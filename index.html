@@ -31,7 +31,7 @@
   .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
   .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 30px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
-  #question-text { font-size: 20px; line-height: 1.72; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 20px; min-height: 70px; flex-shrink: 0; }
+  #question-text { font-size: 20px; line-height: 1.65; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 20px; min-height: 70px; flex-shrink: 0; }
   
   .options-wrap { flex-grow: 1; }
   .option { display: flex; align-items: flex-start; gap: 14px; width: 100%; text-align: left; padding: 15px 20px; margin-top: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 15px; line-height: 1.6; cursor: pointer; transition: all 0.3s ease; }
@@ -58,7 +58,6 @@
 
   #dissolve-canvas { position: fixed; inset: 0; z-index: 6; width: 100%; height: 100%; pointer-events: none; display: block; }
   
-  /* 视频层与横屏提示 */
   #intro-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4; background: #000; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
   #intro-video.show { opacity: 1; pointer-events: auto; }
   
@@ -105,36 +104,15 @@
   .restart-btn { margin-top: 36px; padding: 13px 36px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #e9e9ee; font-family: inherit; font-size: 13px; letter-spacing: 0.22em; padding-left: 40px; cursor: pointer; transition: all 0.3s ease; }
   .restart-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); box-shadow: 0 10px 34px rgba(110,150,255,0.2); }
 
-  /* ============================================================
-     手机横屏适配 (Landscape)
-     防止用户在答题时手机打横，导致卡片高度被压扁，内容溢出
-     ============================================================ */
   @media (orientation: landscape) and (max-height: 500px) {
-    #card { 
-      padding: 20px 30px; 
-      max-height: 95vh; 
-      overflow-y: auto; 
-      width: 90%;
-    }
-    #question-text { 
-      font-size: 16px; 
-      min-height: auto; 
-      margin-bottom: 12px; 
-    }
-    .option { 
-      padding: 10px 14px; 
-      margin-top: 8px; 
-      font-size: 13.5px; 
-    }
+    #card { padding: 20px 30px; max-height: 95vh; overflow-y: auto; width: 90%; }
+    #question-text { font-size: 16px; min-height: auto; margin-bottom: 12px; }
+    .option { padding: 10px 14px; margin-top: 8px; font-size: 13.5px; }
     .quiz-meta { margin-bottom: 6px; }
     .progress-track { margin-bottom: 12px; }
     .card-footer { margin-top: 12px; }
-    
-    /* 开始界面在横屏下的适配 */
     .start-title { font-size: 32px; margin-bottom: 10px; }
     .start-desc { font-size: 13px; margin-bottom: 20px; }
-    
-    /* 结果页双列变三列 */
     .info-grid { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     .sin-panel { grid-column: span 3; padding: 16px; }
     .sin-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
@@ -169,7 +147,7 @@
     <section id="card" class="glass-panel">
       <div class="quiz-meta">
         <span>MBTI TEST</span>
-        <span id="question-index">01 / 32</span>
+        <span id="question-index">01 / 28</span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       <h2 id="question-text">题目加载中…</h2>
@@ -196,7 +174,6 @@
   
   <video id="intro-video" muted playsinline preload="auto"></video>
   
-  <!-- 横屏观看提示 -->
   <div id="landscape-hint">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
     建议横屏观看，体验更佳
@@ -288,7 +265,7 @@
 })();
 
 /* ================================================================
-   二、16 人格数据 (保持原样)
+   二、16 人格数据
    ================================================================ */
 const MBTI_TYPES = {
   INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', comm: '倾向于倾听和共情，表达含蓄，很少直接批评他人，喜欢用文字或艺术表达内心。', growth: '试着把想法落地为具体行动，接受世界的不完美，学会在必要时表达自己的愤怒和边界。', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
@@ -317,45 +294,46 @@ const SIN_META = [
 ];
 
 /* ================================================================
-   三、32 道题库 (保持原样)
+   三、28 道全新题库 (采用16P的陈述句+程度选择，正反向交叉)
    ================================================================ */
 const QUESTIONS = [
-  { q: '如果公司组织周末去郊区团建，你的真实想法是——', a: { text: '太好了，能和大家玩在一起很开心', dim: 'E', score: 2 }, b: { text: '去也行，顺便拉近一下同事关系', dim: 'E', score: 1 }, c: { text: '能请假就请假，想在家里安静待着', dim: 'I', score: 1 }, d: { text: '极其抗拒，甚至想为了不去而辞职', dim: 'I', score: 2 } },
-  { q: '当你在人群中待了很久，你通常会——', a: { text: '越聊越兴奋，不想散场', dim: 'E', score: 2 }, b: { text: '挺开心的，回家后还能回味一下', dim: 'E', score: 1 }, c: { text: '觉得有点累，需要一个人待会儿', dim: 'I', score: 1 }, d: { text: '电量彻底归零，接下来三天都不想见人', dim: 'I', score: 2 } },
-  { q: '遇到烦心事时，你更倾向于——', a: { text: '立刻找人吐槽，说出来心里就舒服了', dim: 'E', score: 2 }, b: { text: '找一两个好朋友倾诉一下', dim: 'E', score: 1 }, c: { text: '自己安静地想清楚，不想麻烦别人', dim: 'I', score: 1 }, d: { text: '完全不想说话，把自己关起来慢慢消化', dim: 'I', score: 2 } },
-  { q: '在一个需要频繁和陌生人沟通的任务中，你——', a: { text: '如鱼得水，能迅速热络起来', dim: 'E', score: 2 }, b: { text: '能应付，但结束后需要独处回血', dim: 'E', score: 1 }, c: { text: '尽量用文字沟通，避免打电话或面谈', dim: 'I', score: 1 }, d: { text: '感到非常厌烦，希望完全不要有人来打扰我', dim: 'I', score: 2 } },
-  { q: '在会议或讨论中，你更自然的参与方式是——', a: { text: '边说边想，发言的过程就是整理思路', dim: 'E', score: 2 }, b: { text: '有时插话，但更喜欢在有把握时开口', dim: 'E', score: 1 }, c: { text: '先听别人说，脑子里想清楚再决定要不要讲', dim: 'I', score: 1 }, d: { text: '除非被点名，否则绝不主动开口', dim: 'I', score: 2 } },
-  { q: '你理想中的周末更接近——', a: { text: '排满社交和外出，和朋友待在一起', dim: 'E', score: 2 }, b: { text: '有一两个安排，但也留点时间给自己', dim: 'E', score: 1 }, c: { text: '大部分时间独处，偶尔见一两个最亲近的人', dim: 'I', score: 1 }, d: { text: '完全属于自己的安静周末，谁来约都不去', dim: 'I', score: 2 } },
-  { q: '你更愿意选择的放松方式是——', a: { text: '和朋友吃饭、唱K、逛街，热闹一下', dim: 'E', score: 2 }, b: { text: '约一两个熟人喝东西聊聊天', dim: 'E', score: 1 }, c: { text: '一个人看电影、逛展或散步', dim: 'I', score: 1 }, d: { text: '待在家里，完全不用和人讲话', dim: 'I', score: 2 } },
+  /* ---------- E / I (6题) ---------- */
+  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '不太符合', dim: 'E', score: 1 }, d: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '不太符合', dim: 'E', score: 1 }, d: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
 
-  { q: '听到“森林”这个词，你脑子里首先浮现的是——', a: { text: '具体的树、泥土、光线和声音', dim: 'S', score: 2 }, b: { text: '一条可以走进去的路径和明确的场景', dim: 'S', score: 1 }, c: { text: '某种氛围、故事或隐喻', dim: 'N', score: 1 }, d: { text: '无限的可能性、未知和联想', dim: 'N', score: 2 } },
-  { q: '学习一个全新领域时，你更舒服的节奏是——', a: { text: '从基础步骤和具体细节开始，一步步来', dim: 'S', score: 2 }, b: { text: '先看例子，再自己动手试', dim: 'S', score: 1 }, c: { text: '先理解背后的整体逻辑和框架', dim: 'N', score: 1 }, d: { text: '先跳进去乱试，在试错中自己找规律', dim: 'N', score: 2 } },
-  { q: '别人向你描述一件事时，你更容易记住——', a: { text: '时间、地点、数字、具体发生了什么', dim: 'S', score: 2 }, b: { text: '事情的经过和最终结果', dim: 'S', score: 1 }, c: { text: '他说话时的情绪和言外之意', dim: 'N', score: 1 }, d: { text: '这件事让我联想到的更大图景或趋势', dim: 'N', score: 2 } },
-  { q: '面对一个实际任务，你更信任——', a: { text: '过往验证过的方法和现实条件', dim: 'S', score: 2 }, b: { text: '别人给过的靠谱建议', dim: 'S', score: 1 }, c: { text: '自己的直觉和对整体方向的判断', dim: 'N', score: 1 }, d: { text: '一种“感觉对了”的灵感，哪怕还说不清楚', dim: 'N', score: 2 } },
-  { q: '你更享受的对话类型是——', a: { text: '聊具体发生的事、人和经历', dim: 'S', score: 2 }, b: { text: '聊有用的信息和实际建议', dim: 'S', score: 1 }, c: { text: '聊想法、假设和“如果……会怎样”', dim: 'N', score: 1 }, d: { text: '聊抽象概念、意义和未来的可能性', dim: 'N', score: 2 } },
-  { q: '当计划出现一个现实层面的问题时，你的第一反应是——', a: { text: '先看清楚具体哪里出了问题，再动手修', dim: 'S', score: 2 }, b: { text: '找有经验的人问实际解决办法', dim: 'S', score: 1 }, c: { text: '想想能不能换一种思路绕过它', dim: 'N', score: 1 }, d: { text: '也许这个问题背后有更大的机会', dim: 'N', score: 2 } },
-  { q: '你更容易被哪种表达打动——', a: { text: '真实、具体、有细节的故事', dim: 'S', score: 2 }, b: { text: '清晰、有数据、可验证的结论', dim: 'S', score: 1 }, c: { text: '有隐喻和多重解读空间的句子', dim: 'N', score: 1 }, d: { text: '指向某种宏大愿景或未来可能性的描述', dim: 'N', score: 2 } },
+  /* ---------- S / N (6题) ---------- */
+  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '不太符合', dim: 'N', score: 1 }, d: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '不太符合', dim: 'S', score: 1 }, d: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '不太符合', dim: 'N', score: 1 }, d: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '不太符合', dim: 'S', score: 1 }, d: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '不太符合', dim: 'N', score: 1 }, d: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '不太符合', dim: 'S', score: 1 }, d: { text: '完全不符合', dim: 'S', score: 2 } },
 
-  { q: '朋友因为一个错误决定而懊恼，你通常会——', a: { text: '告诉他“活该”，让他记住这个教训', dim: 'T', score: 2 }, b: { text: '客观分析哪里错了，下次怎么避免', dim: 'T', score: 1 }, c: { text: '先安抚情绪，再顺带提一嘴正确的做法', dim: 'F', score: 1 }, d: { text: '跟着他一起骂，帮他发泄情绪', dim: 'F', score: 2 } },
-  { q: '团队里有人拖了进度，你的第一反应是——', a: { text: '这是他的责任，我不插手，等他自己解决', dim: 'T', score: 2 }, b: { text: '找出流程漏洞，理清责任，赶紧补救', dim: 'T', score: 1 }, c: { text: '委婉提醒他，照顾他的面子', dim: 'F', score: 1 }, d: { text: '看他是不是遇到困难了，主动帮他分担一点', dim: 'F', score: 2 } },
-  { q: '做一个重要决定时，你更倾向——', a: { text: '把利弊和数据列出来，选最优解', dim: 'T', score: 2 }, b: { text: '理性为主，但也会考虑相关人的接受度', dim: 'T', score: 1 }, c: { text: '会考虑这个决定对身边人意味着什么', dim: 'F', score: 1 }, d: { text: '听内心的声音，感受对了就是对的', dim: 'F', score: 2 } },
-  { q: '当规则和人情冲突时，你更可能——', a: { text: '规则就是规则，破了口子以后没法管', dim: 'T', score: 2 }, b: { text: '先看规则的初衷，再判断要不要灵活', dim: 'T', score: 1 }, c: { text: '能通融就通融，关系比条文重要', dim: 'F', score: 1 }, d: { text: '不忍心因为规则让具体的人受伤', dim: 'F', score: 2 } },
-  { q: '你更容易被哪种批评激怒——', a: { text: '说我逻辑有问题、不够专业', dim: 'T', score: 2 }, b: { text: '说我效率低、判断失误', dim: 'T', score: 1 }, c: { text: '说我冷漠、不近人情', dim: 'F', score: 1 }, d: { text: '说我自私、没有考虑别人的感受', dim: 'F', score: 2 } },
-  { q: '在争论中，你更看重——', a: { text: '谁的道理站得住脚', dim: 'T', score: 2 }, b: { text: '谁的论据更充分', dim: 'T', score: 1 }, c: { text: '争论之后关系还能不能维持', dim: 'F', score: 1 }, d: { text: '对方有没有感到被尊重', dim: 'F', score: 2 } },
-  { q: '当有人向你寻求帮助，但你其实不太想参与时，你会——', a: { text: '直接拒绝，觉得这是他自己的课题，应该自己解决', dim: 'T', score: 2 }, b: { text: '丢个资料或指个方向，让他自己去研究', dim: 'T', score: 1 }, c: { text: '怕破坏关系，硬着头皮听他倾诉完', dim: 'F', score: 1 }, d: { text: '委婉找个理由推脱，说几句暖心话安抚对方', dim: 'F', score: 2 } },
+  /* ---------- T / F (6题) ---------- */
+  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'F', score: 1 }, d: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'F', score: 1 }, d: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'F', score: 1 }, d: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
 
-  { q: '面对一个空闲的周末，你更舒服的状态是——', a: { text: '大致已经想好要做什么，心里有底', dim: 'J', score: 2 }, b: { text: '有一两个固定安排，其他时间灵活', dim: 'J', score: 1 }, c: { text: '不想定死，到时候看心情', dim: 'P', score: 1 }, d: { text: '完全开放，最怕提前被安排', dim: 'P', score: 2 } },
-  { q: '一项重要任务，你通常会——', a: { text: '提前拆好步骤，按计划推进', dim: 'J', score: 2 }, b: { text: '心里有个大框架，细节边做边补', dim: 'J', score: 1 }, c: { text: '先放着，等状态来了集中做', dim: 'P', score: 1 }, d: { text: '截止日期才是第一生产力', dim: 'P', score: 2 } },
-  { q: '旅行前，你更可能——', a: { text: '行程、住宿、路线都提前安排妥当', dim: 'J', score: 2 }, b: { text: '定好大交通和住宿，其他到了再说', dim: 'J', score: 1 }, c: { text: '只订个机票，剩下的随缘', dim: 'P', score: 1 }, d: { text: '说走就走，计划赶不上变化', dim: 'P', score: 2 } },
-  { q: '如果原定计划突然作废，你更可能——', a: { text: '非常烦躁，必须立刻重新安排一件事来做', dim: 'J', score: 2 }, b: { text: '有点不爽，但能接受，重新定个计划', dim: 'J', score: 1 }, c: { text: '顺其自然，走一步看一步', dim: 'P', score: 1 }, d: { text: '太好了，直接摆烂，什么都不想干了', dim: 'P', score: 2 } },
-  { q: '你的工作台/房间通常——', a: { text: '分类清楚，东西基本有固定位置', dim: 'J', score: 2 }, b: { text: '大面上整齐，细节偶尔乱', dim: 'J', score: 1 }, c: { text: '乱，但我知道每个东西大概在哪', dim: 'P', score: 1 }, d: { text: '乱就乱，找得到就行', dim: 'P', score: 2 } },
-  { q: '如果突然多出一段完全空白的时间，你会——', a: { text: '很快把它安排上具体的事', dim: 'J', score: 2 }, b: { text: '先想想有什么该做但一直没做的', dim: 'J', score: 1 }, c: { text: '挺开心的，终于可以随便晃一晃', dim: 'P', score: 1 }, d: { text: '太好了，我最喜欢没有计划的状态', dim: 'P', score: 2 } },
-  { q: '对于“截止日期”，你的感受更接近——', a: { text: '需要它，没有 deadline 我很难收尾', dim: 'J', score: 2 }, b: { text: '会提前留出缓冲，不喜欢踩点', dim: 'J', score: 1 }, c: { text: '有点压力，但踩点也能做完', dim: 'P', score: 1 }, d: { text: '最后一刻的紧迫感反而让我专注', dim: 'P', score: 2 } },
+  /* ---------- J / P (6题) ---------- */
+  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '不太符合', dim: 'P', score: 1 }, d: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '不太符合', dim: 'J', score: 1 }, d: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '不太符合', dim: 'P', score: 1 }, d: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '不太符合', dim: 'J', score: 1 }, d: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '不太符合', dim: 'P', score: 1 }, d: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '我经常在最后期限的压迫下才进入最佳状态。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '不太符合', dim: 'J', score: 1 }, d: { text: '完全不符合', dim: 'J', score: 2 } },
 
-  { q: '面对一件结果不确定的重要事情，你通常——', a: { text: '相信船到桥头自然直，不太提前焦虑', dim: 'A', score: 2 }, b: { text: '会紧张，但能在行动中稳住', dim: 'A', score: 1 }, c: { text: '忍不住反复推演最坏情况', dim: 'T', score: 1 }, d: { text: '很难放松，直到事情尘埃落定', dim: 'T', score: 2 } },
-  { q: '当你回顾自己过去的某个决定时，你更接近——', a: { text: '过去了就过去了，不太反复回想', dim: 'A', score: 2 }, b: { text: '偶尔想一下，但不会陷进去', dim: 'A', score: 1 }, c: { text: '会时不时复盘，想如果当时选了另一条路会怎样', dim: 'T', score: 1 }, d: { text: '经常被“当初要是……就好了”的念头缠绕', dim: 'T', score: 2 } },
-  { q: '别人指出你的错误时，你的第一感受是——', a: { text: '就事论事，错了就改，不太往心里去', dim: 'A', score: 2 }, b: { text: '有点不舒服，但很快能消化', dim: 'A', score: 1 }, c: { text: '会反复想自己是不是能力有问题', dim: 'T', score: 1 }, d: { text: '即使对方说得对，也需要很久才能不介怀', dim: 'T', score: 2 } },
-  { q: '你对自己的整体感觉更接近——', a: { text: '大体自信，觉得自己能处理好大多数事', dim: 'A', score: 2 }, b: { text: '自信和不确定交替，但总体偏向自己', dim: 'A', score: 1 }, c: { text: '常常觉得自己还可以做得更好', dim: 'T', score: 1 }, d: { text: '习惯性自我怀疑，哪怕别人觉得我做得不错', dim: 'T', score: 2 } }
+  /* ---------- A / T 身份 (4题) ---------- */
+  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'A', score: 1 }, d: { text: '完全不符合', dim: 'A', score: 2 } }
 ];
 
 /* ================================================================
@@ -387,7 +365,7 @@ const restartBtn = document.getElementById('restart-btn');
 let currentIndex = 0, answerHistory = [], currentType = '', currentSubtype = '';
 let finished = false, videoStarted = false, videoFallbackTimer = null, musicPlaying = false;
 
-const STORAGE_KEY = 'mbti_test_progress_v2';
+const STORAGE_KEY = 'mbti_test_progress_v3';
 
 function saveProgress() {
   if (currentIndex < QUESTIONS.length) localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: currentIndex, answers: answerHistory }));
@@ -474,21 +452,26 @@ function handleChoice(choiceKey) {
 optionBtns.forEach(btn => { btn.addEventListener('click', () => handleChoice(btn.dataset.choice)); });
 
 /* ================================================================
-   五、计算
+   五、计算 (严格区分 24 题核心维度与 4 题身份维度)
    ================================================================ */
 function calcResult() {
   const coreScore = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
   const identityScore = { A:0, Tb:0 };
+  
   answerHistory.forEach((ans, idx) => {
-    if (idx < 28) {
+    // 前 24 题归为核心四维
+    if (idx < 24) {
       if (coreScore[ans.dim] !== undefined) coreScore[ans.dim] += ans.score;
-    } else {
+    } 
+    // 后 4 题归为身份维度（注意身份题的 T 用 Tb 接收，避免与 Thinking 混淆）
+    else {
       if (ans.dim === 'A') identityScore.A += ans.score;
       else if (ans.dim === 'T') identityScore.Tb += ans.score;
     }
   });
 
   const dims = [['E','I'],['S','N'],['T','F'],['J','P']];
+  // 平票时取偏左侧（如 E）
   const type = dims.map(([l,r]) => coreScore[l] >= coreScore[r] ? l : r).join('');
   const subtype = identityScore.A >= identityScore.Tb ? 'A' : 'T';
   return { type, subtype };
@@ -508,7 +491,6 @@ function finishQuiz() {
   }, 500);
 }
 
-/* 进入视频播放，处理横屏和全屏 */
 function playTypeVideo(type) {
   const info = MBTI_TYPES[type] || {}; const src = info.video || '';
   finished = false; videoStarted = false;
@@ -517,12 +499,8 @@ function playTypeVideo(type) {
   video.classList.remove('show'); video.muted = true; video.setAttribute('muted', ''); video.src = src; video.load();
   video.addEventListener('playing', function onPlaying() { 
     videoStarted = true; 
-    
-    // 视频播放时，如果检测到竖屏，显示横屏提示，并尝试请求全屏
     if (window.innerHeight > window.innerWidth) {
       landscapeHint.classList.add('show');
-      
-      // 尝试全屏并锁定横屏 (部分浏览器支持)
       const videoEl = video;
       if (videoEl.requestFullscreen) {
         videoEl.requestFullscreen().then(() => {
@@ -531,8 +509,6 @@ function playTypeVideo(type) {
           }
         }).catch(e => console.log('Fullscreen failed:', e));
       }
-      
-      // 5秒后隐藏提示
       setTimeout(() => { landscapeHint.classList.remove('show'); }, 5000);
     }
   }, { once: true });
@@ -550,13 +526,8 @@ function endVideo() {
   if (finished) return; finished = true; clearTimeout(videoFallbackTimer);
   try { 
     video.pause(); 
-    // 退出全屏
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(e => {});
-    }
-    if (screen.orientation && screen.orientation.unlock) {
-      screen.orientation.unlock();
-    }
+    if (document.fullscreenElement) document.exitFullscreen().catch(e => {});
+    if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
   } catch (e) {}
   
   video.classList.remove('show');
