@@ -8,26 +8,54 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; overflow: hidden; background: #000; color: #f5f5f7; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
   
-  /* 背景层 */
+  /* 背景层 & 全局通用 */
   #bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  .glass-panel { background: rgba(255,255,255,0.055); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 30px 90px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.12); }
+
+  /* 音乐开关 */
+  #music-toggle { position: fixed; top: 24px; right: 24px; z-index: 10; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.6); transition: all 0.3s ease; }
+  #music-toggle:hover { color: #fff; background: rgba(255,255,255,0.1); }
+  #music-toggle svg { width: 20px; height: 20px; fill: currentColor; }
+  #music-toggle.muted::after { content: ''; position: absolute; width: 22px; height: 2px; background: #f87171; transform: rotate(45deg); }
+
+  /* 开始界面 */
+  #start-layer { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; transition: opacity 1s ease; padding: 24px; text-align: center; }
+  #start-layer.hide { opacity: 0; pointer-events: none; }
+  .start-title { font-size: clamp(32px, 6vw, 56px); font-weight: 200; letter-spacing: 0.2em; margin-bottom: 20px; padding-left: 0.2em; background: linear-gradient(120deg, #fff, #9fc0ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .start-desc { font-size: 14.5px; color: rgba(255,255,255,0.5); max-width: 400px; line-height: 1.8; margin-bottom: 50px; letter-spacing: 0.05em; }
+  .start-btn { padding: 16px 48px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 15px; letter-spacing: 0.2em; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+  .start-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(110,150,255,0.2); }
+  
+  /* 进度提示小字 */
+  #resume-hint { display: none; margin-top: 16px; font-size: 12px; color: rgba(160, 190, 255, 0.8); letter-spacing: 0.05em; }
 
   /* 答题区 */
-  #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 1; transition: opacity 1.5s ease; }
-  #card { width: min(720px, 100%); padding: 44px 44px 40px; border-radius: 26px; background: rgba(255,255,255,0.055); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 30px 90px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.12); transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; }
+  #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
+  #quiz-layer.active { opacity: 1; pointer-events: auto; }
+  #card { width: min(720px, 100%); padding: 44px 44px 30px; border-radius: 26px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
   
   .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
   .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 30px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
-  #question-text { font-size: 20px; line-height: 1.72; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 24px; min-height: 70px; }
+  #question-text { font-size: 20px; line-height: 1.72; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 20px; min-height: 70px; flex-shrink: 0; }
   
-  /* 4 个选项的布局 */
+  .options-wrap { flex-grow: 1; }
   .option { display: flex; align-items: flex-start; gap: 14px; width: 100%; text-align: left; padding: 15px 20px; margin-top: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 15px; line-height: 1.6; cursor: pointer; transition: all 0.3s ease; }
   .option:hover { background: rgba(255,255,255,0.1); border-color: rgba(160,190,255,0.5); transform: translateY(-2px); box-shadow: 0 10px 34px rgba(110,150,255,0.16); }
   .option:active { transform: translateY(0) scale(0.99); }
   .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(200,218,255,0.95); background: rgba(140,175,255,0.16); border: 1px solid rgba(160,190,255,0.3); margin-top: 1px; }
 
+  /* 底部按钮 */
+  .card-footer { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; font-family: inherit; }
+  #prev-btn { color: rgba(255,255,255,0.3); }
+  #prev-btn:hover:not(:disabled) { color: rgba(255,255,255,0.8); }
+  #prev-btn:disabled { opacity: 0; pointer-events: none; }
+  #reset-btn { color: rgba(248, 113, 113, 0.4); }
+  #reset-btn:hover { color: rgba(248, 113, 113, 0.9); }
+
   /* 大字闪现层 */
-  #type-flash { position: fixed; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
+  #type-flash { position: fixed; inset: 0; z-index: 6; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #type-flash.show { opacity: 1; }
   #type-flash-text { font-size: clamp(62px, 14vw, 138px); font-weight: 200; line-height: 1; letter-spacing: 0.12em; padding-left: 0.12em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(130,165,255,0.42)); transform: scale(0.94); transition: transform 0.9s ease; }
   #type-flash.show #type-flash-text { transform: scale(1); }
@@ -35,12 +63,12 @@
   #type-flash.dissolving #type-flash-text { transform: scale(1.1); transition: transform 0.6s ease; }
 
   /* 消散画布 & 视频层 */
-  #dissolve-canvas { position: fixed; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; display: block; }
+  #dissolve-canvas { position: fixed; inset: 0; z-index: 6; width: 100%; height: 100%; pointer-events: none; display: block; }
   #intro-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4; background: #000; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
   #intro-video.show { opacity: 1; pointer-events: auto; }
 
   /* 结果页 */
-  #result-layer { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; padding: 56px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+  #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 56px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
   #result-layer::-webkit-scrollbar { width: 6px; }
   #result-layer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
   #result-layer.show { opacity: 1; pointer-events: auto; }
@@ -51,7 +79,7 @@
   .result-title { font-size: 21px; font-weight: 400; letter-spacing: 0.14em; color: rgba(255,255,255,0.9); margin-bottom: 22px; }
   .result-desc { font-size: 15.5px; line-height: 1.95; letter-spacing: 0.02em; color: rgba(255,255,255,0.6); text-align: justify; text-align-last: center; margin-bottom: 10px; }
 
-  /* 信息网格面板（职业、优势、盲点、社交） */
+  /* 信息网格面板 */
   .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; text-align: left; }
   .info-card { padding: 22px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); }
   .info-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
@@ -81,7 +109,7 @@
     .sin-panel { padding: 20px; }
   }
   @media (max-width: 560px) {
-    #card { padding: 32px 24px 28px; border-radius: 22px; }
+    #card { padding: 32px 24px 20px; border-radius: 22px; }
     #question-text { font-size: 18px; min-height: 60px; }
     .option { font-size: 14px; padding: 14px 16px; gap: 10px; }
     .result-desc { font-size: 14px; }
@@ -90,22 +118,44 @@
 </head>
 <body>
 
+  <audio id="bgm" src="bgm.mp3" loop></audio>
+
+  <div id="music-toggle" title="切换背景音乐">
+    <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+  </div>
+
   <canvas id="bg-canvas"></canvas>
 
+  <!-- 开始界面 -->
+  <section id="start-layer">
+    <h1 class="start-title">MBTI 人格测试</h1>
+    <p class="start-desc">一场关于灵魂底色的探索。请凭着第一直觉做出选择，不要过度思考，这会揭示你最真实的潜意识倾向。</p>
+    <button class="start-btn" id="start-btn">开 始 测 试</button>
+    <div id="resume-hint">检测到未完成的进度，点击继续</div>
+  </section>
+
+  <!-- 答题区 -->
   <main id="quiz-layer">
-    <section id="card">
+    <section id="card" class="glass-panel">
       <div class="quiz-meta">
         <span>MBTI TEST</span>
         <span id="question-index">01 / 16</span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       <h2 id="question-text">题目加载中…</h2>
-      <div id="options">
-        <!-- 动态注入 4 个选项 -->
+      
+      <div class="options-wrap">
         <button class="option" data-choice="A" type="button"><span class="tag">A</span><span class="option-text"></span></button>
         <button class="option" data-choice="B" type="button"><span class="tag">B</span><span class="option-text"></span></button>
         <button class="option" data-choice="C" type="button"><span class="tag">C</span><span class="option-text"></span></button>
         <button class="option" data-choice="D" type="button"><span class="tag">D</span><span class="option-text"></span></button>
+      </div>
+
+      <div class="card-footer">
+        <button id="prev-btn" class="footer-btn" type="button" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 上一题
+        </button>
+        <button id="reset-btn" class="footer-btn" type="button">重新开始</button>
       </div>
     </section>
   </main>
@@ -114,6 +164,7 @@
   <canvas id="dissolve-canvas"></canvas>
   <video id="intro-video" muted playsinline preload="auto"></video>
 
+  <!-- 结果页 -->
   <section id="result-layer">
     <div class="result-inner">
       <div class="result-label">Your Type</div>
@@ -122,25 +173,31 @@
       <p class="result-desc" id="result-desc"></p>
 
       <div class="info-grid" id="info-grid">
-        <!-- 动态渲染：优势、盲点、社交、职业 -->
-        <div class="info-card" id="card-strengths">
+        <div class="info-card">
           <div class="info-title">Core Strengths · 核心优势</div>
           <div class="info-text" id="text-strengths"></div>
         </div>
-        <div class="info-card" id="card-weaknesses">
+        <div class="info-card">
           <div class="info-title">Blind Spots · 潜在盲点</div>
           <div class="info-text" id="text-weaknesses"></div>
         </div>
-        <div class="info-card" id="card-love">
+        <div class="info-card">
           <div class="info-title">Social & Love · 社交与恋爱</div>
           <div class="info-text" id="text-love"></div>
         </div>
-        <div class="info-card" id="card-careers">
+        <div class="info-card">
           <div class="info-title">Ideal Careers · 推荐职业</div>
           <div class="info-text" id="text-careers"></div>
         </div>
+        <div class="info-card">
+          <div class="info-title">Communication · 沟通风格</div>
+          <div class="info-text" id="text-comm"></div>
+        </div>
+        <div class="info-card">
+          <div class="info-title">Growth Advice · 成长建议</div>
+          <div class="info-text" id="text-growth"></div>
+        </div>
         
-        <!-- 七宗罪指数面板横跨两列 -->
         <div class="sin-panel">
           <div class="sin-title">Seven Deadly Sins · 七宗罪指数</div>
           <div class="sin-grid" id="sin-grid"></div>
@@ -153,7 +210,7 @@
 
 <script>
 /* ================================================================
-   一、Canvas 四芒星粒子背景
+   一、四芒星背景
    ================================================================ */
 (function initParticles() {
   const canvas = document.getElementById('bg-canvas');
@@ -213,60 +270,50 @@
 })();
 
 /* ================================================================
-   二、人格数据（极大扩充了信息维度）
+   二、人格数据（保持原样）
    ================================================================ */
 const MBTI_TYPES = {
-  INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
-  INFJ: { title: '提倡者 · 沉默的理想主义者', desc: '你安静却有力量。能敏锐地读懂别人的情绪，也执着于自己认定的意义。你渴望深度连接，讨厌浮于表面的社交。看似温和，内心却有一份近乎固执的理想主义。', strengths: '洞察力极强、有远见、充满同情心、原则性强', weaknesses: '完美主义、容易精神内耗、有时过于固执', love: '追求极致的真诚与精神共鸣，不轻易交心，一旦认定就毫无保留。', careers: '人力资源、心理咨询师、教育工作者、公益组织者', video: 'videos/INFJ.mp4', sins: { pride: 40, envy: 50, wrath: 35, sloth: 40, greed: 25, gluttony: 30, lust: 50 } },
-  ENFP: { title: '竞选者 · 会走路的火焰', desc: '你是一团会走路的火焰。好奇心旺盛，热情来得快去得也快，却总能在人群里点亮气氛。你害怕被束缚，喜欢可能性多过确定性。真诚、跳脱、容易共情。', strengths: '热情洋溢、极具感染力、脑洞大开、善于交际', weaknesses: '容易三分钟热度、缺乏条理、过度承诺', love: '追求浪漫与新鲜感，需要强烈的精神共鸣，容易上头但也需要自由。', careers: '广告创意、公关、市场营销、编剧', video: 'videos/ENFP.mp4', sins: { pride: 50, envy: 45, wrath: 45, sloth: 55, greed: 40, gluttony: 55, lust: 70 } },
-  ENFJ: { title: '主人公 · 天生的引路人', desc: '你天生会照顾人。能敏锐察觉团队里每个人的状态，并让大家朝同一个方向走。你热心、有感染力，常常把别人的需要放在自己前面。', strengths: '极具领导力、善解人意、善于鼓舞他人、责任心强', weaknesses: '容易忽视自身需求、过度干涉他人、渴望被认可', love: '在关系中扮演照顾者和引导者，极度渴望双向奔赴和被需要的感觉。', careers: '教师、团队管理、公关、活动策划', video: 'videos/ENFJ.mp4', sins: { pride: 55, envy: 50, wrath: 40, sloth: 30, greed: 45, gluttony: 50, lust: 60 } },
-  INTP: { title: '逻辑学家 · 行走的思考机器', desc: '你的大脑是一台不停运转的机器。喜欢拆解问题、追问本质，对“为什么”的兴趣远大于“怎么办”。你不擅长寒暄，却能在自己感兴趣的领域钻得很深。', strengths: '逻辑严密、客观理智、富有探索精神、不随波逐流', weaknesses: '不善表达情感、容易陷入拖延、过度分析', love: '很难察觉他人的情绪，但会用实际行动和分享知识来表达爱意。', careers: '程序员、数据分析师、科研人员、系统架构师', video: 'videos/INTP.mp4', sins: { pride: 65, envy: 30, wrath: 25, sloth: 70, greed: 40, gluttony: 45, lust: 35 } },
-  INTJ: { title: '建筑师 · 藏在沉默里的野心', desc: '你习惯站在更远的地方看问题。目标清晰，逻辑缜密，讨厌无效的讨论和反复的犹豫。你的野心藏在沉默里，靠一步步的执行兑现。', strengths: '战略眼光、高度独立、执行力极强、理性果断', weaknesses: '过于冷漠、傲慢、难以接受批评、不擅长处理情绪', love: '非常独立，不会轻易陷入恋爱，需要伴侣有足够的智慧和独立空间。', careers: '战略规划、投资分析师、企业高管、科学家', video: 'videos/INTJ.mp4', sins: { pride: 75, envy: 40, wrath: 40, sloth: 25, greed: 65, gluttony: 45, lust: 35 } },
-  ENTP: { title: '辩论家 · 灵感的永动机', desc: '你脑子里永远有新的点子。喜欢挑战规则，享受思维的碰撞，一张嘴就能把平凡的话题聊出花来。你讨厌重复和无聊，容易半途转向下一个目标。', strengths: '思维敏捷、善于创新、适应力强、富有挑战精神', weaknesses: '喜欢抬杠、缺乏耐心、难以坚持到底', love: '充满趣味和智力交锋，需要伴侣能接住他们的梗，不能过于沉闷。', careers: '创业者、律师、产品经理、咨询顾问', video: 'videos/ENTP.mp4', sins: { pride: 70, envy: 30, wrath: 50, sloth: 45, greed: 55, gluttony: 50, lust: 60 } },
-  ENTJ: { title: '指挥官 · 天生的掌控者', desc: '你天生想掌控局面。目标明确，行动果断，能在混乱中迅速理出头绪并推动所有人往前走。你不怕冲突，也不怕承担责任。', strengths: '极强的组织能力、果断、自信、战略执行力', weaknesses: '专横霸道、缺乏耐心、容易忽视他人情感', love: '高度目标导向，寻找能并肩作战的伴侣，不擅长处理无意义的情绪纠葛。', careers: '企业高管、项目经理、创业合伙人、律师', video: 'videos/ENTJ.mp4', sins: { pride: 80, envy: 40, wrath: 65, sloth: 20, greed: 75, gluttony: 55, lust: 55 } },
-  ISFP: { title: '探险家 · 安静的自由主义者', desc: '你活得安静而自我。不喜欢被安排，也不太爱争辩，只想按自己的节奏感受生活。你对美很敏感，可能在一首歌、一场日落里获得巨大满足。', strengths: '艺术感知力强、温柔善良、包容度高、活在当下', weaknesses: '容易逃避冲突、缺乏长远规划、容易情绪化', love: '细腻且注重当下的感受，不喜欢被束缚，需要伴侣给予足够的审美和自由空间。', careers: '艺术家、设计师、厨师、摄影师', video: 'videos/ISFP.mp4', sins: { pride: 25, envy: 40, wrath: 45, sloth: 60, greed: 20, gluttony: 60, lust: 65 } },
-  ISFJ: { title: '守卫者 · 默默托底的人', desc: '你是那种默默把事情做好的人。记得朋友的生日，记得谁不爱吃香菜，习惯用行动而不是语言表达关心。你可靠、耐心、有责任感。', strengths: '极具耐心、细致可靠、有奉献精神、注重细节', weaknesses: '容易过度妥协、缺乏主见、不善于拒绝', love: '在感情中极为忠诚和体贴，习惯默默付出，非常看重家庭的安稳。', careers: '护士、行政主管、教师、会计', video: 'videos/ISFJ.mp4', sins: { pride: 25, envy: 50, wrath: 30, sloth: 40, greed: 20, gluttony: 50, lust: 40 } },
-  ESFP: { title: '表演者 · 走到哪亮到哪', desc: '你走到哪儿，哪儿就有笑声。喜欢新鲜、喜欢热闹，享受当下多过规划未来。你情绪来得直接，喜欢就说，难过也不藏着。', strengths: '极具活力、擅长交际、乐观开朗、敏锐感知当下', weaknesses: '容易冲动消费、缺乏长远规划、容易感到无聊', love: '热情直接，喜欢制造浪漫和惊喜，需要伴侣能够提供持续的新鲜感。', careers: '演员、主播、公关、活动主持人', video: 'videos/ESFP.mp4', sins: { pride: 50, envy: 40, wrath: 55, sloth: 60, greed: 50, gluttony: 75, lust: 80 } },
-  ESFJ: { title: '执政官 · 团队的黏合剂', desc: '你是团队里的黏合剂。热心、周到，总记得照顾每个人的感受，也乐于为集体付出。你重视关系和归属感，需要被认可。', strengths: '沟通协调力强、充满关怀、有责任感、极具亲和力', weaknesses: '过于在意他人眼光、害怕冲突、情绪容易受外界影响', love: '感情中是完美的照顾者，极度需要陪伴和情绪反馈，受不了冷暴力。', careers: '客户经理、护士、人力资源、行政', video: 'videos/ESFJ.mp4', sins: { pride: 40, envy: 60, wrath: 45, sloth: 40, greed: 30, gluttony: 55, lust: 50 } },
-  ISTP: { title: '鉴赏家 · 话少手稳的行动派', desc: '你话不多，但手上功夫很稳。遇到问题习惯自己琢磨，先动手试试再说。你不喜欢情绪化的场面，讨厌被管着，追求自由和实用。', strengths: '冷静客观、动手能力强、危机处理能力极佳、实用主义', weaknesses: '不善表达、容易冷漠、容易沉迷个人爱好', love: '不喜欢黏腻的依恋，需要有各自的独立空间，行动多于言辞。', careers: '工程师、飞行员、机械师、数据分析师', video: 'videos/ISTP.mp4', sins: { pride: 60, envy: 25, wrath: 60, sloth: 55, greed: 45, gluttony: 50, lust: 45 } },
-  ISTJ: { title: '物流师 · 说到就做到的人', desc: '你是那种说到就一定做到的人。重视规则、秩序和承诺，做事有条理，讨厌临时变卦。你不太表达情绪，却用可靠撑起了身边人的生活。', strengths: '极度可靠、严谨负责、做事有条理、注重承诺', weaknesses: '固执死板、难以变通、缺乏创新和浪漫', love: '非常稳定和长情，不喜欢变动，承诺了就是一辈子，但可能缺乏浪漫惊喜。', careers: '财务审计、公务员、项目经理、法务', video: 'videos/ISTJ.mp4', sins: { pride: 55, envy: 30, wrath: 50, sloth: 20, greed: 55, gluttony: 55, lust: 30 } },
-  ESTP: { title: '企业家 · 活在当下的破局者', desc: '你活在当下，反应极快。喜欢刺激和挑战，讨厌拖泥带水，遇到问题第一反应是“先干起来”。你社交能力强，能把尴尬的场面轻松化解。', strengths: '行动力极强、极具胆识、反应迅速、擅长破局', weaknesses: '容易冲动冒险、缺乏耐心、做事容易半途而废', love: '喜欢追求刺激和征服感，直来直去，极具荷尔蒙气息，但有时容易忽略对方感受。', careers: '销售总监、创业者、危机公关、演员', video: 'videos/ESTP.mp4', sins: { pride: 65, envy: 30, wrath: 70, sloth: 40, greed: 65, gluttony: 75, lust: 80 } },
-  ESTJ: { title: '总经理 · 把混乱理成秩序', desc: '你务实、果断，天生适合管事。重视效率和结果，讨厌含糊其辞和拖沓。你说话直接，做事有章法，能把混乱的局面理顺。', strengths: '强大的统筹能力、务实高效、果断负责、规则意识强', weaknesses: '过于强势、喜欢说教、有时过于功利', love: '务实且有担当，习惯用安排好一切来表达爱，但可能会让伴侣感到缺乏情感沟通。', careers: '总经理、项目经理、财务总监、行政主管', video: 'videos/ESTJ.mp4', sins: { pride: 75, envy: 40, wrath: 65, sloth: 20, greed: 70, gluttony: 60, lust: 45 } }
+  INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', comm: '倾向于倾听和共情，表达含蓄，很少直接批评他人，喜欢用文字或艺术表达内心。', growth: '试着把想法落地为具体行动，接受世界的不完美，学会在必要时表达自己的愤怒和边界。', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
+  INFJ: { title: '提倡者 · 沉默的理想主义者', desc: '你安静却有力量。能敏锐地读懂别人的情绪，也执着于自己认定的意义。你渴望深度连接，讨厌浮于表面的社交。看似温和，内心却有一份近乎固执的理想主义。', strengths: '洞察力极强、有远见、充满同情心、原则性强', weaknesses: '完美主义、容易精神内耗、有时过于固执', love: '追求极致的真诚与精神共鸣，不轻易交心，一旦认定就毫无保留。', careers: '人力资源、心理咨询师、教育工作者、公益组织者', comm: '沟通充满隐喻和深意，善于捕捉潜台词。通常很温和，但被触及底线时会非常坚定。', growth: '不要试图拯救所有人，留出时间照顾自己的身体和情绪。允许自己做一个“普通人”。', video: 'videos/INFJ.mp4', sins: { pride: 40, envy: 50, wrath: 35, sloth: 40, greed: 25, gluttony: 30, lust: 50 } },
+  ENFP: { title: '竞选者 · 会走路的火焰', desc: '你是一团会走路的火焰。好奇心旺盛，热情来得快去得也快，却总能在人群里点亮气氛。你害怕被束缚，喜欢可能性多过确定性。真诚、跳脱、容易共情。', strengths: '热情洋溢、极具感染力、脑洞大开、善于交际', weaknesses: '容易三分钟热度、缺乏条理、过度承诺', love: '追求浪漫与新鲜感，需要强烈的精神共鸣，容易上头但也需要自由。', careers: '广告创意、公关、市场营销、编剧', comm: '表达丰富且极具感染力，肢体语言很多，善于活跃气氛，但有时会偏离重点。', growth: '建立规律的作息和计划，学会完成一件事再开启下一件。在关系中设立合理的边界。', video: 'videos/ENFP.mp4', sins: { pride: 50, envy: 45, wrath: 45, sloth: 55, greed: 40, gluttony: 55, lust: 70 } },
+  ENFJ: { title: '主人公 · 天生的引路人', desc: '你天生会照顾人。能敏锐察觉团队里每个人的状态，并让大家朝同一个方向走。你热心、有感染力，常常把别人的需要放在自己前面。', strengths: '极具领导力、善解人意、善于鼓舞他人、责任心强', weaknesses: '容易忽视自身需求、过度干涉他人、渴望被认可', love: '在关系中扮演照顾者和引导者，极度渴望双向奔赴和被需要的感觉。', careers: '教师、团队管理、公关、活动策划', comm: '极具说服力和同理心，善于协调矛盾，说话得体，但也容易报喜不报忧。', growth: '学会倾听自己内心的声音，不要过度依赖外界的正面反馈。允许自己偶尔“自私”一点。', video: 'videos/ENFJ.mp4', sins: { pride: 55, envy: 50, wrath: 40, sloth: 30, greed: 45, gluttony: 50, lust: 60 } },
+  INTP: { title: '逻辑学家 · 行走的思考机器', desc: '你的大脑是一台不停运转的机器。喜欢拆解问题、追问本质，对“为什么”的兴趣远大于“怎么办”。你不擅长寒暄，却能在自己感兴趣的领域钻得很深。', strengths: '逻辑严密、客观理智、富有探索精神、不随波逐流', weaknesses: '不善表达情感、容易陷入拖延、过度分析', love: '很难察觉他人的情绪，但会用实际行动和分享知识来表达爱意。', careers: '程序员、数据分析师、科研人员、系统架构师', comm: '直切要害，注重逻辑严密性。不喜欢无效寒暄，遇到感兴趣的话题能滔滔不绝。', growth: '多关注身边人的情绪需求，有时候“感觉”比“逻辑”更重要。逼自己把想法付诸实践。', video: 'videos/INTP.mp4', sins: { pride: 65, envy: 30, wrath: 25, sloth: 70, greed: 40, gluttony: 45, lust: 35 } },
+  INTJ: { title: '建筑师 · 藏在沉默里的野心', desc: '你习惯站在更远的地方看问题。目标清晰，逻辑缜密，讨厌无效的讨论和反复的犹豫。你的野心藏在沉默里，靠一步步的执行兑现。', strengths: '战略眼光、高度独立、执行力极强、理性果断', weaknesses: '过于冷漠、傲慢、难以接受批评、不擅长处理情绪', love: '非常独立，不会轻易陷入恋爱，需要伴侣有足够的智慧和独立空间。', careers: '战略规划、投资分析师、企业高管、科学家', comm: '精准、高效、一针见血。讨厌废话和情绪发泄，倾向于通过解决问题来回应他人。', growth: '学会示弱，试着理解“情绪”也是一种真实数据。在追求效率的同时，给身边人留一点温度。', video: 'videos/INTJ.mp4', sins: { pride: 75, envy: 40, wrath: 40, sloth: 25, greed: 65, gluttony: 45, lust: 35 } },
+  ENTP: { title: '辩论家 · 灵感的永动机', desc: '你脑子里永远有新的点子。喜欢挑战规则，享受思维的碰撞，一张嘴就能把平凡的话题聊出花来。你讨厌重复和无聊，容易半途转向下一个目标。', strengths: '思维敏捷、善于创新、适应力强、富有挑战精神', weaknesses: '喜欢抬杠、缺乏耐心、难以坚持到底', love: '充满趣味和智力交锋，需要伴侣能接住他们的梗，不能过于沉闷。', careers: '创业者、律师、产品经理、咨询顾问', comm: '喜欢用辩论和头脑风暴来交流，常常出其不意，有时为了赢而争论，忽略了听者的感受。', growth: '学会把好点子落实到底。在交流中多肯定别人，少一些“但是”，照顾他人的情绪底线。', video: 'videos/ENTP.mp4', sins: { pride: 70, envy: 30, wrath: 50, sloth: 45, greed: 55, gluttony: 50, lust: 60 } },
+  ENTJ: { title: '指挥官 · 天生的掌控者', desc: '你天生想掌控局面。目标明确，行动果断，能在混乱中迅速理出头绪并推动所有人往前走。你不怕冲突，也不怕承担责任。', strengths: '极强的组织能力、果断、自信、战略执行力', weaknesses: '专横霸道、缺乏耐心、容易忽视他人情感', love: '高度目标导向，寻找能并肩作战的伴侣，不擅长处理无意义的情绪纠葛。', careers: '企业高管、项目经理、创业合伙人、律师', comm: '下达指令般直接，气场强大，不容置疑。效率极高，但有时会给人带来压迫感。', growth: '放慢脚步，听听团队和家人的意见。尝试在命令之外，多用“邀请”和“感谢”的语气。', video: 'videos/ENTJ.mp4', sins: { pride: 80, envy: 40, wrath: 65, sloth: 20, greed: 75, gluttony: 55, lust: 55 } },
+  ISFP: { title: '探险家 · 安静的自由主义者', desc: '你活得安静而自我。不喜欢被安排，也不太爱争辩，只想按自己的节奏感受生活。你对美很敏感，可能在一首歌、一场日落里获得巨大满足。', strengths: '艺术感知力强、温柔善良、包容度高、活在当下', weaknesses: '容易逃避冲突、缺乏长远规划、容易情绪化', love: '细腻且注重当下的感受，不喜欢被束缚，需要伴侣给予足够的审美和自由空间。', careers: '艺术家、设计师、厨师、摄影师', comm: '温和且注重分寸，不喜欢正面冲突，更多用行动而不是语言来传达善意。', growth: '试着为未来做一些小规划。在冲突中勇敢表达自己的真实需求，不要总是委屈自己去迎合。', video: 'videos/ISFP.mp4', sins: { pride: 25, envy: 40, wrath: 45, sloth: 60, greed: 20, gluttony: 60, lust: 65 } },
+  ISFJ: { title: '守卫者 · 默默托底的人', desc: '你是那种默默把事情做好的人。记得朋友的生日，记得谁不爱吃香菜，习惯用行动而不是语言表达关心。你可靠、耐心、有责任感。', strengths: '极具耐心、细致可靠、有奉献精神、注重细节', weaknesses: '容易过度妥协、缺乏主见、不善于拒绝', love: '在感情中极为忠诚和体贴，习惯默默付出，非常看重家庭的安稳。', careers: '护士、行政主管、教师、会计', comm: '委婉、体贴，常常先考虑别人的感受，倾向于用实际的服务行为来代替甜言蜜语。', growth: '学会说“不”，不要把所有重担都扛在自己身上。你的需求同样重要，要勇敢地提出来。', video: 'videos/ISFJ.mp4', sins: { pride: 25, envy: 50, wrath: 30, sloth: 40, greed: 20, gluttony: 50, lust: 40 } },
+  ESFP: { title: '表演者 · 走到哪亮到哪', desc: '你走到哪儿，哪儿就有笑声。喜欢新鲜、喜欢热闹，享受当下多过规划未来。你情绪来得直接，喜欢就说，难过也不藏着。', strengths: '极具活力、擅长交际、乐观开朗、敏锐感知当下', weaknesses: '容易冲动消费、缺乏长远规划、容易感到无聊', love: '热情直接，喜欢制造浪漫和惊喜，需要伴侣能够提供持续的新鲜感。', careers: '演员、主播、公关、活动主持人', comm: '生动、活泼、极具画面感，善于讲故事和调节气氛，但不喜欢深奥严肃的探讨。', growth: '培养理财和长期规划的习惯。在冲动行事前，给自己三分钟的冷静期。', video: 'videos/ESFP.mp4', sins: { pride: 50, envy: 40, wrath: 55, sloth: 60, greed: 50, gluttony: 75, lust: 80 } },
+  ESFJ: { title: '执政官 · 团队的黏合剂', desc: '你是团队里的黏合剂。热心、周到，总记得照顾每个人的感受，也乐于为集体付出。你重视关系和归属感，需要被认可。', strengths: '沟通协调力强、充满关怀、有责任感、极具亲和力', weaknesses: '过于在意他人眼光、害怕冲突、情绪容易受外界影响', love: '感情中是完美的照顾者，极度需要陪伴和情绪反馈，受不了冷暴力。', careers: '客户经理、护士、人力资源、行政', comm: '热情周到，非常关注他人的反应。常常为了维持和谐而委屈自己，害怕被讨厌。', growth: '不需要所有人喜欢你，做真实的自己更重要。将注意力更多地放在自身的成长上。', video: 'videos/ESFJ.mp4', sins: { pride: 40, envy: 60, wrath: 45, sloth: 40, greed: 30, gluttony: 55, lust: 50 } },
+  ISTP: { title: '鉴赏家 · 话少手稳的行动派', desc: '你话不多，但手上功夫很稳。遇到问题习惯自己琢磨，先动手试试再说。你不喜欢情绪化的场面，讨厌被管着，追求自由和实用。', strengths: '冷静客观、动手能力强、危机处理能力极佳、实用主义', weaknesses: '不善表达、容易冷漠、容易沉迷个人爱好', love: '不喜欢黏腻的依恋，需要有各自的独立空间，行动多于言辞。', careers: '工程师、飞行员、机械师、数据分析师', comm: '极为简洁，能用行动解决绝不动嘴。讨厌长篇大论和情绪发泄，喜欢就事论事。', growth: '试着用语言向重要的人表达你的在乎。在团队中多一点耐心，不要觉得别人都太慢。', video: 'videos/ISTP.mp4', sins: { pride: 60, envy: 25, wrath: 60, sloth: 55, greed: 45, gluttony: 50, lust: 45 } },
+  ISTJ: { title: '物流师 · 说到就做到的人', desc: '你是那种说到就一定做到的人。重视规则、秩序和承诺，做事有条理，讨厌临时变卦。你不太表达情绪，却用可靠撑起了身边人的生活。', strengths: '极度可靠、严谨负责、做事有条理、注重承诺', weaknesses: '固执死板、难以变通、缺乏创新和浪漫', love: '非常稳定和长情，不喜欢变动，承诺了就是一辈子，但可能缺乏浪漫惊喜。', careers: '财务审计、公务员、项目经理、法务', comm: '有一说一，实事求是。不喜欢夸夸其谈，发消息往往极其严谨，不带表情包。', growth: '尝试接受计划外的小变化。多表达一点感性的话语，偶尔给自己和伴侣制造一点小浪漫。', video: 'videos/ISTJ.mp4', sins: { pride: 55, envy: 30, wrath: 50, sloth: 20, greed: 55, gluttony: 55, lust: 30 } },
+  ESTP: { title: '企业家 · 活在当下的破局者', desc: '你活在当下，反应极快。喜欢刺激和挑战，讨厌拖泥带水，遇到问题第一反应是“先干起来”。你社交能力强，能把尴尬的场面轻松化解。', strengths: '行动力极强、极具胆识、反应迅速、擅长破局', weaknesses: '容易冲动冒险、缺乏耐心、做事容易半途而废', love: '喜欢追求刺激和征服感，直来直去，极具荷尔蒙气息，但有时容易忽略对方感受。', careers: '销售总监、创业者、危机公关、演员', comm: '直接了当，幽默风趣。喜欢用调侃的方式沟通，但要注意不要触碰别人的雷区。', growth: '行动前先思考后果。多一点对长远目标的耐心，不要总是靠“刺激”来驱动自己。', video: 'videos/ESTP.mp4', sins: { pride: 65, envy: 30, wrath: 70, sloth: 40, greed: 65, gluttony: 75, lust: 80 } },
+  ESTJ: { title: '总经理 · 把混乱理成秩序', desc: '你务实、果断，天生适合管事。重视效率和结果，讨厌含糊其辞和拖沓。你说话直接，做事有章法，能把混乱的局面理顺。', strengths: '强大的统筹能力、务实高效、果断负责、规则意识强', weaknesses: '过于强势、喜欢说教、有时过于功利', love: '务实且有担当，习惯用安排好一切来表达爱，但可能会让伴侣感到缺乏情感沟通。', careers: '总经理、项目经理、财务总监、行政主管', comm: '条理清晰，习惯给出明确的指令和建议，喜欢掌控局面，有时会显得过于严厉。', growth: '放下“我都是对的”的执念。在沟通时多用“我觉得”而不是“你应该”，学会欣赏不确定性。', video: 'videos/ESTJ.mp4', sins: { pride: 75, envy: 40, wrath: 65, sloth: 20, greed: 70, gluttony: 60, lust: 45 } }
 };
 
 const SIN_META = [
-  { key: 'pride', name: '傲慢', en: 'Pride', color: '#a78bfa' },
-  { key: 'envy', name: '嫉妒', en: 'Envy', color: '#4ade80' },
-  { key: 'wrath', name: '暴怒', en: 'Wrath', color: '#f87171' },
-  { key: 'sloth', name: '懒惰', en: 'Sloth', color: '#94a3b8' },
-  { key: 'greed', name: '贪婪', en: 'Greed', color: '#fbbf24' },
-  { key: 'gluttony', name: '暴食', en: 'Gluttony', color: '#fb923c' },
+  { key: 'pride', name: '傲慢', en: 'Pride', color: '#a78bfa' }, { key: 'envy', name: '嫉妒', en: 'Envy', color: '#4ade80' },
+  { key: 'wrath', name: '暴怒', en: 'Wrath', color: '#f87171' }, { key: 'sloth', name: '懒惰', en: 'Sloth', color: '#94a3b8' },
+  { key: 'greed', name: '贪婪', en: 'Greed', color: '#fbbf24' }, { key: 'gluttony', name: '暴食', en: 'Gluttony', color: '#fb923c' },
   { key: 'lust', name: '色欲', en: 'Lust', color: '#f472b6' }
 ];
 
 /* ================================================================
-   三、题库（16 题，每题 4 个选项，2分/1分/1分/2分）
+   三、题库
    ================================================================ */
 const QUESTIONS = [
-  // E / I
   { q: '周五下班前，同事突然发起临时聚餐，你的第一反应是——', a: { text: '太好了！立刻响应，马上订位', dim: 'E', score: 2 }, b: { text: '看情况，如果有熟人就凑个热闹', dim: 'E', score: 1 }, c: { text: '有点累，找个借口推掉算了', dim: 'I', score: 1 }, d: { text: '绝对不去，只想赶紧回家躺平', dim: 'I', score: 2 } },
   { q: '在一个几乎全是陌生人的聚会上待了一小时，你会——', a: { text: '主动出击，认识了好几个有趣的新朋友', dim: 'E', score: 2 }, b: { text: '如果有人搭话，能聊几句', dim: 'E', score: 1 }, c: { text: '默默待在角落玩手机，等着散场', dim: 'I', score: 1 }, d: { text: '感觉社交电量已耗尽，随时准备开溜', dim: 'I', score: 2 } },
   { q: '遇到开心或难过的事，你通常会——', a: { text: '第一时间打电话给好朋友分享', dim: 'E', score: 2 }, b: { text: '找机会在群里顺嘴提一句', dim: 'E', score: 1 }, c: { text: '自己先消化一下，之后再看要不要说', dim: 'I', score: 1 }, d: { text: '永远藏在心里，自己慢慢回味或消化', dim: 'I', score: 2 } },
   { q: '在团队讨论中，你更倾向于——', a: { text: '抢着发言，边说边理清思路', dim: 'E', score: 2 }, b: { text: '时不时插两句，参与感比较重要', dim: 'E', score: 1 }, c: { text: '仔细听别人说，偶尔才发表意见', dim: 'I', score: 1 }, d: { text: '只做安静的旁听者，非必要不开口', dim: 'I', score: 2 } },
-  
-  // S / N
   { q: '看一部口碑很好的科幻电影，你更享受——', a: { text: '硬核的世界观、特效和清晰的情节', dim: 'S', score: 2 }, b: { text: '动作戏和视觉效果够爽就行', dim: 'S', score: 1 }, c: { text: '导演想要表达的隐喻和深意', dim: 'N', score: 1 }, d: { text: '开放式的脑洞，可以自己无限遐想', dim: 'N', score: 2 } },
   { q: '朋友说想辞职去旅行，你的第一句话——', a: { text: '“路线怎么走？预算多少？先算清楚。”', dim: 'S', score: 2 }, b: { text: '“去哪玩？好玩的话我也想去。”', dim: 'S', score: 1 }, c: { text: '“听起来很酷，也许能发现新自我。”', dim: 'N', score: 1 }, d: { text: '“太棒了！说不定这就是命运的转折。”', dim: 'N', score: 2 } },
   { q: '如果你要组装一个新买的家具，你会——', a: { text: '严格按说明书，一步都不能错', dim: 'S', score: 2 }, b: { text: '大体看一遍说明，然后开干', dim: 'S', score: 1 }, c: { text: '凭感觉拼，遇到问题再翻说明', dim: 'N', score: 1 }, d: { text: '全凭直觉，说明书是什么？不用看', dim: 'N', score: 2 } },
   { q: '别人向你描述一件事时，你更关注——', a: { text: '具体时间、地点、数字和细节', dim: 'S', score: 2 }, b: { text: '事情发生的经过和结果', dim: 'S', score: 1 }, c: { text: '他描述时的情绪和潜台词', dim: 'N', score: 1 }, d: { text: '背后的动机、隐喻和潜在趋势', dim: 'N', score: 2 } },
-  
-  // T / F
   { q: '朋友失恋后哭着找你倾诉，你会——', a: { text: '客观分析原因，帮她避坑', dim: 'T', score: 2 }, b: { text: '听她倾诉，偶尔给点理性建议', dim: 'T', score: 1 }, c: { text: '陪着她一起吐槽对方', dim: 'F', score: 1 }, d: { text: '先抱住她，陪她大哭一场', dim: 'F', score: 2 } },
   { q: '团队里有人犯错导致进度延误——', a: { text: '直接指出问题，追究责任', dim: 'T', score: 2 }, b: { text: '先解决问题，事后复盘', dim: 'T', score: 1 }, c: { text: '先安抚他的情绪，再一起解决', dim: 'F', score: 1 }, d: { text: '他一定很难过，多帮他分担点吧', dim: 'F', score: 2 } },
   { q: '当你要做一个重要决定时——', a: { text: '只相信事实、数据和利弊分析', dim: 'T', score: 2 }, b: { text: '理性思考为主，参考下他人意见', dim: 'T', score: 1 }, c: { text: '考虑决定对周围人的影响', dim: 'F', score: 1 }, d: { text: '听从内心的直觉，感受最重要', dim: 'F', score: 2 } },
   { q: '看到一部结局悲惨的电影——', a: { text: '毫无波澜，分析剧情是否合理', dim: 'T', score: 2 }, b: { text: '知道是假的，看个乐呵', dim: 'T', score: 1 }, c: { text: '有些难受，需要找点东西缓缓', dim: 'F', score: 1 }, d: { text: '彻底破防，几天都走不出来', dim: 'F', score: 2 } },
-  
-  // J / P
   { q: '距离出发旅行还有一周——', a: { text: '攻略、酒店、行程单早排好了', dim: 'J', score: 2 }, b: { text: '大框架定了，细节再慢慢补', dim: 'J', score: 1 }, c: { text: '订了机票，其他的到了再说', dim: 'P', score: 1 }, d: { text: '随缘，走到哪算哪，主打自由', dim: 'P', score: 2 } },
   { q: '老板把边界模糊的大项目交给你——', a: { text: '立刻拆解目标，制定甘特图', dim: 'J', score: 2 }, b: { text: '先定个里程碑，再慢慢推进', dim: 'J', score: 1 }, c: { text: '先做做看，边做边找方向', dim: 'P', score: 1 }, d: { text: '车到山前必有路，想做啥做啥', dim: 'P', score: 2 } },
   { q: '你的办公桌或房间通常是——', a: { text: '极其整洁，所有东西井井有条', dim: 'J', score: 2 }, b: { text: '大面上整齐，偶尔有点乱', dim: 'J', score: 1 }, c: { text: '乱中有序，别人觉得乱但我能找到', dim: 'P', score: 1 }, d: { text: '随心所欲，乱就乱吧', dim: 'P', score: 2 } },
@@ -274,39 +321,86 @@ const QUESTIONS = [
 ];
 
 /* ================================================================
-   四、逻辑控制
+   四、DOM 与 全局状态
    ================================================================ */
+const startLayer = document.getElementById('start-layer');
+const startBtn = document.getElementById('start-btn');
+const resumeHint = document.getElementById('resume-hint');
+const bgm = document.getElementById('bgm');
+const musicToggle = document.getElementById('music-toggle');
+
 const quizLayer = document.getElementById('quiz-layer');
 const card = document.getElementById('card');
 const questionText = document.getElementById('question-text');
 const questionIdx = document.getElementById('question-index');
 const progressFill = document.getElementById('progress-fill');
 const optionBtns = Array.from(document.querySelectorAll('.option'));
+const prevBtn = document.getElementById('prev-btn');
+const resetBtn = document.getElementById('reset-btn');
+
 const typeFlash = document.getElementById('type-flash');
 const typeFlashText = document.getElementById('type-flash-text');
 const dissolveCanvas = document.getElementById('dissolve-canvas');
 const dctx = dissolveCanvas.getContext('2d');
 const video = document.getElementById('intro-video');
 const resultLayer = document.getElementById('result-layer');
-const resultTypeEl = document.getElementById('result-type');
-const resultTitle = document.getElementById('result-title');
-const resultDesc = document.getElementById('result-desc');
-const sinGrid = document.getElementById('sin-grid');
 const restartBtn = document.getElementById('restart-btn');
 
-// 新增的内容节点
-const textStrengths = document.getElementById('text-strengths');
-const textWeaknesses = document.getElementById('text-weaknesses');
-const textLove = document.getElementById('text-love');
-const textCareers = document.getElementById('text-careers');
-
 let currentIndex = 0;
-let answers = []; // 记录分数 { E: 2, I: 0... } 这样的累加
-let locked = false, currentType = '', finished = false, videoStarted = false, videoFallbackTimer = null;
-const TYPE_FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif';
+let answerHistory = []; 
+let currentType = '', finished = false, videoStarted = false, videoFallbackTimer = null;
+let musicPlaying = false;
 
-function getTypeFontSize(viewportWidth) { return Math.min(Math.max(62, viewportWidth * 0.14), 138); }
+/* 本地存储 KEY */
+const STORAGE_KEY = 'mbti_test_progress_v1';
 
+/* 保存进度 */
+function saveProgress() {
+  if (currentIndex < QUESTIONS.length) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: currentIndex, answers: answerHistory }));
+  } else {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+}
+
+/* 读取进度（在初始化时调用） */
+function checkSavedProgress() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      if (data && typeof data.index === 'number' && Array.isArray(data.answers) && data.index < QUESTIONS.length) {
+        // 修改开始界面的文案
+        startBtn.textContent = '继 续 测 试';
+        resumeHint.style.display = 'block';
+        resumeHint.textContent = `检测到未完成的进度（已完成 ${data.index} / 16 题）`;
+        
+        // 预填数据
+        currentIndex = data.index;
+        answerHistory = data.answers;
+      }
+    } catch (e) { localStorage.removeItem(STORAGE_KEY); }
+  }
+}
+checkSavedProgress(); // 页面加载时检查
+
+/* 音乐控制 */
+musicToggle.addEventListener('click', () => {
+  if (musicPlaying) { bgm.pause(); musicToggle.classList.add('muted'); }
+  else { bgm.play().catch(() => {}); musicToggle.classList.remove('muted'); }
+  musicPlaying = !musicPlaying;
+});
+
+/* 开始测试 / 继续测试 */
+startBtn.addEventListener('click', () => {
+  bgm.volume = 0.5;
+  bgm.play().then(() => { musicPlaying = true; musicToggle.classList.remove('muted'); }).catch(() => {});
+  startLayer.classList.add('hide');
+  quizLayer.classList.add('active');
+  renderQuestion(); // 如果 currentIndex > 0，会自动渲染上次未做完的题
+});
+
+/* 渲染题目 */
 function renderQuestion() {
   const q = QUESTIONS[currentIndex];
   questionIdx.textContent = String(currentIndex + 1).padStart(2, '0') + ' / ' + String(QUESTIONS.length).padStart(2, '0');
@@ -318,21 +412,35 @@ function renderQuestion() {
   optionBtns[2].querySelector('.option-text').textContent = q.c.text;
   optionBtns[3].querySelector('.option-text').textContent = q.d.text;
   
-  locked = false;
+  prevBtn.disabled = (currentIndex === 0);
 }
 
-function switchCard(renderFn) {
-  card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
-  setTimeout(() => {
-    renderFn();
-    card.style.transition = 'none'; card.style.opacity = '0'; card.style.transform = 'scale(1.04)'; void card.offsetWidth;
+/* 上一题 */
+prevBtn.addEventListener('click', () => {
+  if (currentIndex > 0) {
+    answerHistory.pop(); 
+    currentIndex--;
+    saveProgress(); // 更新存储
+    card.style.transition = 'none'; card.style.opacity = '0'; card.style.transform = 'scale(0.95)'; void card.offsetWidth;
     card.style.transition = ''; card.style.opacity = '1'; card.style.transform = 'scale(1)';
-  }, 380);
-}
+    renderQuestion();
+  }
+});
 
+/* 重新开始按钮 */
+resetBtn.addEventListener('click', () => {
+  if (confirm('确定要重新开始吗？当前进度将丢失。')) {
+    localStorage.removeItem(STORAGE_KEY);
+    currentIndex = 0;
+    answerHistory = [];
+    card.style.transition = 'none'; card.style.opacity = '0'; card.style.transform = 'scale(0.95)'; void card.offsetWidth;
+    card.style.transition = ''; card.style.opacity = '1'; card.style.transform = 'scale(1)';
+    renderQuestion();
+  }
+});
+
+/* 选中选项 */
 function handleChoice(choiceKey) {
-  if (locked) return;
-  locked = true;
   const q = QUESTIONS[currentIndex];
   let selected;
   if (choiceKey === 'A') selected = q.a;
@@ -340,40 +448,89 @@ function handleChoice(choiceKey) {
   else if (choiceKey === 'C') selected = q.c;
   else selected = q.d;
   
-  answers.push({ dim: selected.dim, score: selected.score });
+  answerHistory.push({ dim: selected.dim, score: selected.score });
   currentIndex++;
   
-  if (currentIndex < QUESTIONS.length) switchCard(renderQuestion);
-  else finishQuiz();
+  if (currentIndex < QUESTIONS.length) {
+    saveProgress(); // 答题后保存
+    card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+      renderQuestion();
+      card.style.transition = 'none'; card.style.opacity = '0'; card.style.transform = 'scale(1.04)'; void card.offsetWidth;
+      card.style.transition = ''; card.style.opacity = '1'; card.style.transform = 'scale(1)';
+    }, 380);
+  } else {
+    localStorage.removeItem(STORAGE_KEY); // 答完清空存储
+    finishQuiz();
+  }
 }
-
 optionBtns.forEach(btn => { btn.addEventListener('click', () => handleChoice(btn.dataset.choice)); });
+
+/* ================================================================
+   五、计算与流程切换
+   ================================================================ */
+function calcType() {
+  const score = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+  answerHistory.forEach(ans => { score[ans.dim] += ans.score; });
+  const dims = [['E', 'I'], ['S', 'N'], ['T', 'F'], ['J', 'P']];
+  return dims.map(([left, right]) => score[left] >= score[right] ? left : right).join('');
+}
 
 function finishQuiz() {
   currentType = calcType();
   card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
-  quizLayer.style.pointerEvents = 'none'; quizLayer.style.opacity = '0';
-  setTimeout(() => showTypeFlash(currentType), 520);
+  quizLayer.style.pointerEvents = 'none';
+  setTimeout(() => {
+    quizLayer.classList.remove('active');
+    if (musicPlaying) { bgm.pause(); musicToggle.classList.add('muted'); musicPlaying = false; }
+    playTypeVideo(currentType);
+  }, 500);
 }
+
+function playTypeVideo(type) {
+  const info = MBTI_TYPES[type] || {}; const src = info.video || '';
+  finished = false; videoStarted = false;
+  if (!src) { setTimeout(() => endVideo(), 500); return; }
+  video.classList.remove('show'); video.muted = true; video.setAttribute('muted', ''); video.src = src; video.load();
+  video.addEventListener('playing', function onPlaying() { videoStarted = true; }, { once: true });
+  video.oncanplay = function () {
+    video.oncanplay = null; video.classList.add('show');
+    const p = video.play();
+    if (p && typeof p.catch === 'function') p.catch(() => { if (!finished) endVideo(); });
+    clearTimeout(videoFallbackTimer); videoFallbackTimer = setTimeout(() => { if (!videoStarted && !finished) endVideo(); }, 10000);
+  };
+  video.onerror = function () { if (!finished) setTimeout(() => endVideo(), 600); };
+}
+
+function endVideo() {
+  if (finished) return; finished = true; clearTimeout(videoFallbackTimer);
+  try { video.pause(); } catch (e) {}
+  video.classList.remove('show'); 
+  setTimeout(() => showTypeFlash(currentType), 600);
+}
+
+video.addEventListener('ended', endVideo);
 
 function showTypeFlash(type) {
   typeFlashText.textContent = type;
   typeFlash.classList.add('show');
   setTimeout(() => {
-    dissolveType(type, () => { setTimeout(() => playTypeVideo(type), 180); });
-  }, 1500);
+    dissolveType(type, () => { 
+      setTimeout(() => showResult(type), 200); 
+    });
+  }, 1800);
 }
 
+/* 粒子消散 */
 function dissolveType(type, onComplete) {
   const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const cx = W / 2, cy = H / 2, fontSize = getTypeFontSize(W), spacing = fontSize * 0.12;
+  const cx = W / 2, cy = H / 2, fontSize = Math.min(Math.max(62, W * 0.14), 138), spacing = fontSize * 0.12;
   const off = document.createElement('canvas'); off.width = Math.floor(W * dpr); off.height = Math.floor(H * dpr);
-  const octx = off.getContext('2d'); octx.scale(dpr, dpr); octx.textAlign = 'left'; octx.textBaseline = 'middle'; octx.font = `200 ${fontSize}px ${TYPE_FONT_FAMILY}`;
+  const octx = off.getContext('2d'); octx.scale(dpr, dpr); octx.textAlign = 'left'; octx.textBaseline = 'middle'; octx.font = `200 ${fontSize}px -apple-system, sans-serif`;
   const chars = Array.from(type), widths = chars.map(ch => octx.measureText(ch).width);
   let totalWidth = 0; chars.forEach((ch, i) => { totalWidth += widths[i]; if (i < chars.length - 1) totalWidth += spacing; });
-  const angleRad = 30 * Math.PI / 180, halfLen = (totalWidth * Math.cos(angleRad) + fontSize * Math.sin(angleRad)) / 2;
-  const grad = octx.createLinearGradient(cx - Math.cos(angleRad)*halfLen, cy - Math.sin(angleRad)*halfLen, cx + Math.cos(angleRad)*halfLen, cy + Math.sin(angleRad)*halfLen);
-  grad.addColorStop(0.1, '#fff'); grad.addColorStop(0.58, '#9fc0ff'); grad.addColorStop(1, '#c9a7ff'); octx.fillStyle = grad;
+  const grad = octx.createLinearGradient(cx - totalWidth/2, cy, cx + totalWidth/2, cy);
+  grad.addColorStop(0, '#fff'); grad.addColorStop(0.58, '#9fc0ff'); grad.addColorStop(1, '#c9a7ff'); octx.fillStyle = grad;
   let penX = cx - totalWidth / 2;
   chars.forEach((ch, i) => { octx.fillText(ch, penX, cy); penX += widths[i] + spacing; });
 
@@ -391,8 +548,7 @@ function dissolveType(type, onComplete) {
         if (px >= off.width || py >= off.height) continue;
         const idx = (py * off.width + px) * 4;
         if (pixels[idx + 3] > 100) {
-          const dir = Math.random() * Math.PI * 2, spd = 0.25 + Math.random() * 1.6;
-          particles.push({ x: lx, y: ly, vx: Math.cos(dir)*spd, vy: Math.sin(dir)*spd - 0.35, size: 0.9 + Math.random()*1.5, life: 1, decay: 0.008 + Math.random()*0.012, color: `rgb(${pixels[idx]},${pixels[idx+1]},${pixels[idx+2]})` });
+          particles.push({ x: lx, y: ly, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2 - 0.5, size: 0.9 + Math.random()*1.5, life: 1, decay: 0.01 + Math.random()*0.015, color: `rgb(${pixels[idx]},${pixels[idx+1]},${pixels[idx+2]})` });
         }
       }
     }
@@ -421,52 +577,21 @@ function dissolveType(type, onComplete) {
   requestAnimationFrame(frame);
 }
 
-function playTypeVideo(type) {
-  const info = MBTI_TYPES[type] || {}; const src = info.video || '';
-  finished = false; videoStarted = false;
-  if (!src) { setTimeout(() => endVideo(), 500); return; }
-  video.classList.remove('show'); video.muted = true; video.setAttribute('muted', ''); video.src = src; video.load();
-  video.addEventListener('playing', function onPlaying() { videoStarted = true; }, { once: true });
-  video.oncanplay = function () {
-    video.oncanplay = null; video.classList.add('show');
-    const p = video.play();
-    if (p && typeof p.catch === 'function') p.catch(() => { if (!finished) endVideo(); });
-    clearTimeout(videoFallbackTimer); videoFallbackTimer = setTimeout(() => { if (!videoStarted && !finished) endVideo(); }, 10000);
-  };
-  video.onerror = function () { if (!finished) setTimeout(() => endVideo(), 600); };
-}
-
-function endVideo() {
-  if (finished) return; finished = true; clearTimeout(videoFallbackTimer);
-  try { video.pause(); } catch (e) {}
-  video.classList.remove('show'); setTimeout(() => showResult(currentType), 700);
-}
-video.addEventListener('ended', endVideo);
-
-/* 计算分数：基于 4 个选项的权重累加 */
-function calcType() {
-  const score = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
-  answers.forEach(ans => { score[ans.dim] += ans.score; });
-  
-  const dims = [['E', 'I'], ['S', 'N'], ['T', 'F'], ['J', 'P']];
-  return dims.map(([left, right]) => {
-    if (score[left] > score[right]) return left;
-    if (score[right] > score[left]) return right;
-    return left; // 极端平票时随便取一个
-  }).join('');
-}
-
+/* ================================================================
+   六、结果页
+   ================================================================ */
 function showResult(type) {
-  const info = MBTI_TYPES[type] || { title: '神秘人格', desc: '暂时还没有对应的描述文案。', sins: {} };
-  resultTypeEl.textContent = type;
-  resultTitle.textContent = info.title;
-  resultDesc.textContent = info.desc;
+  const info = MBTI_TYPES[type] || {};
+  document.getElementById('result-type').textContent = type;
+  document.getElementById('result-title').textContent = info.title || '';
+  document.getElementById('result-desc').textContent = info.desc || '';
   
-  // 填充扩展信息
-  textStrengths.textContent = info.strengths || '暂无数据';
-  textWeaknesses.textContent = info.weaknesses || '暂无数据';
-  textLove.textContent = info.love || '暂无数据';
-  textCareers.textContent = info.careers || '暂无数据';
+  document.getElementById('text-strengths').textContent = info.strengths || '';
+  document.getElementById('text-weaknesses').textContent = info.weaknesses || '';
+  document.getElementById('text-love').textContent = info.love || '';
+  document.getElementById('text-careers').textContent = info.careers || '';
+  document.getElementById('text-comm').textContent = info.comm || '';
+  document.getElementById('text-growth').textContent = info.growth || '';
   
   renderSins(info.sins || {});
   resultLayer.classList.add('show');
@@ -474,39 +599,32 @@ function showResult(type) {
 }
 
 function renderSins(sins) {
+  const sinGrid = document.getElementById('sin-grid');
   sinGrid.innerHTML = '';
   SIN_META.forEach(meta => {
-    const raw = Number(sins[meta.key]);
-    const value = Number.isFinite(raw) ? Math.max(0, Math.min(100, raw)) : 0;
-    const item = document.createElement('div'); item.className = 'sin-item'; item.dataset.value = String(value);
-    item.innerHTML = `
-      <div class="sin-head">
-        <span class="sin-name">${meta.name}<em>${meta.en}</em></span>
-        <span class="sin-value">0</span>
-      </div>
-      <div class="sin-track"><div class="sin-bar" style="background: linear-gradient(90deg, ${meta.color}99, ${meta.color}); box-shadow: 0 0 10px ${meta.color}55;"></div></div>
-    `;
+    const val = Math.max(0, Math.min(100, Number(sins[meta.key]) || 0));
+    const item = document.createElement('div'); item.className = 'sin-item'; item.dataset.value = String(val);
+    item.innerHTML = `<div class="sin-head"><span class="sin-name">${meta.name}<em>${meta.en}</em></span><span class="sin-value">0</span></div><div class="sin-track"><div class="sin-bar" style="background: linear-gradient(90deg, ${meta.color}99, ${meta.color}); box-shadow: 0 0 10px ${meta.color}55;"></div></div>`;
     sinGrid.appendChild(item);
   });
 }
 
 function animateSins() {
-  const items = sinGrid.querySelectorAll('.sin-item');
-  items.forEach((item, index) => {
-    const target = Number(item.dataset.value) || 0, bar = item.querySelector('.sin-bar'), valueEl = item.querySelector('.sin-value');
-    const delay = index * 80, duration = 1100;
+  document.querySelectorAll('.sin-item').forEach((item, index) => {
+    const target = Number(item.dataset.value) || 0, bar = item.querySelector('.sin-bar'), valEl = item.querySelector('.sin-value');
+    const delay = index * 60, duration = 1000;
     setTimeout(() => { bar.style.width = target + '%'; }, delay);
-    const startTime = performance.now();
+    const start = performance.now();
     function tick(now) {
-      const elapsed = now - startTime - delay, t = Math.min(Math.max(elapsed / duration, 0), 1), ease = 1 - Math.pow(1 - t, 3);
-      valueEl.textContent = Math.round(target * ease); if (t < 1) requestAnimationFrame(tick);
+      const t = Math.min(Math.max((now - start - delay) / duration, 0), 1);
+      valEl.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
   });
 }
 
 restartBtn.addEventListener('click', () => { window.location.reload(); });
-renderQuestion();
 </script>
 </body>
 </html>
