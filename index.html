@@ -118,7 +118,7 @@
 
   <section id="start-layer">
     <h1 class="start-title">MBTI 人格测试</h1>
-    <p class="start-desc">32 道情境题，测量你的核心四维偏好与「坚定/动荡」身份倾向。请凭第一反应作答，不要过度思考“应该”怎样。</p>
+    <p class="start-desc">32 道情境题，测量你的核心四维偏好与「坚定/动荡」身份倾向。请凭第一反应作答，这里没有标准答案，只有真实的你。</p>
     <button class="start-btn" id="start-btn">开 始 测 试</button>
     <div id="resume-hint">检测到未完成的进度，点击继续</div>
   </section>
@@ -239,7 +239,7 @@
 })();
 
 /* ================================================================
-   二、16 人格数据（共用基础四字母，A/T 不单独建视频和数据）
+   二、16 人格数据
    ================================================================ */
 const MBTI_TYPES = {
   INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', comm: '倾向于倾听和共情，表达含蓄，很少直接批评他人，喜欢用文字或艺术表达内心。', growth: '试着把想法落地为具体行动，接受世界的不完美，学会在必要时表达自己的愤怒和边界。', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
@@ -268,18 +268,16 @@ const SIN_META = [
 ];
 
 /* ================================================================
-   三、32 道题库
-   —— 前 28 题：四个核心维度各 7 题（4 选项，±2/±1）
-   —— 后 4 题：身份维度 A/T（2 选项，方向由 dim 决定）
+   三、32 道题库（重写了所有带“道德绑架”的题目）
    ================================================================ */
 const QUESTIONS = [
   /* ---------- E / I (0-6) ---------- */
-  { q: '一场热闹的社交活动结束后，你通常感觉——', a: { text: '精力充沛，意犹未尽，还想再约下一场', dim: 'E', score: 2 }, b: { text: '虽然开心，但隐隐觉得需要一点自己的时间', dim: 'E', score: 1 }, c: { text: '有点累，但睡一觉就能恢复', dim: 'I', score: 1 }, d: { text: '电量彻底耗尽，只想赶紧回家独处回血', dim: 'I', score: 2 } },
-  { q: '遇到烦心事时，你的第一反应更接近——', a: { text: '立刻找人说出来，聊着聊着思路就顺了', dim: 'E', score: 2 }, b: { text: '会跟亲近的人提一嘴，但主要还是自己消化', dim: 'E', score: 1 }, c: { text: '先自己安静想一会儿，等情绪平复再决定要不要说', dim: 'I', score: 1 }, d: { text: '完全不想说话，把自己关起来慢慢消化', dim: 'I', score: 2 } },
-  { q: '在一个需要频繁和陌生人打交道的工作环境里，你——', a: { text: '如鱼得水，越互动越有状态', dim: 'E', score: 2 }, b: { text: '能应付，但下班后需要明显更多的独处时间', dim: 'E', score: 1 }, c: { text: '会消耗很大，更希望工作能独立完成', dim: 'I', score: 1 }, d: { text: '能线上就不线下，能文字就不语音', dim: 'I', score: 2 } },
-  { q: '你理想中的周末更接近——', a: { text: '排满社交和外出，和朋友待在一起', dim: 'E', score: 2 }, b: { text: '有一两个安排，但也留点时间给自己', dim: 'E', score: 1 }, c: { text: '大部分时间独处，偶尔见一两个最亲近的人', dim: 'I', score: 1 }, d: { text: '完全属于自己的安静周末，谁也不见', dim: 'I', score: 2 } },
-  { q: '在会议或讨论中，你更自然的参与方式是——', a: { text: '边说边想，发言的过程就是整理思路的过程', dim: 'E', score: 2 }, b: { text: '偶尔插话，但更喜欢在有把握时开口', dim: 'E', score: 1 }, c: { text: '先听别人说，脑子里想清楚再决定要不要讲', dim: 'I', score: 1 }, d: { text: '除非被点名，否则更愿意做一个安静的观察者', dim: 'I', score: 2 } },
-  { q: '当你有几天完全没人打扰的独处时间，你会——', a: { text: '很快觉得无聊，想找人说话或出门', dim: 'E', score: 2 }, b: { text: '前两天挺爽，第三天开始想联系朋友', dim: 'E', score: 1 }, c: { text: '很享受，能做好多自己的事', dim: 'I', score: 1 }, d: { text: '求之不得，希望这样的时间能再长一点', dim: 'I', score: 2 } },
+  { q: '如果公司组织周末去郊区团建，你的真实想法是——', a: { text: '太好了，能和大家玩在一起很开心', dim: 'E', score: 2 }, b: { text: '去也行，顺便拉近一下同事关系', dim: 'E', score: 1 }, c: { text: '能请假就请假，想在家里安静待着', dim: 'I', score: 1 }, d: { text: '极其抗拒，甚至想为了不去而辞职', dim: 'I', score: 2 } },
+  { q: '当你在人群中待了很久，你通常会——', a: { text: '越聊越兴奋，不想散场', dim: 'E', score: 2 }, b: { text: '挺开心的，回家后还能回味一下', dim: 'E', score: 1 }, c: { text: '觉得有点累，需要一个人待会儿', dim: 'I', score: 1 }, d: { text: '电量彻底归零，接下来三天都不想见人', dim: 'I', score: 2 } },
+  { q: '遇到烦心事时，你更倾向于——', a: { text: '立刻找人吐槽，说出来心里就舒服了', dim: 'E', score: 2 }, b: { text: '找一两个好朋友倾诉一下', dim: 'E', score: 1 }, c: { text: '自己安静地想清楚，不想麻烦别人', dim: 'I', score: 1 }, d: { text: '完全不想说话，把自己关起来慢慢消化', dim: 'I', score: 2 } },
+  { q: '在一个需要频繁和陌生人沟通的任务中，你——', a: { text: '如鱼得水，能迅速热络起来', dim: 'E', score: 2 }, b: { text: '能应付，但结束后需要独处回血', dim: 'E', score: 1 }, c: { text: '尽量用文字沟通，避免打电话或面谈', dim: 'I', score: 1 }, d: { text: '感到非常厌烦，希望完全不要有人来打扰我', dim: 'I', score: 2 } },
+  { q: '在会议或讨论中，你更自然的参与方式是——', a: { text: '边说边想，发言的过程就是整理思路', dim: 'E', score: 2 }, b: { text: '有时插话，但更喜欢在有把握时开口', dim: 'E', score: 1 }, c: { text: '先听别人说，脑子里想清楚再决定要不要讲', dim: 'I', score: 1 }, d: { text: '除非被点名，否则绝不主动开口', dim: 'I', score: 2 } },
+  { q: '你理想中的周末更接近——', a: { text: '排满社交和外出，和朋友待在一起', dim: 'E', score: 2 }, b: { text: '有一两个安排，但也留点时间给自己', dim: 'E', score: 1 }, c: { text: '大部分时间独处，偶尔见一两个最亲近的人', dim: 'I', score: 1 }, d: { text: '完全属于自己的安静周末，谁来约都不去', dim: 'I', score: 2 } },
   { q: '你更愿意选择的放松方式是——', a: { text: '和朋友吃饭、唱K、逛街，热闹一下', dim: 'E', score: 2 }, b: { text: '约一两个熟人喝东西聊聊天', dim: 'E', score: 1 }, c: { text: '一个人看电影、逛展或散步', dim: 'I', score: 1 }, d: { text: '待在家里，完全不用和人讲话', dim: 'I', score: 2 } },
 
   /* ---------- S / N (7-13) ---------- */
@@ -291,20 +289,20 @@ const QUESTIONS = [
   { q: '当计划出现一个现实层面的问题时，你的第一反应是——', a: { text: '先看清楚具体哪里出了问题，再动手修', dim: 'S', score: 2 }, b: { text: '找有经验的人问实际解决办法', dim: 'S', score: 1 }, c: { text: '想想能不能换一种思路绕过它', dim: 'N', score: 1 }, d: { text: '也许这个问题背后有更大的机会', dim: 'N', score: 2 } },
   { q: '你更容易被哪种表达打动——', a: { text: '真实、具体、有细节的故事', dim: 'S', score: 2 }, b: { text: '清晰、有数据、可验证的结论', dim: 'S', score: 1 }, c: { text: '有隐喻和多重解读空间的句子', dim: 'N', score: 1 }, d: { text: '指向某种宏大愿景或未来可能性的描述', dim: 'N', score: 2 } },
 
-  /* ---------- T / F (14-20) ---------- */
-  { q: '朋友因为一个错误决定而懊恼，你的第一反应——', a: { text: '帮他分析哪里出了问题，下次怎么避免', dim: 'T', score: 2 }, b: { text: '先听他说完，然后给一点客观建议', dim: 'T', score: 1 }, c: { text: '先让他知道“我理解你”，再说别的', dim: 'F', score: 1 }, d: { text: '什么都不说，先陪着他把情绪缓过去', dim: 'F', score: 2 } },
-  { q: '团队里有人拖了进度，你更在意——', a: { text: '流程和职责哪里没卡住，怎么补救', dim: 'T', score: 2 }, b: { text: '先把活干完，事后复盘', dim: 'T', score: 1 }, c: { text: '这个人是不是遇到了什么困难', dim: 'F', score: 1 }, d: { text: '他会不会因为拖了后腿而自责', dim: 'F', score: 2 } },
+  /* ---------- T / F (14-20) 大幅重写，去除道德绑架 ---------- */
+  { q: '朋友因为一个错误决定而懊恼，你通常会——', a: { text: '告诉他“活该”，让他记住这个教训', dim: 'T', score: 2 }, b: { text: '客观分析哪里错了，下次怎么避免', dim: 'T', score: 1 }, c: { text: '先安抚情绪，再顺带提一嘴正确的做法', dim: 'F', score: 1 }, d: { text: '跟着他一起骂，帮他发泄情绪', dim: 'F', score: 2 } },
+  { q: '团队里有人拖了进度，你的第一反应是——', a: { text: '这是他的责任，我不插手，等他自己解决', dim: 'T', score: 2 }, b: { text: '找出流程漏洞，理清责任，赶紧补救', dim: 'T', score: 1 }, c: { text: '委婉提醒他，照顾他的面子', dim: 'F', score: 1 }, d: { text: '看他是不是遇到困难了，主动帮他分担一点', dim: 'F', score: 2 } },
   { q: '做一个重要决定时，你更倾向——', a: { text: '把利弊和数据列出来，选最优解', dim: 'T', score: 2 }, b: { text: '理性为主，但也会考虑相关人的接受度', dim: 'T', score: 1 }, c: { text: '会考虑这个决定对身边人意味着什么', dim: 'F', score: 1 }, d: { text: '听内心的声音，感受对了就是对的', dim: 'F', score: 2 } },
   { q: '当规则和人情冲突时，你更可能——', a: { text: '规则就是规则，破了口子以后没法管', dim: 'T', score: 2 }, b: { text: '先看规则的初衷，再判断要不要灵活', dim: 'T', score: 1 }, c: { text: '能通融就通融，关系比条文重要', dim: 'F', score: 1 }, d: { text: '不忍心因为规则让具体的人受伤', dim: 'F', score: 2 } },
   { q: '你更容易被哪种批评激怒——', a: { text: '说我逻辑有问题、不够专业', dim: 'T', score: 2 }, b: { text: '说我效率低、判断失误', dim: 'T', score: 1 }, c: { text: '说我冷漠、不近人情', dim: 'F', score: 1 }, d: { text: '说我自私、没有考虑别人的感受', dim: 'F', score: 2 } },
   { q: '在争论中，你更看重——', a: { text: '谁的道理站得住脚', dim: 'T', score: 2 }, b: { text: '谁的论据更充分', dim: 'T', score: 1 }, c: { text: '争论之后关系还能不能维持', dim: 'F', score: 1 }, d: { text: '对方有没有感到被尊重', dim: 'F', score: 2 } },
-  { q: '别人向你求助时，你更自然的回应是——', a: { text: '直接给方案，告诉他该怎么做', dim: 'T', score: 2 }, b: { text: '帮他理清思路，让他自己决定', dim: 'T', score: 1 }, c: { text: '先让他感到被支持，再聊办法', dim: 'F', score: 1 }, d: { text: '多听他说，很多时候他只是需要被听见', dim: 'F', score: 2 } },
+  { q: '当有人向你寻求帮助，但你其实不太想参与时，你会——', a: { text: '直接拒绝，觉得这是他自己的课题，应该自己解决', dim: 'T', score: 2 }, b: { text: '丢个资料或指个方向，让他自己去研究', dim: 'T', score: 1 }, c: { text: '怕破坏关系，硬着头皮听他倾诉完', dim: 'F', score: 1 }, d: { text: '委婉找个理由推脱，说几句暖心话安抚对方', dim: 'F', score: 2 } },
 
   /* ---------- J / P (21-27) ---------- */
   { q: '面对一个空闲的周末，你更舒服的状态是——', a: { text: '大致已经想好要做什么，心里有底', dim: 'J', score: 2 }, b: { text: '有一两个固定安排，其他时间灵活', dim: 'J', score: 1 }, c: { text: '不想定死，到时候看心情', dim: 'P', score: 1 }, d: { text: '完全开放，最怕提前被安排', dim: 'P', score: 2 } },
   { q: '一项重要任务，你通常会——', a: { text: '提前拆好步骤，按计划推进', dim: 'J', score: 2 }, b: { text: '心里有个大框架，细节边做边补', dim: 'J', score: 1 }, c: { text: '先放着，等状态来了集中做', dim: 'P', score: 1 }, d: { text: '截止日期才是第一生产力', dim: 'P', score: 2 } },
   { q: '旅行前，你更可能——', a: { text: '行程、住宿、路线都提前安排妥当', dim: 'J', score: 2 }, b: { text: '定好大交通和住宿，其他到了再说', dim: 'J', score: 1 }, c: { text: '只订个机票，剩下的随缘', dim: 'P', score: 1 }, d: { text: '说走就走，计划赶不上变化', dim: 'P', score: 2 } },
-  { q: '当事情没有按预期推进时，你更容易——', a: { text: '烦躁，想立刻把它拉回正轨', dim: 'J', score: 2 }, b: { text: '有点不安，但会试着调整计划', dim: 'J', score: 1 }, c: { text: '算了，换条路走也行', dim: 'P', score: 1 }, d: { text: '说不定意外的方向更有意思', dim: 'P', score: 2 } },
+  { q: '如果原定计划突然作废，你更可能——', a: { text: '非常烦躁，必须立刻重新安排一件事来做', dim: 'J', score: 2 }, b: { text: '有点不爽，但能接受，重新定个计划', dim: 'J', score: 1 }, c: { text: '顺其自然，走一步看一步', dim: 'P', score: 1 }, d: { text: '太好了，直接摆烂，什么都不想干了', dim: 'P', score: 2 } },
   { q: '你的工作台/房间通常——', a: { text: '分类清楚，东西基本有固定位置', dim: 'J', score: 2 }, b: { text: '大面上整齐，细节偶尔乱', dim: 'J', score: 1 }, c: { text: '乱，但我知道每个东西大概在哪', dim: 'P', score: 1 }, d: { text: '乱就乱，找得到就行', dim: 'P', score: 2 } },
   { q: '如果突然多出一段完全空白的时间，你会——', a: { text: '很快把它安排上具体的事', dim: 'J', score: 2 }, b: { text: '先想想有什么该做但一直没做的', dim: 'J', score: 1 }, c: { text: '挺开心的，终于可以随便晃一晃', dim: 'P', score: 1 }, d: { text: '太好了，我最喜欢没有计划的状态', dim: 'P', score: 2 } },
   { q: '对于“截止日期”，你的感受更接近——', a: { text: '需要它，没有 deadline 我很难收尾', dim: 'J', score: 2 }, b: { text: '会提前留出缓冲，不喜欢踩点', dim: 'J', score: 1 }, c: { text: '有点压力，但踩点也能做完', dim: 'P', score: 1 }, d: { text: '最后一刻的紧迫感反而让我专注', dim: 'P', score: 2 } },
@@ -431,28 +429,14 @@ function handleChoice(choiceKey) {
 optionBtns.forEach(btn => { btn.addEventListener('click', () => handleChoice(btn.dataset.choice)); });
 
 /* ================================================================
-   五、计算（四维 + A/T 身份）
+   五、计算
    ================================================================ */
 function calcResult() {
-  const score = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0,A:0,Tb:0 };
-  // 注意：T 同时用于 Thinking 和 Turbulent，这里用 Tb 代表 Turbulent
-  answerHistory.forEach(ans => {
-    const d = ans.dim;
-    if (d === 'T' && ans.score >= 0) score.T += ans.score; // 前 28 题的 T 是 Thinking
-    else if (d === 'A' || d === 'T') {
-      // 身份维度的 T 归入 Tb
-      if (d === 'A') score.A += ans.score;
-      else score.Tb += ans.score;
-    } else if (score[d] !== undefined) score[d] += ans.score;
-  });
-
-  // 修正：T 维度在身份题中会被重复计入 Thinking，需要分离
-  // 更可靠的方式：根据题目索引区分
   const coreScore = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
   const identityScore = { A:0, Tb:0 };
   answerHistory.forEach((ans, idx) => {
     if (idx < 28) {
-      coreScore[ans.dim] += ans.score;
+      if (coreScore[ans.dim] !== undefined) coreScore[ans.dim] += ans.score;
     } else {
       if (ans.dim === 'A') identityScore.A += ans.score;
       else if (ans.dim === 'T') identityScore.Tb += ans.score;
