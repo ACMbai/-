@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>MBTI 人格测试 · 沉浸版</title>
+<style>
+  /* ============================================================
+     全局基础样式
+     ============================================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: #000000;
+    color: #f5f5f7;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+                 "Helvetica Neue", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ============================================================
+     Canvas 粒子背景层（最底层 z-index: 0）
+     ============================================================ */
+  #bg-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    display: block;
+    pointer-events: none;
+  }
+
+  /* ============================================================
+     答题区（z-index: 2）
+     ============================================================ */
+  #quiz-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 1;
+    transition: opacity 1.5s ease;
+  }
+
+  #card {
+    width: min(680px, 100%);
+    padding: 44px 44px 40px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.055);
+    backdrop-filter: blur(26px) saturate(160%);
+    -webkit-backdrop-filter: blur(26px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 30px 90px rgba(0, 0, 0, 0.65),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transition: opacity 0.38s ease,
+                transform 0.38s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transform: scale(1);
+    opacity: 1;
+    will-change: opacity, transform;
+  }
+
+  .quiz-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: rgba(255, 255, 255, 0.4);
+    text-transform: uppercase;
+  }
+
+  .progress-track {
+    height: 2px;
+    width: 100%;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+    margin-bottom: 30px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #6f9dff, #c9a7ff);
+    box-shadow: 0 0 12px rgba(120, 160, 255, 0.7);
+    transition: width 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  #question-text {
+    font-size: 21px;
+    line-height: 1.72;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    color: #f2f2f5;
+    margin-bottom: 26px;
+    min-height: 76px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    padding: 18px 22px;
+    margin-top: 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: #e9e9ee;
+    font-family: inherit;
+    font-size: 15.5px;
+    line-height: 1.65;
+    cursor: pointer;
+    transition: background 0.3s ease,
+                border-color 0.3s ease,
+                transform 0.25s ease,
+                box-shadow 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(160, 190, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 34px rgba(110, 150, 255, 0.16);
+  }
+
+  .option:active { transform: translateY(0) scale(0.99); }
+
+  .option .tag {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: rgba(200, 218, 255, 0.95);
+    background: rgba(140, 175, 255, 0.16);
+    border: 1px solid rgba(160, 190, 255, 0.3);
+    margin-top: 1px;
+  }
+
+  /* ============================================================
+     类型闪现层（z-index: 3）
+     —— 答完题后，以大字显示最终人格类型
+     ============================================================ */
+  #type-flash {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  #type-flash.show {
+    opacity: 1;
+  }
+
+  #type-flash-text {
+    font-size: clamp(62px, 14vw, 138px);
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    padding-left: 0.12em;
+    background: linear-gradient(120deg, #ffffff 10%, #9fc0ff 58%, #c9a7ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 40px rgba(130, 165, 255, 0.42));
+    transform: scale(0.94);
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
+  }
+
+  #type-flash.show #type-flash-text {
+    transform: scale(1);
+  }
+
+  /* 消散阶段：文字快速淡出 + 轻微放大，同时粒子接替 */
+  #type-flash.dissolving {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  #type-flash.dissolving #type-flash-text {
+    transform: scale(1.1);
+    transition: transform 0.6s ease;
+  }
+
+  /* ============================================================
+     文字消散粒子画布（z-index: 3，DOM 顺序在 type-flash 之后）
+     ============================================================ */
+  #dissolve-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: block;
+  }
+
+  /* ============================================================
+     全屏视频层（z-index: 4）
+     ============================================================ */
+  #intro-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 4;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease;
+    will-change: opacity;
+  }
+
+  #intro-video.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ============================================================
+     结果页（z-index: 5，最上层）
+     ============================================================ */
+  #result-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    padding: 56px 24px;
+    overflow-y: auto;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease;
+    background:
+      radial-gradient(circle at 50% 32%, rgba(90, 125, 255, 0.10), transparent 62%),
+      #000;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+
+  #result-layer::-webkit-scrollbar { width: 6px; }
+  #result-layer::-webkit-scrollbar-track { background: transparent; }
+  #result-layer::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+
+  #result-layer.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .result-inner {
+    margin: auto;
+    width: 100%;
+    max-width: 720px;
+    text-align: center;
+    transform: translateY(18px);
+    transition: transform 1.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  #result-layer.show .result-inner {
+    transform: translateY(0);
+  }
+
+  .result-label {
+    font-size: 11px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 18px;
+    padding-left: 0.5em;
+  }
+
+  .result-type {
+    font-size: clamp(62px, 14vw, 138px);
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    padding-left: 0.12em;
+    background: linear-gradient(120deg, #ffffff 10%, #9fc0ff 58%, #c9a7ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 22px;
+    filter: drop-shadow(0 0 34px rgba(130, 165, 255, 0.28));
+  }
+
+  .result-title {
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 22px;
+  }
+
+  .result-desc {
+    font-size: 15.5px;
+    line-height: 1.95;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: justify;
+    text-align-last: center;
+  }
+
+  /* ============================================================
+     七宗罪指数面板
+     ============================================================ */
+  .sin-panel {
+    margin-top: 38px;
+    padding: 26px 28px 24px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    box-shadow:
+      0 18px 50px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    text-align: left;
+  }
+
+  .sin-title {
+    font-size: 11px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    text-align: center;
+    margin-bottom: 22px;
+    padding-left: 0.34em;
+  }
+
+  .sin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 30px;
+  }
+
+  .sin-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .sin-name {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .sin-name em {
+    font-style: normal;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+    margin-left: 7px;
+  }
+
+  .sin-value {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+
+  .sin-track {
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  .sin-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 1.1s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .restart-btn {
+    margin-top: 42px;
+    padding: 13px 36px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #e9e9ee;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    padding-left: 40px;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease,
+                transform 0.25s ease, box-shadow 0.3s ease;
+  }
+
+  .restart-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(160, 190, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 34px rgba(110, 150, 255, 0.2);
+  }
+
+  /* ============================================================
+     移动端适配
+     ============================================================ */
+  @media (max-width: 640px) {
+    #result-layer { padding: 44px 18px; }
+    .sin-grid {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    .sin-panel { padding: 22px 20px 20px; margin-top: 30px; }
+  }
+
+  @media (max-width: 560px) {
+    #card { padding: 32px 24px 28px; border-radius: 22px; }
+    #question-text { font-size: 18px; min-height: 66px; }
+    .option { font-size: 14.5px; padding: 16px 16px; }
+    .result-desc { font-size: 14px; }
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ========== Canvas 粒子背景 ========== -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ========== 答题区 ========== -->
+  <main id="quiz-layer">
+    <section id="card">
+      <div class="quiz-meta">
+        <span>MBTI TEST</span>
+        <span id="question-index">01 / 08</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <h2 id="question-text">题目加载中…</h2>
+
+      <div id="options">
+        <button class="option" data-choice="A" type="button">
+          <span class="tag">A</span>
+          <span class="option-text"></span>
+        </button>
+        <button class="option" data-choice="B" type="button">
+          <span class="tag">B</span>
+          <span class="option-text"></span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== 类型大字闪现层 ========== -->
+  <div id="type-flash">
+    <span id="type-flash-text"></span>
+  </div>
+
+  <!-- ========== 文字消散粒子画布 ========== -->
+  <canvas id="dissolve-canvas"></canvas>
+
+  <!-- ========== 全屏视频层 ==========
+       ★ src 在算出人格后由 JS 动态设置为对应类型的视频
+       ★ muted / playsinline 必须保留，否则移动端和浏览器会拦截自动播放
+  -->
+  <video
+    id="intro-video"
+    muted
+    playsinline
+    preload="auto"
+  ></video>
+
+  <!-- ========== 结果页 ========== -->
+  <section id="result-layer">
+    <div class="result-inner">
+      <div class="result-label">Your Type</div>
+      <div class="result-type" id="result-type">----</div>
+      <h1 class="result-title" id="result-title"></h1>
+      <p class="result-desc" id="result-desc"></p>
+
+      <div class="sin-panel">
+        <div class="sin-title">Seven Deadly Sins · 七宗罪指数</div>
+        <div class="sin-grid" id="sin-grid"></div>
+      </div>
+
+      <button class="restart-btn" id="restart-btn" type="button">再测一次</button>
+    </div>
+  </section>
+
+<script>
+/* ================================================================
+   一、Canvas 微光粒子背景
+   ================================================================ */
+(function initParticles() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  let particles = [];
+  let sprite = null;
+
+  function createSprite() {
+    const size = 64;
+    const off = document.createElement('canvas');
+    off.width = off.height = size;
+    const g = off.getContext('2d');
+    const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    grad.addColorStop(0.00, 'rgba(255, 255, 255, 0.95)');
+    grad.addColorStop(0.20, 'rgba(205, 222, 255, 0.55)');
+    grad.addColorStop(0.55, 'rgba(140, 170, 255, 0.14)');
+    grad.addColorStop(1.00, 'rgba(120, 150, 255, 0.00)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, size, size);
+    return off;
+  }
+
+  function buildParticles() {
+    const count = Math.min(180, Math.round((W * H) / 14000));
+    particles = [];
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: 1.6 + Math.random() * 3.4,
+        vx: (Math.random() - 0.5) * 0.09,
+        vy: -0.05 - Math.random() * 0.13,
+        alpha: 0.12 + Math.random() * 0.55,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.0004 + Math.random() * 0.0011
+      });
+    }
+  }
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.floor(W * dpr);
+    canvas.height = Math.floor(H * dpr);
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildParticles();
+  }
+
+  let lastTime = performance.now();
+
+  function loop(now) {
+    const dt = Math.min(now - lastTime, 50);
+    lastTime = now;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx * dt * 0.06;
+      p.y += p.vy * dt * 0.06;
+      p.phase += p.speed * dt;
+
+      if (p.y < -40) { p.y = H + 40; p.x = Math.random() * W; }
+      if (p.x < -40) p.x = W + 40;
+      if (p.x > W + 40) p.x = -40;
+
+      const twinkle = 0.55 + 0.45 * Math.sin(p.phase);
+      const drawSize = p.size * 7;
+
+      ctx.globalAlpha = p.alpha * twinkle;
+      ctx.drawImage(sprite, p.x - drawSize / 2, p.y - drawSize / 2, drawSize, drawSize);
+    }
+
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
+    requestAnimationFrame(loop);
+  }
+
+  sprite = createSprite();
+  resize();
+  requestAnimationFrame(loop);
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 180);
+  });
+})();
+
+
+/* ================================================================
+   二、16 种 MBTI 人格数据
+   —— title：标题；desc：约 100 字描述；video：对应视频路径
+   —— sins：七宗罪指数（0 - 100，艺术化设定，仅供娱乐）
+   ================================================================ */
+const MBTI_TYPES = {
+  INFP: {
+    title: '调停者 · 温柔的理想主义者',
+    desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观，不喜欢为了迎合别人而改变自己。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。',
+    video: 'videos/INFP.mp4',
+    sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 }
+  },
+  INFJ: {
+    title: '提倡者 · 沉默的理想主义者',
+    desc: '你安静却有力量。能敏锐地读懂别人的情绪，也执着于自己认定的意义。你渴望深度连接，讨厌浮于表面的社交。看似温和，内心却有一份近乎固执的理想主义，愿意为相信的事默默坚持很久。',
+    video: 'videos/INFJ.mp4',
+    sins: { pride: 40, envy: 50, wrath: 35, sloth: 40, greed: 25, gluttony: 30, lust: 50 }
+  },
+  ENFP: {
+    title: '竞选者 · 会走路的火焰',
+    desc: '你是一团会走路的火焰。好奇心旺盛，热情来得快去得也快，却总能在人群里点亮气氛。你害怕被束缚，喜欢可能性多过确定性。真诚、跳脱、容易共情，也常常在深夜里和自己较劲。',
+    video: 'videos/ENFP.mp4',
+    sins: { pride: 50, envy: 45, wrath: 45, sloth: 55, greed: 40, gluttony: 55, lust: 70 }
+  },
+  ENFJ: {
+    title: '主人公 · 天生的引路人',
+    desc: '你天生会照顾人。能敏锐察觉团队里每个人的状态，并让大家朝同一个方向走。你热心、有感染力，常常把别人的需要放在自己前面。记得偶尔停下来问问自己：今天，我想要什么？',
+    video: 'videos/ENFJ.mp4',
+    sins: { pride: 55, envy: 50, wrath: 40, sloth: 30, greed: 45, gluttony: 50, lust: 60 }
+  },
+  INTP: {
+    title: '逻辑学家 · 行走的思考机器',
+    desc: '你的大脑是一台不停运转的机器。喜欢拆解问题、追问本质，对“为什么”的兴趣远大于“怎么办”。你不擅长寒暄，却能在自己感兴趣的领域钻得很深。冷静、独立，偶尔显得有点脱线。',
+    video: 'videos/INTP.mp4',
+    sins: { pride: 65, envy: 30, wrath: 25, sloth: 70, greed: 40, gluttony: 45, lust: 35 }
+  },
+  INTJ: {
+    title: '建筑师 · 藏在沉默里的野心',
+    desc: '你习惯站在更远的地方看问题。目标清晰，逻辑缜密，讨厌无效的讨论和反复的犹豫。你不需要很多朋友，但看重每一段关系里的真诚与效率。你的野心藏在沉默里，靠一步步的执行兑现。',
+    video: 'videos/INTJ.mp4',
+    sins: { pride: 75, envy: 40, wrath: 40, sloth: 25, greed: 65, gluttony: 45, lust: 35 }
+  },
+  ENTP: {
+    title: '辩论家 · 灵感的永动机',
+    desc: '你脑子里永远有新的点子。喜欢挑战规则，享受思维的碰撞，一张嘴就能把平凡的话题聊出花来。你讨厌重复和无聊，容易半途转向下一个目标。聪明、跳脱，偶尔让人觉得不太好抓。',
+    video: 'videos/ENTP.mp4',
+    sins: { pride: 70, envy: 30, wrath: 50, sloth: 45, greed: 55, gluttony: 50, lust: 60 }
+  },
+  ENTJ: {
+    title: '指挥官 · 天生的掌控者',
+    desc: '你天生想掌控局面。目标明确，行动果断，能在混乱中迅速理出头绪并推动所有人往前走。你不怕冲突，也不怕承担责任。对自己要求高，对别人也一样——但你的强大，是为了赢下想赢的东西。',
+    video: 'videos/ENTJ.mp4',
+    sins: { pride: 80, envy: 40, wrath: 65, sloth: 20, greed: 75, gluttony: 55, lust: 55 }
+  },
+  ISFP: {
+    title: '探险家 · 安静的自由主义者',
+    desc: '你活得安静而自我。不喜欢被安排，也不太爱争辩，只想按自己的节奏感受生活。你对美很敏感，可能在一首歌、一场日落里获得巨大满足。温柔、随性，却比谁都清楚自己不想要什么。',
+    video: 'videos/ISFP.mp4',
+    sins: { pride: 25, envy: 40, wrath: 45, sloth: 60, greed: 20, gluttony: 60, lust: 65 }
+  },
+  ISFJ: {
+    title: '守卫者 · 默默托底的人',
+    desc: '你是那种默默把事情做好的人。记得朋友的生日，记得谁不爱吃香菜，习惯用行动而不是语言表达关心。你可靠、耐心、有责任感，只是常常忘了，自己也值得被好好照顾一次。',
+    video: 'videos/ISFJ.mp4',
+    sins: { pride: 25, envy: 50, wrath: 30, sloth: 40, greed: 20, gluttony: 50, lust: 40 }
+  },
+  ESFP: {
+    title: '表演者 · 走到哪亮到哪',
+    desc: '你走到哪儿，哪儿就有笑声。喜欢新鲜、喜欢热闹，享受当下多过规划未来。你情绪来得直接，喜欢就说，难过也不藏着。你让身边的人放松，但也需要一个懂你的人，接住你偶尔的脆弱。',
+    video: 'videos/ESFP.mp4',
+    sins: { pride: 50, envy: 40, wrath: 55, sloth: 60, greed: 50, gluttony: 75, lust: 80 }
+  },
+  ESFJ: {
+    title: '执政官 · 团队的黏合剂',
+    desc: '你是团队里的黏合剂。热心、周到，总记得照顾每个人的感受，也乐于为集体付出。你重视关系和归属感，需要被认可。别总担心自己做得够不够，你已经比想象中做得更多了。',
+    video: 'videos/ESFJ.mp4',
+    sins: { pride: 40, envy: 60, wrath: 45, sloth: 40, greed: 30, gluttony: 55, lust: 50 }
+  },
+  ISTP: {
+    title: '鉴赏家 · 话少手稳的行动派',
+    desc: '你话不多，但手上功夫很稳。遇到问题习惯自己琢磨，先动手试试再说。你不喜欢情绪化的场面，讨厌被管着，追求自由和实用。冷静、利落，关键时刻往往是最靠得住的那一个。',
+    video: 'videos/ISTP.mp4',
+    sins: { pride: 60, envy: 25, wrath: 60, sloth: 55, greed: 45, gluttony: 50, lust: 45 }
+  },
+  ISTJ: {
+    title: '物流师 · 说到就做到的人',
+    desc: '你是那种说到就一定做到的人。重视规则、秩序和承诺，做事有条理，讨厌临时变卦。你不太表达情绪，却用可靠撑起了身边人的生活。你的安全感来自计划，而你的价值，是长期的坚持。',
+    video: 'videos/ISTJ.mp4',
+    sins: { pride: 55, envy: 30, wrath: 50, sloth: 20, greed: 55, gluttony: 55, lust: 30 }
+  },
+  ESTP: {
+    title: '企业家 · 活在当下的破局者',
+    desc: '你活在当下，反应极快。喜欢刺激和挑战，讨厌拖泥带水，遇到问题第一反应是“先干起来”。你社交能力强，能把尴尬的场面轻松化解。你不是不思考，只是更相信行动能带来答案。',
+    video: 'videos/ESTP.mp4',
+    sins: { pride: 65, envy: 30, wrath: 70, sloth: 40, greed: 65, gluttony: 75, lust: 80 }
+  },
+  ESTJ: {
+    title: '总经理 · 把混乱理成秩序',
+    desc: '你务实、果断，天生适合管事。重视效率和结果，讨厌含糊其辞和拖沓。你说话直接，做事有章法，能把混乱的局面理顺。你对承诺认真，也希望别人同样认真——这份可靠，正是你的底色。',
+    video: 'videos/ESTJ.mp4',
+    sins: { pride: 75, envy: 40, wrath: 65, sloth: 20, greed: 70, gluttony: 60, lust: 45 }
+  }
+};
+
+
+/* ================================================================
+   三、七宗罪元信息
+   ================================================================ */
+const SIN_META = [
+  { key: 'pride',    name: '傲慢', en: 'Pride',    color: '#a78bfa' },
+  { key: 'envy',     name: '嫉妒', en: 'Envy',     color: '#4ade80' },
+  { key: 'wrath',    name: '暴怒', en: 'Wrath',    color: '#f87171' },
+  { key: 'sloth',    name: '懒惰', en: 'Sloth',    color: '#94a3b8' },
+  { key: 'greed',    name: '贪婪', en: 'Greed',    color: '#fbbf24' },
+  { key: 'gluttony', name: '暴食', en: 'Gluttony', color: '#fb923c' },
+  { key: 'lust',     name: '色欲', en: 'Lust',     color: '#f472b6' }
+];
+
+
+/* ================================================================
+   四、题库（8 题，每 2 题对应一个维度）
+   ================================================================ */
+const QUESTIONS = [
+  {
+    q: '周五下班前，同事突然在群里发起临时聚餐，你的第一反应是——',
+    a: { text: '太好了，正好想找人聊聊天，热闹一下', dim: 'E' },
+    b: { text: '能推就推吧，我更想回家一个人待着', dim: 'I' }
+  },
+  {
+    q: '在一个几乎全是陌生人的聚会上待了一小时后，你会——',
+    a: { text: '越聊越起劲，还想再去认识几个新朋友', dim: 'E' },
+    b: { text: '感觉电量被抽干，只想找个角落安静待着', dim: 'I' }
+  },
+  {
+    q: '看一部口碑很好的科幻电影，你更享受的是——',
+    a: { text: '扎实的世界观设定和清晰的情节逻辑', dim: 'S' },
+    b: { text: '那些没明说的隐喻，以及开放式的想象空间', dim: 'N' }
+  },
+  {
+    q: '朋友说想辞职去旅行，你的第一句话更接近——',
+    a: { text: '“路线怎么走？预算多少？先算清楚吧。”', dim: 'S' },
+    b: { text: '“听起来好棒，也许这就是你人生的转折点。”', dim: 'N' }
+  },
+  {
+    q: '朋友失恋后哭着找你倾诉，你会先——',
+    a: { text: '帮她理清问题出在哪，给出可行的建议', dim: 'T' },
+    b: { text: '先抱抱她，陪她一起难过一会儿', dim: 'F' }
+  },
+  {
+    q: '团队里有人犯了错导致进度延误，你更在意——',
+    a: { text: '流程哪里出了问题，怎么避免下次再犯', dim: 'T' },
+    b: { text: '他的状态还好吗，会不会太自责', dim: 'F' }
+  },
+  {
+    q: '距离出发旅行还有一周，你的行李和行程——',
+    a: { text: '早就按清单收拾好，每天去哪都排得清清楚楚', dim: 'J' },
+    b: { text: '出门前一晚再收，反正缺什么到那儿都能买', dim: 'P' }
+  },
+  {
+    q: '老板把一个边界模糊的大项目交给你，你更倾向于——',
+    a: { text: '先定好阶段目标和时间表，再按计划推进', dim: 'J' },
+    b: { text: '先上手试试，边走边调整方向', dim: 'P' }
+  }
+];
+
+
+/* ================================================================
+   五、页面元素引用与状态
+   ================================================================ */
+const quizLayer    = document.getElementById('quiz-layer');
+const card         = document.getElementById('card');
+const questionText = document.getElementById('question-text');
+const questionIdx  = document.getElementById('question-index');
+const progressFill = document.getElementById('progress-fill');
+const optionBtns   = Array.from(document.querySelectorAll('.option'));
+
+const typeFlash    = document.getElementById('type-flash');
+const typeFlashText = document.getElementById('type-flash-text');
+const dissolveCanvas = document.getElementById('dissolve-canvas');
+const dctx         = dissolveCanvas.getContext('2d');
+
+const video        = document.getElementById('intro-video');
+
+const resultLayer  = document.getElementById('result-layer');
+const resultTypeEl = document.getElementById('result-type');
+const resultTitle  = document.getElementById('result-title');
+const resultDesc   = document.getElementById('result-desc');
+const sinGrid      = document.getElementById('sin-grid');
+const restartBtn   = document.getElementById('restart-btn');
+
+let currentIndex = 0;
+let answers = [];
+let locked = false;
+
+let currentType = '';
+let finished = false;
+let videoStarted = false;
+let videoFallbackTimer = null;
+
+/* 与 CSS 中 #type-flash-text 的字体参数保持一致，用于 Canvas 精确复刻 */
+const TYPE_FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif';
+const TYPE_FONT_WEIGHT = 200;
+const TYPE_LETTER_SPACING_EM = 0.12;
+
+/* 根据视口宽度计算字体大小，对应 CSS 的 clamp(62px, 14vw, 138px) */
+function getTypeFontSize(viewportWidth) {
+  return Math.min(Math.max(62, viewportWidth * 0.14), 138);
+}
+
+
+/* ================================================================
+   六、答题渲染与切换
+   ================================================================ */
+function renderQuestion() {
+  const q = QUESTIONS[currentIndex];
+
+  questionIdx.textContent =
+    String(currentIndex + 1).padStart(2, '0') + ' / ' +
+    String(QUESTIONS.length).padStart(2, '0');
+
+  progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
+
+  questionText.textContent = q.q;
+  optionBtns[0].querySelector('.option-text').textContent = q.a.text;
+  optionBtns[1].querySelector('.option-text').textContent = q.b.text;
+
+  locked = false;
+}
+
+function switchCard(renderFn) {
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.9)';
+
+  setTimeout(() => {
+    renderFn();
+
+    card.style.transition = 'none';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(1.06)';
+    void card.offsetWidth;
+
+    card.style.transition = '';
+    card.style.opacity = '1';
+    card.style.transform = 'scale(1)';
+  }, 380);
+}
+
+function handleChoice(choiceKey) {
+  if (locked) return;
+  locked = true;
+
+  const q = QUESTIONS[currentIndex];
+  const dim = choiceKey === 'A' ? q.a.dim : q.b.dim;
+  answers.push(dim);
+
+  currentIndex++;
+
+  if (currentIndex < QUESTIONS.length) {
+    switchCard(renderQuestion);
+  } else {
+    finishQuiz();
+  }
+}
+
+optionBtns.forEach(btn => {
+  btn.addEventListener('click', () => handleChoice(btn.dataset.choice));
+});
+
+
+/* ================================================================
+   七、答完 8 题：答题区淡出 → 大字显示类型 → 粒子消散 → 视频
+   ================================================================ */
+function finishQuiz() {
+  currentType = calcType();
+
+  card.style.opacity = '0';
+  card.style.transform = 'scale(0.9)';
+
+  quizLayer.style.pointerEvents = 'none';
+  quizLayer.style.opacity = '0';
+
+  /* 等答题层基本退场后，再让类型大字登场 */
+  setTimeout(() => showTypeFlash(currentType), 520);
+}
+
+/* ---------- 大字显示最终类型 ---------- */
+function showTypeFlash(type) {
+  typeFlashText.textContent = type;
+  typeFlash.classList.add('show');   // 淡入 + 从 0.94 放大到 1
+
+  /* 文字完全显示后停留约 0.9s，然后开始粒子消散 */
+  setTimeout(() => {
+    dissolveType(type, () => {
+      /* 粒子散尽后，稍作停顿再切入视频，避免转场太急 */
+      setTimeout(() => playTypeVideo(type), 180);
+    });
+  }, 1500);
+}
+
+/* ---------- 把大字“打碎”成粒子并让它飘散 ----------
+   ★ 实现原理：
+     1. 用离屏 canvas 按与 DOM 完全相同的字体/字号/字距/渐变重绘文字
+     2. 读取像素，把非透明像素采样成粒子（保留原渐变颜色）
+     3. DOM 文字淡出的同时，粒子从原位向外扩散、上升、逐渐透明
+     4. 粒子全部消失后回调，进入视频
+   ================================================================ */
+function dissolveType(type, onComplete) {
+  const W = window.innerWidth;
+  const H = window.innerHeight;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cx = W / 2;
+  const cy = H / 2;
+
+  /* 与 CSS 完全一致的字体参数 */
+  const fontSize = getTypeFontSize(W);
+  const spacing = fontSize * TYPE_LETTER_SPACING_EM;
+
+  /* ---------- 1. 离屏 canvas 绘制文字 ---------- */
+  const off = document.createElement('canvas');
+  off.width = Math.floor(W * dpr);
+  off.height = Math.floor(H * dpr);
+  const octx = off.getContext('2d');
+  octx.scale(dpr, dpr);
+  octx.textAlign = 'left';
+  octx.textBaseline = 'middle';
+  octx.font = `${TYPE_FONT_WEIGHT} ${fontSize}px ${TYPE_FONT_FAMILY}`;
+
+  /* 逐字符测量，精确还原 letter-spacing（Canvas 原生 letterSpacing 兼容性不稳） */
+  const chars = Array.from(type);
+  const widths = chars.map(ch => octx.measureText(ch).width);
+  let totalWidth = 0;
+  chars.forEach((ch, i) => {
+    totalWidth += widths[i];
+    if (i < chars.length - 1) totalWidth += spacing;
+  });
+
+  /* 渐变填充，方向近似 CSS 的 120deg */
+  const angleRad = 30 * Math.PI / 180;
+  const halfLen = (totalWidth * Math.cos(angleRad) + fontSize * Math.sin(angleRad)) / 2;
+  const grad = octx.createLinearGradient(
+    cx - Math.cos(angleRad) * halfLen,
+    cy - Math.sin(angleRad) * halfLen,
+    cx + Math.cos(angleRad) * halfLen,
+    cy + Math.sin(angleRad) * halfLen
+  );
+  grad.addColorStop(0.10, '#ffffff');
+  grad.addColorStop(0.58, '#9fc0ff');
+  grad.addColorStop(1.00, '#c9a7ff');
+  octx.fillStyle = grad;
+
+  /* 绘制：从 cx - totalWidth/2 开始，保证视觉中心与 DOM 一致 */
+  let penX = cx - totalWidth / 2;
+  chars.forEach((ch, i) => {
+    octx.fillText(ch, penX, cy);
+    penX += widths[i] + spacing;
+  });
+
+  /* ---------- 2. 在文字包围盒内采样像素 ---------- */
+  const boxW = totalWidth + 60;
+  const boxH = fontSize * 1.45;
+  const boxX = Math.max(0, Math.floor(cx - boxW / 2));
+  const boxY = Math.max(0, Math.floor(cy - boxH / 2));
+  const boxX2 = Math.min(W, Math.ceil(cx + boxW / 2));
+  const boxY2 = Math.min(H, Math.ceil(cy + boxH / 2));
+
+  const imgData = octx.getImageData(0, 0, off.width, off.height);
+  const pixels = imgData.data;
+
+  let particles = [];
+  let gap = 3;   // 逻辑像素采样步长
+
+  while (true) {
+    particles = [];
+    for (let ly = boxY; ly < boxY2; ly += gap) {
+      for (let lx = boxX; lx < boxX2; lx += gap) {
+        const px = Math.floor(lx * dpr);
+        const py = Math.floor(ly * dpr);
+        if (px >= off.width || py >= off.height) continue;
+
+        const idx = (py * off.width + px) * 4;
+        if (pixels[idx + 3] > 100) {
+          const r = pixels[idx];
+          const g = pixels[idx + 1];
+          const b = pixels[idx + 2];
+
+          /* 粒子初始速度：向外扩散 + 整体略微向上 */
+          const dir = Math.random() * Math.PI * 2;
+          const spd = 0.25 + Math.random() * 1.6;
+
+          particles.push({
+            x: lx,
+            y: ly,
+            vx: Math.cos(dir) * spd,
+            vy: Math.sin(dir) * spd - 0.35,
+            size: 0.9 + Math.random() * 1.5,
+            life: 1,
+            decay: 0.008 + Math.random() * 0.012,
+            color: `rgb(${r},${g},${b})`
+          });
+        }
+      }
+    }
+    /* 粒子太多就加大采样步长重新采，保证流畅 */
+    if (particles.length <= 2600 || gap >= 7) break;
+    gap += 0.5;
+  }
+
+  /* ---------- 3. 文字淡出，粒子接棒 ---------- */
+  typeFlash.classList.add('dissolving');
+
+  /* 画布尺寸与视口同步 */
+  dissolveCanvas.width = Math.floor(W * dpr);
+  dissolveCanvas.height = Math.floor(H * dpr);
+  dissolveCanvas.style.width = W + 'px';
+  dissolveCanvas.style.height = H + 'px';
+  dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  /* ---------- 4. 粒子动画 ---------- */
+  let lastFrame = performance.now();
+
+  function frame(now) {
+    const dt = Math.min(now - lastFrame, 32);
+    lastFrame = now;
+    const f = dt / 16.67;   // 帧率归一化，60fps 时 f ≈ 1
+
+    dctx.clearRect(0, 0, W, H);
+    let alive = 0;
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      if (p.life <= 0) continue;
+      alive++;
+
+      /* 位移 + 阻尼 + 上升浮力 */
+      p.x += p.vx * f;
+      p.y += p.vy * f;
+      p.vx *= Math.pow(0.972, f);
+      p.vy *= Math.pow(0.972, f);
+      p.vy -= 0.02 * f;
+
+      /* 生命衰减 */
+      p.life -= p.decay * f;
+      if (p.life < 0) p.life = 0;
+
+      /* 越接近消散越小 */
+      const size = p.size * (0.35 + 0.65 * p.life);
+
+      dctx.globalAlpha = p.life;
+      dctx.fillStyle = p.color;
+      dctx.beginPath();
+      dctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+      dctx.fill();
+    }
+
+    if (alive > 0) {
+      requestAnimationFrame(frame);
+    } else {
+      dctx.clearRect(0, 0, W, H);
+      /* 彻底隐藏大字层，准备进入视频 */
+      typeFlash.classList.remove('show');
+      typeFlash.classList.remove('dissolving');
+      typeFlashText.textContent = '';
+      onComplete();
+    }
+  }
+
+  requestAnimationFrame(frame);
+}
+
+
+/* ================================================================
+   八、视频播放（每种人格对应一个视频）
+   ================================================================ */
+function playTypeVideo(type) {
+  const info = MBTI_TYPES[type] || {};
+  const src = info.video || '';
+
+  finished = false;
+  videoStarted = false;
+
+  if (!src) {
+    setTimeout(() => endVideo(), 500);
+    return;
+  }
+
+  video.classList.remove('show');
+  video.muted = true;
+  video.setAttribute('muted', '');
+
+  video.src = src;
+  video.load();
+
+  video.addEventListener('playing', function onPlaying() {
+    videoStarted = true;
+  }, { once: true });
+
+  video.oncanplay = function () {
+    video.oncanplay = null;
+
+    video.classList.add('show');
+
+    const p = video.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(() => {
+        if (!finished) endVideo();
+      });
+    }
+
+    clearTimeout(videoFallbackTimer);
+    videoFallbackTimer = setTimeout(() => {
+      if (!videoStarted && !finished) endVideo();
+    }, 10000);
+  };
+
+  video.onerror = function () {
+    if (!finished) setTimeout(() => endVideo(), 600);
+  };
+}
+
+function endVideo() {
+  if (finished) return;
+  finished = true;
+
+  clearTimeout(videoFallbackTimer);
+  try { video.pause(); } catch (e) { /* 忽略 */ }
+
+  video.classList.remove('show');
+  setTimeout(() => showResult(currentType), 700);
+}
+
+video.addEventListener('ended', endVideo);
+
+
+/* ================================================================
+   九、计算结果
+   ================================================================ */
+function calcType() {
+  const score = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+  answers.forEach(letter => { if (score[letter] !== undefined) score[letter]++; });
+
+  const dims = [
+    ['E', 'I', 0],
+    ['S', 'N', 2],
+    ['T', 'F', 4],
+    ['J', 'P', 6]
+  ];
+
+  return dims.map(([left, right, firstIdx]) => {
+    if (score[left] > score[right]) return left;
+    if (score[right] > score[left]) return right;
+    return answers[firstIdx];
+  }).join('');
+}
+
+
+/* ================================================================
+   十、结果页渲染（含七宗罪指数）
+   ================================================================ */
+function showResult(type) {
+  const info = MBTI_TYPES[type] || {
+    title: '神秘人格',
+    desc: '你的选择组合出了一种独特的性格结构，暂时还没有对应的描述文案。',
+    sins: {}
+  };
+
+  resultTypeEl.textContent = type;
+  resultTitle.textContent  = info.title;
+  resultDesc.textContent   = info.desc;
+
+  renderSins(info.sins || {});
+
+  resultLayer.classList.add('show');
+  setTimeout(animateSins, 400);
+}
+
+function renderSins(sins) {
+  sinGrid.innerHTML = '';
+
+  SIN_META.forEach(meta => {
+    const raw = Number(sins[meta.key]);
+    const value = Number.isFinite(raw) ? Math.max(0, Math.min(100, raw)) : 0;
+
+    const item = document.createElement('div');
+    item.className = 'sin-item';
+    item.dataset.value = String(value);
+    item.innerHTML = `
+      <div class="sin-head">
+        <span class="sin-name">${meta.name}<em>${meta.en}</em></span>
+        <span class="sin-value">0</span>
+      </div>
+      <div class="sin-track">
+        <div class="sin-bar"
+             style="background: linear-gradient(90deg, ${meta.color}99, ${meta.color});
+                    box-shadow: 0 0 10px ${meta.color}55;"></div>
+      </div>
+    `;
+    sinGrid.appendChild(item);
+  });
+}
+
+function animateSins() {
+  const items = sinGrid.querySelectorAll('.sin-item');
+
+  items.forEach((item, index) => {
+    const target = Number(item.dataset.value) || 0;
+    const bar = item.querySelector('.sin-bar');
+    const valueEl = item.querySelector('.sin-value');
+
+    const delay = index * 80;
+    const duration = 1100;
+
+    setTimeout(() => {
+      bar.style.width = target + '%';
+    }, delay);
+
+    const startTime = performance.now();
+    function tick(now) {
+      const elapsed = now - startTime - delay;
+      const t = Math.min(Math.max(elapsed / duration, 0), 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      valueEl.textContent = Math.round(target * ease);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+restartBtn.addEventListener('click', () => {
+  window.location.reload();
+});
+
+
+/* ================================================================
+   十一、启动
+   ================================================================ */
+renderQuestion();
+</script>
+</body>
+</html>
