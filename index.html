@@ -8,28 +8,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; overflow: hidden; background: #000; color: #f5f5f7; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
   
-  /* 背景层 & 全局通用 */
   #bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   .glass-panel { background: rgba(255,255,255,0.055); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 30px 90px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.12); }
 
-  /* 音乐开关 */
   #music-toggle { position: fixed; top: 24px; right: 24px; z-index: 10; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.6); transition: all 0.3s ease; }
   #music-toggle:hover { color: #fff; background: rgba(255,255,255,0.1); }
   #music-toggle svg { width: 20px; height: 20px; fill: currentColor; }
   #music-toggle.muted::after { content: ''; position: absolute; width: 22px; height: 2px; background: #f87171; transform: rotate(45deg); }
 
-  /* 开始界面 */
   #start-layer { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; transition: opacity 1s ease; padding: 24px; text-align: center; }
   #start-layer.hide { opacity: 0; pointer-events: none; }
   .start-title { font-size: clamp(32px, 6vw, 56px); font-weight: 200; letter-spacing: 0.2em; margin-bottom: 20px; padding-left: 0.2em; background: linear-gradient(120deg, #fff, #9fc0ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .start-desc { font-size: 14.5px; color: rgba(255,255,255,0.5); max-width: 400px; line-height: 1.8; margin-bottom: 50px; letter-spacing: 0.05em; }
+  .start-desc { font-size: 14.5px; color: rgba(255,255,255,0.5); max-width: 440px; line-height: 1.8; margin-bottom: 50px; letter-spacing: 0.05em; }
   .start-btn { padding: 16px 48px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 15px; letter-spacing: 0.2em; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); }
   .start-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(110,150,255,0.2); }
-  
-  /* 进度提示小字 */
   #resume-hint { display: none; margin-top: 16px; font-size: 12px; color: rgba(160, 190, 255, 0.8); letter-spacing: 0.05em; }
 
-  /* 答题区 */
   #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
   #quiz-layer.active { opacity: 1; pointer-events: auto; }
   #card { width: min(720px, 100%); padding: 44px 44px 30px; border-radius: 26px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
@@ -45,7 +39,6 @@
   .option:active { transform: translateY(0) scale(0.99); }
   .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(200,218,255,0.95); background: rgba(140,175,255,0.16); border: 1px solid rgba(160,190,255,0.3); margin-top: 1px; }
 
-  /* 底部按钮 */
   .card-footer { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; }
   .footer-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; font-family: inherit; }
   #prev-btn { color: rgba(255,255,255,0.3); }
@@ -54,20 +47,19 @@
   #reset-btn { color: rgba(248, 113, 113, 0.4); }
   #reset-btn:hover { color: rgba(248, 113, 113, 0.9); }
 
-  /* 大字闪现层 */
-  #type-flash { position: fixed; inset: 0; z-index: 6; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
+  #type-flash { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #type-flash.show { opacity: 1; }
-  #type-flash-text { font-size: clamp(62px, 14vw, 138px); font-weight: 200; line-height: 1; letter-spacing: 0.12em; padding-left: 0.12em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(130,165,255,0.42)); transform: scale(0.94); transition: transform 0.9s ease; }
+  #type-flash-text { font-size: clamp(52px, 12vw, 116px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; padding-left: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(130,165,255,0.42)); transform: scale(0.94); transition: transform 0.9s ease; text-align: center; }
   #type-flash.show #type-flash-text { transform: scale(1); }
+  #type-flash-sub { margin-top: 16px; font-size: 13px; letter-spacing: 0.16em; color: rgba(255,255,255,0.4); opacity: 0; transition: opacity 0.8s ease 0.4s; }
+  #type-flash.show #type-flash-sub { opacity: 1; }
   #type-flash.dissolving { opacity: 0; transition: opacity 0.3s ease; }
-  #type-flash.dissolving #type-flash-text { transform: scale(1.1); transition: transform 0.6s ease; }
+  #type-flash.dissolving #type-flash-text { transform: scale(1.08); transition: transform 0.6s ease; }
 
-  /* 消散画布 & 视频层 */
   #dissolve-canvas { position: fixed; inset: 0; z-index: 6; width: 100%; height: 100%; pointer-events: none; display: block; }
   #intro-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4; background: #000; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
   #intro-video.show { opacity: 1; pointer-events: auto; }
 
-  /* 结果页 */
   #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 56px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
   #result-layer::-webkit-scrollbar { width: 6px; }
   #result-layer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
@@ -75,18 +67,17 @@
   .result-inner { margin: auto; width: 100%; max-width: 760px; text-align: center; transform: translateY(18px); transition: transform 1.5s ease; padding-bottom: 40px; }
   #result-layer.show .result-inner { transform: translateY(0); }
   .result-label { font-size: 11px; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 18px; padding-left: 0.5em; }
-  .result-type { font-size: clamp(62px, 14vw, 138px); font-weight: 200; line-height: 1; letter-spacing: 0.12em; padding-left: 0.12em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 22px; filter: drop-shadow(0 0 34px rgba(130,165,255,0.28)); }
+  .result-type { font-size: clamp(56px, 12vw, 120px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; padding-left: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px; filter: drop-shadow(0 0 34px rgba(130,165,255,0.28)); }
+  .result-subtype { font-size: 12px; letter-spacing: 0.16em; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
   .result-title { font-size: 21px; font-weight: 400; letter-spacing: 0.14em; color: rgba(255,255,255,0.9); margin-bottom: 22px; }
   .result-desc { font-size: 15.5px; line-height: 1.95; letter-spacing: 0.02em; color: rgba(255,255,255,0.6); text-align: justify; text-align-last: center; margin-bottom: 10px; }
 
-  /* 信息网格面板 */
   .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; text-align: left; }
   .info-card { padding: 22px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); }
   .info-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .info-title::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9fc0ff; }
   .info-text { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.75); }
 
-  /* 七宗罪面板 */
   .sin-panel { margin-top: 18px; padding: 24px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); text-align: left; grid-column: span 2; }
   .sin-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); text-align: center; margin-bottom: 22px; padding-left: 0.34em; }
   .sin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 30px; }
@@ -105,52 +96,47 @@
     .info-grid { grid-template-columns: 1fr; gap: 14px; }
     .sin-panel { grid-column: span 1; }
     .sin-grid { grid-template-columns: 1fr; gap: 14px; }
-    .info-card { padding: 20px; }
-    .sin-panel { padding: 20px; }
+    .info-card, .sin-panel { padding: 20px; }
   }
   @media (max-width: 560px) {
     #card { padding: 32px 24px 20px; border-radius: 22px; }
     #question-text { font-size: 18px; min-height: 60px; }
     .option { font-size: 14px; padding: 14px 16px; gap: 10px; }
     .result-desc { font-size: 14px; }
+    #type-flash-text { font-size: clamp(44px, 11vw, 92px); }
   }
 </style>
 </head>
 <body>
 
   <audio id="bgm" src="bgm.mp3" loop></audio>
-
   <div id="music-toggle" title="切换背景音乐">
     <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
   </div>
 
   <canvas id="bg-canvas"></canvas>
 
-  <!-- 开始界面 -->
   <section id="start-layer">
     <h1 class="start-title">MBTI 人格测试</h1>
-    <p class="start-desc">一场关于灵魂底色的探索。请凭着第一直觉做出选择，不要过度思考，这会揭示你最真实的潜意识倾向。</p>
+    <p class="start-desc">32 道情境题，测量你的核心四维偏好与「坚定/动荡」身份倾向。请凭第一反应作答，不要过度思考“应该”怎样。</p>
     <button class="start-btn" id="start-btn">开 始 测 试</button>
     <div id="resume-hint">检测到未完成的进度，点击继续</div>
   </section>
 
-  <!-- 答题区 -->
   <main id="quiz-layer">
     <section id="card" class="glass-panel">
       <div class="quiz-meta">
         <span>MBTI TEST</span>
-        <span id="question-index">01 / 16</span>
+        <span id="question-index">01 / 32</span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       <h2 id="question-text">题目加载中…</h2>
-      
       <div class="options-wrap">
         <button class="option" data-choice="A" type="button"><span class="tag">A</span><span class="option-text"></span></button>
         <button class="option" data-choice="B" type="button"><span class="tag">B</span><span class="option-text"></span></button>
         <button class="option" data-choice="C" type="button"><span class="tag">C</span><span class="option-text"></span></button>
         <button class="option" data-choice="D" type="button"><span class="tag">D</span><span class="option-text"></span></button>
       </div>
-
       <div class="card-footer">
         <button id="prev-btn" class="footer-btn" type="button" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 上一题
@@ -160,19 +146,22 @@
     </section>
   </main>
 
-  <div id="type-flash"><span id="type-flash-text"></span></div>
+  <div id="type-flash">
+    <span id="type-flash-text"></span>
+    <span id="type-flash-sub"></span>
+  </div>
   <canvas id="dissolve-canvas"></canvas>
   <video id="intro-video" muted playsinline preload="auto"></video>
 
-  <!-- 结果页 -->
   <section id="result-layer">
     <div class="result-inner">
       <div class="result-label">Your Type</div>
       <div class="result-type" id="result-type">----</div>
+      <div class="result-subtype" id="result-subtype"></div>
       <h1 class="result-title" id="result-title"></h1>
       <p class="result-desc" id="result-desc"></p>
 
-      <div class="info-grid" id="info-grid">
+      <div class="info-grid">
         <div class="info-card">
           <div class="info-title">Core Strengths · 核心优势</div>
           <div class="info-text" id="text-strengths"></div>
@@ -197,7 +186,6 @@
           <div class="info-title">Growth Advice · 成长建议</div>
           <div class="info-text" id="text-growth"></div>
         </div>
-        
         <div class="sin-panel">
           <div class="sin-title">Seven Deadly Sins · 七宗罪指数</div>
           <div class="sin-grid" id="sin-grid"></div>
@@ -217,60 +205,41 @@
   const ctx = canvas.getContext('2d');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let W = 0, H = 0, particles = [], sprite = null;
-
   function createSprite() {
-    const size = 64;
-    const off = document.createElement('canvas'); off.width = off.height = size;
+    const size = 64; const off = document.createElement('canvas'); off.width = off.height = size;
     const g = off.getContext('2d'); const cx = size / 2, cy = size / 2;
     const grad = g.createRadialGradient(cx, cy, 0, cx, cy, size / 2);
-    grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)'); grad.addColorStop(0.2, 'rgba(200, 220, 255, 0.4)'); grad.addColorStop(1, 'rgba(200, 220, 255, 0)');
+    grad.addColorStop(0, 'rgba(255,255,255,0.9)'); grad.addColorStop(0.2, 'rgba(200,220,255,0.4)'); grad.addColorStop(1, 'rgba(200,220,255,0)');
     g.fillStyle = grad; g.fillRect(0, 0, size, size);
-    g.beginPath();
-    const long = size * 0.45, short = size * 0.08;
+    g.beginPath(); const long = size * 0.45, short = size * 0.08;
     g.moveTo(cx, cy - long); g.quadraticCurveTo(cx + short, cy - short, cx + long, cy);
     g.quadraticCurveTo(cx + short, cy + short, cx, cy + long); g.quadraticCurveTo(cx - short, cy + short, cx - long, cy);
-    g.quadraticCurveTo(cx - short, cy - short, cx, cy - long);
-    g.fillStyle = 'rgba(255, 255, 255, 0.95)'; g.fill();
+    g.quadraticCurveTo(cx - short, cy - short, cx, cy - long); g.fillStyle = 'rgba(255,255,255,0.95)'; g.fill();
     return off;
   }
-
   function buildParticles() {
-    const count = Math.min(350, Math.round((W * H) / 8000));
-    particles = [];
-    for (let i = 0; i < count; i++) {
-      particles.push({ x: Math.random() * W, y: Math.random() * H, size: 1.2 + Math.random() * 2.8, vx: (Math.random() - 0.5) * 0.12, vy: -0.05 - Math.random() * 0.15, alpha: 0.15 + Math.random() * 0.6, phase: Math.random() * Math.PI * 2, speed: 0.0004 + Math.random() * 0.0012 });
-    }
+    const count = Math.min(350, Math.round((W * H) / 8000)); particles = [];
+    for (let i = 0; i < count; i++) particles.push({ x: Math.random()*W, y: Math.random()*H, size: 1.2+Math.random()*2.8, vx: (Math.random()-0.5)*0.12, vy: -0.05-Math.random()*0.15, alpha: 0.15+Math.random()*0.6, phase: Math.random()*Math.PI*2, speed: 0.0004+Math.random()*0.0012 });
   }
-
-  function resize() {
-    W = window.innerWidth; H = window.innerHeight;
-    canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
-    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); buildParticles();
-  }
-
+  function resize() { W = window.innerWidth; H = window.innerHeight; canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr); canvas.style.width = W+'px'; canvas.style.height = H+'px'; ctx.setTransform(dpr,0,0,dpr,0,0); buildParticles(); }
   let lastTime = performance.now();
   function loop(now) {
-    const dt = Math.min(now - lastTime, 50); lastTime = now;
-    ctx.clearRect(0, 0, W, H); ctx.globalCompositeOperation = 'lighter';
+    const dt = Math.min(now-lastTime, 50); lastTime = now;
+    ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation = 'lighter';
     for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.x += p.vx * dt * 0.06; p.y += p.vy * dt * 0.06; p.phase += p.speed * dt;
-      if (p.y < -40) { p.y = H + 40; p.x = Math.random() * W; }
-      if (p.x < -40) p.x = W + 40; if (p.x > W + 40) p.x = -40;
-      const twinkle = 0.6 + 0.4 * Math.sin(p.phase);
-      const drawSize = p.size * 9; 
-      ctx.globalAlpha = p.alpha * twinkle; ctx.drawImage(sprite, p.x - drawSize/2, p.y - drawSize/2, drawSize, drawSize);
+      const p = particles[i]; p.x += p.vx*dt*0.06; p.y += p.vy*dt*0.06; p.phase += p.speed*dt;
+      if (p.y < -40) { p.y = H+40; p.x = Math.random()*W; } if (p.x < -40) p.x = W+40; if (p.x > W+40) p.x = -40;
+      const twinkle = 0.6 + 0.4*Math.sin(p.phase); const drawSize = p.size*9;
+      ctx.globalAlpha = p.alpha*twinkle; ctx.drawImage(sprite, p.x-drawSize/2, p.y-drawSize/2, drawSize, drawSize);
     }
-    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-    requestAnimationFrame(loop);
+    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; requestAnimationFrame(loop);
   }
   sprite = createSprite(); resize(); requestAnimationFrame(loop);
   let resizeTimer = null; window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 180); });
 })();
 
 /* ================================================================
-   二、人格数据（保持原样）
+   二、16 人格数据（共用基础四字母，A/T 不单独建视频和数据）
    ================================================================ */
 const MBTI_TYPES = {
   INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', comm: '倾向于倾听和共情，表达含蓄，很少直接批评他人，喜欢用文字或艺术表达内心。', growth: '试着把想法落地为具体行动，接受世界的不完美，学会在必要时表达自己的愤怒和边界。', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
@@ -299,36 +268,62 @@ const SIN_META = [
 ];
 
 /* ================================================================
-   三、题库
+   三、32 道题库
+   —— 前 28 题：四个核心维度各 7 题（4 选项，±2/±1）
+   —— 后 4 题：身份维度 A/T（2 选项，方向由 dim 决定）
    ================================================================ */
 const QUESTIONS = [
-  { q: '周五下班前，同事突然发起临时聚餐，你的第一反应是——', a: { text: '太好了！立刻响应，马上订位', dim: 'E', score: 2 }, b: { text: '看情况，如果有熟人就凑个热闹', dim: 'E', score: 1 }, c: { text: '有点累，找个借口推掉算了', dim: 'I', score: 1 }, d: { text: '绝对不去，只想赶紧回家躺平', dim: 'I', score: 2 } },
-  { q: '在一个几乎全是陌生人的聚会上待了一小时，你会——', a: { text: '主动出击，认识了好几个有趣的新朋友', dim: 'E', score: 2 }, b: { text: '如果有人搭话，能聊几句', dim: 'E', score: 1 }, c: { text: '默默待在角落玩手机，等着散场', dim: 'I', score: 1 }, d: { text: '感觉社交电量已耗尽，随时准备开溜', dim: 'I', score: 2 } },
-  { q: '遇到开心或难过的事，你通常会——', a: { text: '第一时间打电话给好朋友分享', dim: 'E', score: 2 }, b: { text: '找机会在群里顺嘴提一句', dim: 'E', score: 1 }, c: { text: '自己先消化一下，之后再看要不要说', dim: 'I', score: 1 }, d: { text: '永远藏在心里，自己慢慢回味或消化', dim: 'I', score: 2 } },
-  { q: '在团队讨论中，你更倾向于——', a: { text: '抢着发言，边说边理清思路', dim: 'E', score: 2 }, b: { text: '时不时插两句，参与感比较重要', dim: 'E', score: 1 }, c: { text: '仔细听别人说，偶尔才发表意见', dim: 'I', score: 1 }, d: { text: '只做安静的旁听者，非必要不开口', dim: 'I', score: 2 } },
-  { q: '看一部口碑很好的科幻电影，你更享受——', a: { text: '硬核的世界观、特效和清晰的情节', dim: 'S', score: 2 }, b: { text: '动作戏和视觉效果够爽就行', dim: 'S', score: 1 }, c: { text: '导演想要表达的隐喻和深意', dim: 'N', score: 1 }, d: { text: '开放式的脑洞，可以自己无限遐想', dim: 'N', score: 2 } },
-  { q: '朋友说想辞职去旅行，你的第一句话——', a: { text: '“路线怎么走？预算多少？先算清楚。”', dim: 'S', score: 2 }, b: { text: '“去哪玩？好玩的话我也想去。”', dim: 'S', score: 1 }, c: { text: '“听起来很酷，也许能发现新自我。”', dim: 'N', score: 1 }, d: { text: '“太棒了！说不定这就是命运的转折。”', dim: 'N', score: 2 } },
-  { q: '如果你要组装一个新买的家具，你会——', a: { text: '严格按说明书，一步都不能错', dim: 'S', score: 2 }, b: { text: '大体看一遍说明，然后开干', dim: 'S', score: 1 }, c: { text: '凭感觉拼，遇到问题再翻说明', dim: 'N', score: 1 }, d: { text: '全凭直觉，说明书是什么？不用看', dim: 'N', score: 2 } },
-  { q: '别人向你描述一件事时，你更关注——', a: { text: '具体时间、地点、数字和细节', dim: 'S', score: 2 }, b: { text: '事情发生的经过和结果', dim: 'S', score: 1 }, c: { text: '他描述时的情绪和潜台词', dim: 'N', score: 1 }, d: { text: '背后的动机、隐喻和潜在趋势', dim: 'N', score: 2 } },
-  { q: '朋友失恋后哭着找你倾诉，你会——', a: { text: '客观分析原因，帮她避坑', dim: 'T', score: 2 }, b: { text: '听她倾诉，偶尔给点理性建议', dim: 'T', score: 1 }, c: { text: '陪着她一起吐槽对方', dim: 'F', score: 1 }, d: { text: '先抱住她，陪她大哭一场', dim: 'F', score: 2 } },
-  { q: '团队里有人犯错导致进度延误——', a: { text: '直接指出问题，追究责任', dim: 'T', score: 2 }, b: { text: '先解决问题，事后复盘', dim: 'T', score: 1 }, c: { text: '先安抚他的情绪，再一起解决', dim: 'F', score: 1 }, d: { text: '他一定很难过，多帮他分担点吧', dim: 'F', score: 2 } },
-  { q: '当你要做一个重要决定时——', a: { text: '只相信事实、数据和利弊分析', dim: 'T', score: 2 }, b: { text: '理性思考为主，参考下他人意见', dim: 'T', score: 1 }, c: { text: '考虑决定对周围人的影响', dim: 'F', score: 1 }, d: { text: '听从内心的直觉，感受最重要', dim: 'F', score: 2 } },
-  { q: '看到一部结局悲惨的电影——', a: { text: '毫无波澜，分析剧情是否合理', dim: 'T', score: 2 }, b: { text: '知道是假的，看个乐呵', dim: 'T', score: 1 }, c: { text: '有些难受，需要找点东西缓缓', dim: 'F', score: 1 }, d: { text: '彻底破防，几天都走不出来', dim: 'F', score: 2 } },
-  { q: '距离出发旅行还有一周——', a: { text: '攻略、酒店、行程单早排好了', dim: 'J', score: 2 }, b: { text: '大框架定了，细节再慢慢补', dim: 'J', score: 1 }, c: { text: '订了机票，其他的到了再说', dim: 'P', score: 1 }, d: { text: '随缘，走到哪算哪，主打自由', dim: 'P', score: 2 } },
-  { q: '老板把边界模糊的大项目交给你——', a: { text: '立刻拆解目标，制定甘特图', dim: 'J', score: 2 }, b: { text: '先定个里程碑，再慢慢推进', dim: 'J', score: 1 }, c: { text: '先做做看，边做边找方向', dim: 'P', score: 1 }, d: { text: '车到山前必有路，想做啥做啥', dim: 'P', score: 2 } },
-  { q: '你的办公桌或房间通常是——', a: { text: '极其整洁，所有东西井井有条', dim: 'J', score: 2 }, b: { text: '大面上整齐，偶尔有点乱', dim: 'J', score: 1 }, c: { text: '乱中有序，别人觉得乱但我能找到', dim: 'P', score: 1 }, d: { text: '随心所欲，乱就乱吧', dim: 'P', score: 2 } },
-  { q: '如果周末的计划突然被打乱——', a: { text: '非常烦躁，强迫自己重新规划', dim: 'J', score: 2 }, b: { text: '有点小不爽，但能快速调整', dim: 'J', score: 1 }, c: { text: '无所谓，本来也是随便定的', dim: 'P', score: 1 }, d: { text: '太好了，我就喜欢惊喜！', dim: 'P', score: 2 } }
+  /* ---------- E / I (0-6) ---------- */
+  { q: '一场热闹的社交活动结束后，你通常感觉——', a: { text: '精力充沛，意犹未尽，还想再约下一场', dim: 'E', score: 2 }, b: { text: '虽然开心，但隐隐觉得需要一点自己的时间', dim: 'E', score: 1 }, c: { text: '有点累，但睡一觉就能恢复', dim: 'I', score: 1 }, d: { text: '电量彻底耗尽，只想赶紧回家独处回血', dim: 'I', score: 2 } },
+  { q: '遇到烦心事时，你的第一反应更接近——', a: { text: '立刻找人说出来，聊着聊着思路就顺了', dim: 'E', score: 2 }, b: { text: '会跟亲近的人提一嘴，但主要还是自己消化', dim: 'E', score: 1 }, c: { text: '先自己安静想一会儿，等情绪平复再决定要不要说', dim: 'I', score: 1 }, d: { text: '完全不想说话，把自己关起来慢慢消化', dim: 'I', score: 2 } },
+  { q: '在一个需要频繁和陌生人打交道的工作环境里，你——', a: { text: '如鱼得水，越互动越有状态', dim: 'E', score: 2 }, b: { text: '能应付，但下班后需要明显更多的独处时间', dim: 'E', score: 1 }, c: { text: '会消耗很大，更希望工作能独立完成', dim: 'I', score: 1 }, d: { text: '能线上就不线下，能文字就不语音', dim: 'I', score: 2 } },
+  { q: '你理想中的周末更接近——', a: { text: '排满社交和外出，和朋友待在一起', dim: 'E', score: 2 }, b: { text: '有一两个安排，但也留点时间给自己', dim: 'E', score: 1 }, c: { text: '大部分时间独处，偶尔见一两个最亲近的人', dim: 'I', score: 1 }, d: { text: '完全属于自己的安静周末，谁也不见', dim: 'I', score: 2 } },
+  { q: '在会议或讨论中，你更自然的参与方式是——', a: { text: '边说边想，发言的过程就是整理思路的过程', dim: 'E', score: 2 }, b: { text: '偶尔插话，但更喜欢在有把握时开口', dim: 'E', score: 1 }, c: { text: '先听别人说，脑子里想清楚再决定要不要讲', dim: 'I', score: 1 }, d: { text: '除非被点名，否则更愿意做一个安静的观察者', dim: 'I', score: 2 } },
+  { q: '当你有几天完全没人打扰的独处时间，你会——', a: { text: '很快觉得无聊，想找人说话或出门', dim: 'E', score: 2 }, b: { text: '前两天挺爽，第三天开始想联系朋友', dim: 'E', score: 1 }, c: { text: '很享受，能做好多自己的事', dim: 'I', score: 1 }, d: { text: '求之不得，希望这样的时间能再长一点', dim: 'I', score: 2 } },
+  { q: '你更愿意选择的放松方式是——', a: { text: '和朋友吃饭、唱K、逛街，热闹一下', dim: 'E', score: 2 }, b: { text: '约一两个熟人喝东西聊聊天', dim: 'E', score: 1 }, c: { text: '一个人看电影、逛展或散步', dim: 'I', score: 1 }, d: { text: '待在家里，完全不用和人讲话', dim: 'I', score: 2 } },
+
+  /* ---------- S / N (7-13) ---------- */
+  { q: '听到“森林”这个词，你脑子里首先浮现的是——', a: { text: '具体的树、泥土、光线和声音', dim: 'S', score: 2 }, b: { text: '一条可以走进去的路径和明确的场景', dim: 'S', score: 1 }, c: { text: '某种氛围、故事或隐喻', dim: 'N', score: 1 }, d: { text: '无限的可能性、未知和联想', dim: 'N', score: 2 } },
+  { q: '学习一个全新领域时，你更舒服的节奏是——', a: { text: '从基础步骤和具体细节开始，一步步来', dim: 'S', score: 2 }, b: { text: '先看例子，再自己动手试', dim: 'S', score: 1 }, c: { text: '先理解背后的整体逻辑和框架', dim: 'N', score: 1 }, d: { text: '先跳进去乱试，在试错中自己找规律', dim: 'N', score: 2 } },
+  { q: '别人向你描述一件事时，你更容易记住——', a: { text: '时间、地点、数字、具体发生了什么', dim: 'S', score: 2 }, b: { text: '事情的经过和最终结果', dim: 'S', score: 1 }, c: { text: '他说话时的情绪和言外之意', dim: 'N', score: 1 }, d: { text: '这件事让我联想到的更大图景或趋势', dim: 'N', score: 2 } },
+  { q: '面对一个实际任务，你更信任——', a: { text: '过往验证过的方法和现实条件', dim: 'S', score: 2 }, b: { text: '别人给过的靠谱建议', dim: 'S', score: 1 }, c: { text: '自己的直觉和对整体方向的判断', dim: 'N', score: 1 }, d: { text: '一种“感觉对了”的灵感，哪怕还说不清楚', dim: 'N', score: 2 } },
+  { q: '你更享受的对话类型是——', a: { text: '聊具体发生的事、人和经历', dim: 'S', score: 2 }, b: { text: '聊有用的信息和实际建议', dim: 'S', score: 1 }, c: { text: '聊想法、假设和“如果……会怎样”', dim: 'N', score: 1 }, d: { text: '聊抽象概念、意义和未来的可能性', dim: 'N', score: 2 } },
+  { q: '当计划出现一个现实层面的问题时，你的第一反应是——', a: { text: '先看清楚具体哪里出了问题，再动手修', dim: 'S', score: 2 }, b: { text: '找有经验的人问实际解决办法', dim: 'S', score: 1 }, c: { text: '想想能不能换一种思路绕过它', dim: 'N', score: 1 }, d: { text: '也许这个问题背后有更大的机会', dim: 'N', score: 2 } },
+  { q: '你更容易被哪种表达打动——', a: { text: '真实、具体、有细节的故事', dim: 'S', score: 2 }, b: { text: '清晰、有数据、可验证的结论', dim: 'S', score: 1 }, c: { text: '有隐喻和多重解读空间的句子', dim: 'N', score: 1 }, d: { text: '指向某种宏大愿景或未来可能性的描述', dim: 'N', score: 2 } },
+
+  /* ---------- T / F (14-20) ---------- */
+  { q: '朋友因为一个错误决定而懊恼，你的第一反应——', a: { text: '帮他分析哪里出了问题，下次怎么避免', dim: 'T', score: 2 }, b: { text: '先听他说完，然后给一点客观建议', dim: 'T', score: 1 }, c: { text: '先让他知道“我理解你”，再说别的', dim: 'F', score: 1 }, d: { text: '什么都不说，先陪着他把情绪缓过去', dim: 'F', score: 2 } },
+  { q: '团队里有人拖了进度，你更在意——', a: { text: '流程和职责哪里没卡住，怎么补救', dim: 'T', score: 2 }, b: { text: '先把活干完，事后复盘', dim: 'T', score: 1 }, c: { text: '这个人是不是遇到了什么困难', dim: 'F', score: 1 }, d: { text: '他会不会因为拖了后腿而自责', dim: 'F', score: 2 } },
+  { q: '做一个重要决定时，你更倾向——', a: { text: '把利弊和数据列出来，选最优解', dim: 'T', score: 2 }, b: { text: '理性为主，但也会考虑相关人的接受度', dim: 'T', score: 1 }, c: { text: '会考虑这个决定对身边人意味着什么', dim: 'F', score: 1 }, d: { text: '听内心的声音，感受对了就是对的', dim: 'F', score: 2 } },
+  { q: '当规则和人情冲突时，你更可能——', a: { text: '规则就是规则，破了口子以后没法管', dim: 'T', score: 2 }, b: { text: '先看规则的初衷，再判断要不要灵活', dim: 'T', score: 1 }, c: { text: '能通融就通融，关系比条文重要', dim: 'F', score: 1 }, d: { text: '不忍心因为规则让具体的人受伤', dim: 'F', score: 2 } },
+  { q: '你更容易被哪种批评激怒——', a: { text: '说我逻辑有问题、不够专业', dim: 'T', score: 2 }, b: { text: '说我效率低、判断失误', dim: 'T', score: 1 }, c: { text: '说我冷漠、不近人情', dim: 'F', score: 1 }, d: { text: '说我自私、没有考虑别人的感受', dim: 'F', score: 2 } },
+  { q: '在争论中，你更看重——', a: { text: '谁的道理站得住脚', dim: 'T', score: 2 }, b: { text: '谁的论据更充分', dim: 'T', score: 1 }, c: { text: '争论之后关系还能不能维持', dim: 'F', score: 1 }, d: { text: '对方有没有感到被尊重', dim: 'F', score: 2 } },
+  { q: '别人向你求助时，你更自然的回应是——', a: { text: '直接给方案，告诉他该怎么做', dim: 'T', score: 2 }, b: { text: '帮他理清思路，让他自己决定', dim: 'T', score: 1 }, c: { text: '先让他感到被支持，再聊办法', dim: 'F', score: 1 }, d: { text: '多听他说，很多时候他只是需要被听见', dim: 'F', score: 2 } },
+
+  /* ---------- J / P (21-27) ---------- */
+  { q: '面对一个空闲的周末，你更舒服的状态是——', a: { text: '大致已经想好要做什么，心里有底', dim: 'J', score: 2 }, b: { text: '有一两个固定安排，其他时间灵活', dim: 'J', score: 1 }, c: { text: '不想定死，到时候看心情', dim: 'P', score: 1 }, d: { text: '完全开放，最怕提前被安排', dim: 'P', score: 2 } },
+  { q: '一项重要任务，你通常会——', a: { text: '提前拆好步骤，按计划推进', dim: 'J', score: 2 }, b: { text: '心里有个大框架，细节边做边补', dim: 'J', score: 1 }, c: { text: '先放着，等状态来了集中做', dim: 'P', score: 1 }, d: { text: '截止日期才是第一生产力', dim: 'P', score: 2 } },
+  { q: '旅行前，你更可能——', a: { text: '行程、住宿、路线都提前安排妥当', dim: 'J', score: 2 }, b: { text: '定好大交通和住宿，其他到了再说', dim: 'J', score: 1 }, c: { text: '只订个机票，剩下的随缘', dim: 'P', score: 1 }, d: { text: '说走就走，计划赶不上变化', dim: 'P', score: 2 } },
+  { q: '当事情没有按预期推进时，你更容易——', a: { text: '烦躁，想立刻把它拉回正轨', dim: 'J', score: 2 }, b: { text: '有点不安，但会试着调整计划', dim: 'J', score: 1 }, c: { text: '算了，换条路走也行', dim: 'P', score: 1 }, d: { text: '说不定意外的方向更有意思', dim: 'P', score: 2 } },
+  { q: '你的工作台/房间通常——', a: { text: '分类清楚，东西基本有固定位置', dim: 'J', score: 2 }, b: { text: '大面上整齐，细节偶尔乱', dim: 'J', score: 1 }, c: { text: '乱，但我知道每个东西大概在哪', dim: 'P', score: 1 }, d: { text: '乱就乱，找得到就行', dim: 'P', score: 2 } },
+  { q: '如果突然多出一段完全空白的时间，你会——', a: { text: '很快把它安排上具体的事', dim: 'J', score: 2 }, b: { text: '先想想有什么该做但一直没做的', dim: 'J', score: 1 }, c: { text: '挺开心的，终于可以随便晃一晃', dim: 'P', score: 1 }, d: { text: '太好了，我最喜欢没有计划的状态', dim: 'P', score: 2 } },
+  { q: '对于“截止日期”，你的感受更接近——', a: { text: '需要它，没有 deadline 我很难收尾', dim: 'J', score: 2 }, b: { text: '会提前留出缓冲，不喜欢踩点', dim: 'J', score: 1 }, c: { text: '有点压力，但踩点也能做完', dim: 'P', score: 1 }, d: { text: '最后一刻的紧迫感反而让我专注', dim: 'P', score: 2 } },
+
+  /* ---------- A / T 身份维度 (28-31) ---------- */
+  { q: '面对一件结果不确定的重要事情，你通常——', a: { text: '相信船到桥头自然直，不太提前焦虑', dim: 'A', score: 2 }, b: { text: '会紧张，但能在行动中稳住', dim: 'A', score: 1 }, c: { text: '忍不住反复推演最坏情况', dim: 'T', score: 1 }, d: { text: '很难放松，直到事情尘埃落定', dim: 'T', score: 2 } },
+  { q: '当你回顾自己过去的某个决定时，你更接近——', a: { text: '过去了就过去了，不太反复回想', dim: 'A', score: 2 }, b: { text: '偶尔想一下，但不会陷进去', dim: 'A', score: 1 }, c: { text: '会时不时复盘，想如果当时选了另一条路会怎样', dim: 'T', score: 1 }, d: { text: '经常被“当初要是……就好了”的念头缠绕', dim: 'T', score: 2 } },
+  { q: '别人指出你的错误时，你的第一感受是——', a: { text: '就事论事，错了就改，不太往心里去', dim: 'A', score: 2 }, b: { text: '有点不舒服，但很快能消化', dim: 'A', score: 1 }, c: { text: '会反复想自己是不是能力有问题', dim: 'T', score: 1 }, d: { text: '即使对方说得对，也需要很久才能不介怀', dim: 'T', score: 2 } },
+  { q: '你对自己的整体感觉更接近——', a: { text: '大体自信，觉得自己能处理好大多数事', dim: 'A', score: 2 }, b: { text: '自信和不确定交替，但总体偏向自己', dim: 'A', score: 1 }, c: { text: '常常觉得自己还可以做得更好', dim: 'T', score: 1 }, d: { text: '习惯性自我怀疑，哪怕别人觉得我做得不错', dim: 'T', score: 2 } }
 ];
 
 /* ================================================================
-   四、DOM 与 全局状态
+   四、DOM 与状态
    ================================================================ */
 const startLayer = document.getElementById('start-layer');
 const startBtn = document.getElementById('start-btn');
 const resumeHint = document.getElementById('resume-hint');
 const bgm = document.getElementById('bgm');
 const musicToggle = document.getElementById('music-toggle');
-
 const quizLayer = document.getElementById('quiz-layer');
 const card = document.getElementById('card');
 const questionText = document.getElementById('question-text');
@@ -337,122 +332,92 @@ const progressFill = document.getElementById('progress-fill');
 const optionBtns = Array.from(document.querySelectorAll('.option'));
 const prevBtn = document.getElementById('prev-btn');
 const resetBtn = document.getElementById('reset-btn');
-
 const typeFlash = document.getElementById('type-flash');
 const typeFlashText = document.getElementById('type-flash-text');
+const typeFlashSub = document.getElementById('type-flash-sub');
 const dissolveCanvas = document.getElementById('dissolve-canvas');
 const dctx = dissolveCanvas.getContext('2d');
 const video = document.getElementById('intro-video');
 const resultLayer = document.getElementById('result-layer');
 const restartBtn = document.getElementById('restart-btn');
 
-let currentIndex = 0;
-let answerHistory = []; 
-let currentType = '', finished = false, videoStarted = false, videoFallbackTimer = null;
-let musicPlaying = false;
+let currentIndex = 0, answerHistory = [], currentType = '', currentSubtype = '';
+let finished = false, videoStarted = false, videoFallbackTimer = null, musicPlaying = false;
 
-/* 本地存储 KEY */
-const STORAGE_KEY = 'mbti_test_progress_v1';
+const STORAGE_KEY = 'mbti_test_progress_v2';
 
-/* 保存进度 */
 function saveProgress() {
-  if (currentIndex < QUESTIONS.length) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: currentIndex, answers: answerHistory }));
-  } else {
-    localStorage.removeItem(STORAGE_KEY);
-  }
+  if (currentIndex < QUESTIONS.length) localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: currentIndex, answers: answerHistory }));
+  else localStorage.removeItem(STORAGE_KEY);
 }
-
-/* 读取进度（在初始化时调用） */
 function checkSavedProgress() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
       const data = JSON.parse(saved);
       if (data && typeof data.index === 'number' && Array.isArray(data.answers) && data.index < QUESTIONS.length) {
-        // 修改开始界面的文案
         startBtn.textContent = '继 续 测 试';
         resumeHint.style.display = 'block';
-        resumeHint.textContent = `检测到未完成的进度（已完成 ${data.index} / 16 题）`;
-        
-        // 预填数据
-        currentIndex = data.index;
-        answerHistory = data.answers;
+        resumeHint.textContent = `检测到未完成的进度（已完成 ${data.index} / ${QUESTIONS.length} 题）`;
+        currentIndex = data.index; answerHistory = data.answers;
       }
     } catch (e) { localStorage.removeItem(STORAGE_KEY); }
   }
 }
-checkSavedProgress(); // 页面加载时检查
+checkSavedProgress();
 
-/* 音乐控制 */
 musicToggle.addEventListener('click', () => {
   if (musicPlaying) { bgm.pause(); musicToggle.classList.add('muted'); }
   else { bgm.play().catch(() => {}); musicToggle.classList.remove('muted'); }
   musicPlaying = !musicPlaying;
 });
 
-/* 开始测试 / 继续测试 */
 startBtn.addEventListener('click', () => {
   bgm.volume = 0.5;
   bgm.play().then(() => { musicPlaying = true; musicToggle.classList.remove('muted'); }).catch(() => {});
-  startLayer.classList.add('hide');
-  quizLayer.classList.add('active');
-  renderQuestion(); // 如果 currentIndex > 0，会自动渲染上次未做完的题
+  startLayer.classList.add('hide'); quizLayer.classList.add('active'); renderQuestion();
 });
 
-/* 渲染题目 */
 function renderQuestion() {
   const q = QUESTIONS[currentIndex];
   questionIdx.textContent = String(currentIndex + 1).padStart(2, '0') + ' / ' + String(QUESTIONS.length).padStart(2, '0');
   progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
   questionText.textContent = q.q;
-  
-  optionBtns[0].querySelector('.option-text').textContent = q.a.text;
-  optionBtns[1].querySelector('.option-text').textContent = q.b.text;
-  optionBtns[2].querySelector('.option-text').textContent = q.c.text;
-  optionBtns[3].querySelector('.option-text').textContent = q.d.text;
-  
+  const keys = ['a', 'b', 'c', 'd'];
+  optionBtns.forEach((btn, i) => {
+    const opt = q[keys[i]];
+    if (opt) { btn.style.display = 'flex'; btn.querySelector('.option-text').textContent = opt.text; }
+    else { btn.style.display = 'none'; }
+  });
   prevBtn.disabled = (currentIndex === 0);
 }
 
-/* 上一题 */
 prevBtn.addEventListener('click', () => {
   if (currentIndex > 0) {
-    answerHistory.pop(); 
-    currentIndex--;
-    saveProgress(); // 更新存储
+    answerHistory.pop(); currentIndex--; saveProgress();
     card.style.transition = 'none'; card.style.opacity = '0'; card.style.transform = 'scale(0.95)'; void card.offsetWidth;
     card.style.transition = ''; card.style.opacity = '1'; card.style.transform = 'scale(1)';
     renderQuestion();
   }
 });
 
-/* 重新开始按钮 */
 resetBtn.addEventListener('click', () => {
   if (confirm('确定要重新开始吗？当前进度将丢失。')) {
-    localStorage.removeItem(STORAGE_KEY);
-    currentIndex = 0;
-    answerHistory = [];
+    localStorage.removeItem(STORAGE_KEY); currentIndex = 0; answerHistory = [];
     card.style.transition = 'none'; card.style.opacity = '0'; card.style.transform = 'scale(0.95)'; void card.offsetWidth;
     card.style.transition = ''; card.style.opacity = '1'; card.style.transform = 'scale(1)';
     renderQuestion();
   }
 });
 
-/* 选中选项 */
 function handleChoice(choiceKey) {
   const q = QUESTIONS[currentIndex];
-  let selected;
-  if (choiceKey === 'A') selected = q.a;
-  else if (choiceKey === 'B') selected = q.b;
-  else if (choiceKey === 'C') selected = q.c;
-  else selected = q.d;
-  
+  const selected = q[choiceKey.toLowerCase()];
+  if (!selected) return;
   answerHistory.push({ dim: selected.dim, score: selected.score });
   currentIndex++;
-  
   if (currentIndex < QUESTIONS.length) {
-    saveProgress(); // 答题后保存
+    saveProgress();
     card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
     setTimeout(() => {
       renderQuestion();
@@ -460,24 +425,51 @@ function handleChoice(choiceKey) {
       card.style.transition = ''; card.style.opacity = '1'; card.style.transform = 'scale(1)';
     }, 380);
   } else {
-    localStorage.removeItem(STORAGE_KEY); // 答完清空存储
-    finishQuiz();
+    localStorage.removeItem(STORAGE_KEY); finishQuiz();
   }
 }
 optionBtns.forEach(btn => { btn.addEventListener('click', () => handleChoice(btn.dataset.choice)); });
 
 /* ================================================================
-   五、计算与流程切换
+   五、计算（四维 + A/T 身份）
    ================================================================ */
-function calcType() {
-  const score = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
-  answerHistory.forEach(ans => { score[ans.dim] += ans.score; });
-  const dims = [['E', 'I'], ['S', 'N'], ['T', 'F'], ['J', 'P']];
-  return dims.map(([left, right]) => score[left] >= score[right] ? left : right).join('');
+function calcResult() {
+  const score = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0,A:0,Tb:0 };
+  // 注意：T 同时用于 Thinking 和 Turbulent，这里用 Tb 代表 Turbulent
+  answerHistory.forEach(ans => {
+    const d = ans.dim;
+    if (d === 'T' && ans.score >= 0) score.T += ans.score; // 前 28 题的 T 是 Thinking
+    else if (d === 'A' || d === 'T') {
+      // 身份维度的 T 归入 Tb
+      if (d === 'A') score.A += ans.score;
+      else score.Tb += ans.score;
+    } else if (score[d] !== undefined) score[d] += ans.score;
+  });
+
+  // 修正：T 维度在身份题中会被重复计入 Thinking，需要分离
+  // 更可靠的方式：根据题目索引区分
+  const coreScore = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
+  const identityScore = { A:0, Tb:0 };
+  answerHistory.forEach((ans, idx) => {
+    if (idx < 28) {
+      coreScore[ans.dim] += ans.score;
+    } else {
+      if (ans.dim === 'A') identityScore.A += ans.score;
+      else if (ans.dim === 'T') identityScore.Tb += ans.score;
+    }
+  });
+
+  const dims = [['E','I'],['S','N'],['T','F'],['J','P']];
+  const type = dims.map(([l,r]) => coreScore[l] >= coreScore[r] ? l : r).join('');
+  const subtype = identityScore.A >= identityScore.Tb ? 'A' : 'T';
+  return { type, subtype };
 }
 
+/* ================================================================
+   六、流程
+   ================================================================ */
 function finishQuiz() {
-  currentType = calcType();
+  const r = calcResult(); currentType = r.type; currentSubtype = r.subtype;
   card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
   quizLayer.style.pointerEvents = 'none';
   setTimeout(() => {
@@ -505,40 +497,41 @@ function playTypeVideo(type) {
 function endVideo() {
   if (finished) return; finished = true; clearTimeout(videoFallbackTimer);
   try { video.pause(); } catch (e) {}
-  video.classList.remove('show'); 
-  setTimeout(() => showTypeFlash(currentType), 600);
+  video.classList.remove('show');
+  setTimeout(() => showTypeFlash(), 600);
 }
-
 video.addEventListener('ended', endVideo);
 
-function showTypeFlash(type) {
-  typeFlashText.textContent = type;
+function showTypeFlash() {
+  const full = `${currentType}-${currentSubtype}`;
+  typeFlashText.textContent = full;
+  typeFlashSub.textContent = currentSubtype === 'A' ? '坚定型 · 自信、抗压、较少内耗' : '动荡型 · 敏感、追求完美、容易自省';
   typeFlash.classList.add('show');
   setTimeout(() => {
-    dissolveType(type, () => { 
-      setTimeout(() => showResult(type), 200); 
-    });
-  }, 1800);
+    dissolveType(full, () => { setTimeout(() => showResult(), 200); });
+  }, 2200);
 }
 
-/* 粒子消散 */
-function dissolveType(type, onComplete) {
+function dissolveType(text, onComplete) {
   const W = window.innerWidth, H = window.innerHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const cx = W / 2, cy = H / 2, fontSize = Math.min(Math.max(62, W * 0.14), 138), spacing = fontSize * 0.12;
+  const cx = W / 2, cy = H / 2;
+  const fontSize = Math.min(Math.max(44, W * 0.11), 108);
+  const spacing = fontSize * 0.08;
   const off = document.createElement('canvas'); off.width = Math.floor(W * dpr); off.height = Math.floor(H * dpr);
-  const octx = off.getContext('2d'); octx.scale(dpr, dpr); octx.textAlign = 'left'; octx.textBaseline = 'middle'; octx.font = `200 ${fontSize}px -apple-system, sans-serif`;
-  const chars = Array.from(type), widths = chars.map(ch => octx.measureText(ch).width);
+  const octx = off.getContext('2d'); octx.scale(dpr, dpr); octx.textAlign = 'left'; octx.textBaseline = 'middle';
+  octx.font = `200 ${fontSize}px -apple-system, sans-serif`;
+  const chars = Array.from(text), widths = chars.map(ch => octx.measureText(ch).width);
   let totalWidth = 0; chars.forEach((ch, i) => { totalWidth += widths[i]; if (i < chars.length - 1) totalWidth += spacing; });
   const grad = octx.createLinearGradient(cx - totalWidth/2, cy, cx + totalWidth/2, cy);
   grad.addColorStop(0, '#fff'); grad.addColorStop(0.58, '#9fc0ff'); grad.addColorStop(1, '#c9a7ff'); octx.fillStyle = grad;
   let penX = cx - totalWidth / 2;
   chars.forEach((ch, i) => { octx.fillText(ch, penX, cy); penX += widths[i] + spacing; });
 
-  const boxW = totalWidth + 60, boxH = fontSize * 1.45;
+  const boxW = totalWidth + 60, boxH = fontSize * 1.6;
   const boxX = Math.max(0, Math.floor(cx - boxW / 2)), boxY = Math.max(0, Math.floor(cy - boxH / 2));
   const boxX2 = Math.min(W, Math.ceil(cx + boxW / 2)), boxY2 = Math.min(H, Math.ceil(cy + boxH / 2));
   const imgData = octx.getImageData(0, 0, off.width, off.height), pixels = imgData.data;
-  
+
   let particles = [], gap = 3;
   while (true) {
     particles = [];
@@ -548,59 +541,57 @@ function dissolveType(type, onComplete) {
         if (px >= off.width || py >= off.height) continue;
         const idx = (py * off.width + px) * 4;
         if (pixels[idx + 3] > 100) {
-          particles.push({ x: lx, y: ly, vx: (Math.random()-0.5)*2, vy: (Math.random()-0.5)*2 - 0.5, size: 0.9 + Math.random()*1.5, life: 1, decay: 0.01 + Math.random()*0.015, color: `rgb(${pixels[idx]},${pixels[idx+1]},${pixels[idx+2]})` });
+          particles.push({ x: lx, y: ly, vx: (Math.random()-0.5)*2.2, vy: (Math.random()-0.5)*2.2 - 0.5, size: 0.9+Math.random()*1.5, life: 1, decay: 0.01+Math.random()*0.015, color: `rgb(${pixels[idx]},${pixels[idx+1]},${pixels[idx+2]})` });
         }
       }
     }
-    if (particles.length <= 2600 || gap >= 7) break; gap += 0.5;
+    if (particles.length <= 3000 || gap >= 8) break; gap += 0.5;
   }
 
   typeFlash.classList.add('dissolving');
   dissolveCanvas.width = Math.floor(W * dpr); dissolveCanvas.height = Math.floor(H * dpr);
   dissolveCanvas.style.width = W + 'px'; dissolveCanvas.style.height = H + 'px';
   dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
   let lastFrame = performance.now();
   function frame(now) {
     const dt = Math.min(now - lastFrame, 32); lastFrame = now; const f = dt / 16.67;
     dctx.clearRect(0, 0, W, H); let alive = 0;
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i]; if (p.life <= 0) continue; alive++;
-      p.x += p.vx * f; p.y += p.vy * f; p.vx *= Math.pow(0.972, f); p.vy *= Math.pow(0.972, f); p.vy -= 0.02 * f;
-      p.life -= p.decay * f; if (p.life < 0) p.life = 0;
+      p.x += p.vx*f; p.y += p.vy*f; p.vx *= Math.pow(0.972, f); p.vy *= Math.pow(0.972, f); p.vy -= 0.02*f;
+      p.life -= p.decay*f; if (p.life < 0) p.life = 0;
       dctx.globalAlpha = p.life; dctx.fillStyle = p.color;
-      dctx.beginPath(); dctx.arc(p.x, p.y, p.size * (0.35 + 0.65 * p.life), 0, Math.PI * 2); dctx.fill();
+      dctx.beginPath(); dctx.arc(p.x, p.y, p.size*(0.35+0.65*p.life), 0, Math.PI*2); dctx.fill();
     }
     if (alive > 0) requestAnimationFrame(frame);
-    else { dctx.clearRect(0, 0, W, H); typeFlash.classList.remove('show', 'dissolving'); typeFlashText.textContent = ''; onComplete(); }
+    else { dctx.clearRect(0,0,W,H); typeFlash.classList.remove('show','dissolving'); typeFlashText.textContent = ''; typeFlashSub.textContent = ''; onComplete(); }
   }
   requestAnimationFrame(frame);
 }
 
 /* ================================================================
-   六、结果页
+   七、结果页
    ================================================================ */
-function showResult(type) {
-  const info = MBTI_TYPES[type] || {};
-  document.getElementById('result-type').textContent = type;
+function showResult() {
+  const info = MBTI_TYPES[currentType] || {};
+  const fullType = `${currentType}-${currentSubtype}`;
+  document.getElementById('result-type').textContent = fullType;
+  document.getElementById('result-subtype').textContent = currentSubtype === 'A' ? '基础类型 ' + currentType + ' · 坚定型（Assertive）' : '基础类型 ' + currentType + ' · 动荡型（Turbulent）';
   document.getElementById('result-title').textContent = info.title || '';
   document.getElementById('result-desc').textContent = info.desc || '';
-  
   document.getElementById('text-strengths').textContent = info.strengths || '';
   document.getElementById('text-weaknesses').textContent = info.weaknesses || '';
   document.getElementById('text-love').textContent = info.love || '';
   document.getElementById('text-careers').textContent = info.careers || '';
   document.getElementById('text-comm').textContent = info.comm || '';
   document.getElementById('text-growth').textContent = info.growth || '';
-  
   renderSins(info.sins || {});
   resultLayer.classList.add('show');
   setTimeout(animateSins, 400);
 }
 
 function renderSins(sins) {
-  const sinGrid = document.getElementById('sin-grid');
-  sinGrid.innerHTML = '';
+  const sinGrid = document.getElementById('sin-grid'); sinGrid.innerHTML = '';
   SIN_META.forEach(meta => {
     const val = Math.max(0, Math.min(100, Number(sins[meta.key]) || 0));
     const item = document.createElement('div'); item.className = 'sin-item'; item.dataset.value = String(val);
