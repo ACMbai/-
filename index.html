@@ -11,48 +11,43 @@
   #bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   .glass-panel { background: rgba(255,255,255,0.055); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 30px 90px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.12); }
 
-  #music-toggle { position: fixed; top: 24px; right: 24px; z-index: 10; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.6); transition: all 0.3s ease; }
-  #music-toggle:hover { color: #fff; background: rgba(255,255,255,0.1); }
-  #music-toggle svg { width: 20px; height: 20px; fill: currentColor; }
-  #music-toggle.muted::after { content: ''; position: absolute; width: 22px; height: 2px; background: #f87171; transform: rotate(45deg); }
+  #music-toggle { position: fixed; top: 16px; right: 16px; z-index: 10; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,255,255,0.6); transition: all 0.3s ease; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); }
+  #music-toggle:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  #music-toggle svg { width: 18px; height: 18px; fill: currentColor; }
+  #music-toggle.muted::after { content: ''; position: absolute; width: 20px; height: 2px; background: #f87171; transform: rotate(45deg); }
 
+  /* 开始界面 */
   #start-layer { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; transition: opacity 1s ease; padding: 24px; text-align: center; }
   #start-layer.hide { opacity: 0; pointer-events: none; }
   .start-title { font-size: clamp(32px, 6vw, 56px); font-weight: 200; letter-spacing: 0.2em; margin-bottom: 20px; padding-left: 0.2em; background: linear-gradient(120deg, #fff, #9fc0ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .start-desc { font-size: 14.5px; color: rgba(255,255,255,0.5); max-width: 440px; line-height: 1.8; margin-bottom: 50px; letter-spacing: 0.05em; }
+  .start-desc { font-size: 14.5px; color: rgba(255,255,255,0.5); max-width: 440px; line-height: 1.8; margin-bottom: 30px; letter-spacing: 0.05em; }
   .start-btn { padding: 16px 48px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 15px; letter-spacing: 0.2em; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); }
   .start-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(110,150,255,0.2); }
   #resume-hint { display: none; margin-top: 16px; font-size: 12px; color: rgba(160, 190, 255, 0.8); letter-spacing: 0.05em; }
 
-  #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
+  /* 答题区 */
+  #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
   #quiz-layer.active { opacity: 1; pointer-events: auto; }
-  #card { width: min(720px, 100%); padding: 30px 44px 30px; border-radius: 26px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
+  #card { width: min(800px, 100%); padding: 24px 30px; border-radius: 24px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
   
   .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
   .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 16px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
 
-  /* 图片动画容器 */
-  .character-box { display: flex; justify-content: center; height: 160px; margin-bottom: 16px; }
-  /* 图片适配样式：等比缩放、发光阴影、轻微圆角 */
-  .character-img { 
-    max-width: 100%; 
-    max-height: 100%; 
-    object-fit: contain; 
-    filter: drop-shadow(0 0 16px rgba(159, 192, 255, 0.3)); 
-    border-radius: 12px; 
-  }
-
-  #question-text { font-size: 19px; line-height: 1.6; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 12px; min-height: 60px; flex-shrink: 0; text-align: center; }
+  /* 默认（竖屏）布局 */
+  .card-content { display: flex; flex-direction: column; }
+  .character-box { display: flex; justify-content: center; height: 140px; margin-bottom: 12px; }
+  .character-img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 0 16px rgba(159, 192, 255, 0.3)); border-radius: 12px; }
+  #question-text { font-size: 18px; line-height: 1.5; color: #f2f2f5; margin-bottom: 12px; text-align: center; }
+  .options-wrap { display: flex; flex-direction: column; gap: 8px; }
   
-  .options-wrap { flex-grow: 1; }
-  .option { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 12px 20px; margin-top: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 14.5px; line-height: 1.5; cursor: pointer; transition: all 0.3s ease; outline: none; }
-  .option:hover { background: rgba(255,255,255,0.1); border-color: rgba(160,190,255,0.5); transform: translateY(-2px); box-shadow: 0 10px 34px rgba(110,150,255,0.16); }
+  .option { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 14px; cursor: pointer; transition: all 0.3s ease; outline: none; }
+  .option:hover { background: rgba(255,255,255,0.1); border-color: rgba(160,190,255,0.5); transform: translateY(-2px); }
   .option:active { transform: translateY(0) scale(0.99); }
   .option:focus { outline: none; }
   .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(200,218,255,0.95); background: rgba(140,175,255,0.16); border: 1px solid rgba(160,190,255,0.3); }
 
-  .card-footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+  .card-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
   .footer-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; font-family: inherit; outline: none; }
   #prev-btn { color: rgba(255,255,255,0.3); }
   #prev-btn:hover:not(:disabled) { color: rgba(255,255,255,0.8); }
@@ -60,7 +55,27 @@
   #reset-btn { color: rgba(248, 113, 113, 0.4); }
   #reset-btn:hover { color: rgba(248, 113, 113, 0.9); }
 
-  /* 其他层保留 */
+  /* 横屏专用排版（左右分栏） */
+  @media (orientation: landscape) and (max-height: 600px) {
+    #card { padding: 20px 24px; width: 95%; max-width: 900px; }
+    .card-content { flex-direction: row; gap: 24px; align-items: center; }
+    .character-box { width: 35%; height: 180px; margin-bottom: 0; flex-shrink: 0; }
+    .right-panel { width: 65%; display: flex; flex-direction: column; justify-content: center; }
+    #question-text { text-align: left; font-size: 17px; min-height: auto; margin-bottom: 16px; }
+    .options-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } /* 选项变成两列，节省高度 */
+    .option { padding: 10px 14px; font-size: 13.5px; }
+    .card-footer { margin-top: 16px; }
+  }
+
+  /* 竖屏提示遮罩 */
+  #rotate-overlay { position: fixed; inset: 0; z-index: 99; background: #000; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-align: center; padding: 24px; }
+  #rotate-overlay.show { display: flex; }
+  #rotate-overlay svg { width: 64px; height: 64px; color: #9fc0ff; margin-bottom: 20px; animation: rotate-phone 2s infinite ease-in-out; }
+  @keyframes rotate-phone { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
+  #rotate-overlay h2 { font-size: 20px; font-weight: 400; letter-spacing: 0.1em; margin-bottom: 10px; }
+  #rotate-overlay p { font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  /* 其他动画层 */
   #type-flash { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #type-flash.show { opacity: 1; }
   #type-flash-text { font-size: clamp(52px, 12vw, 116px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; padding-left: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(130,165,255,0.42)); transform: scale(0.94); transition: transform 0.9s ease; text-align: center; }
@@ -73,12 +88,12 @@
   
   #intro-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4; background: #000; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
   #intro-video.show { opacity: 1; pointer-events: auto; }
-  #landscape-hint { position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%); z-index: 5; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); font-size: 13px; display: none; align-items: center; gap: 8px; pointer-events: none; opacity: 0; transition: opacity 0.5s ease; }
+  
+  #landscape-hint { position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); z-index: 5; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); font-size: 13px; display: none; align-items: center; gap: 8px; pointer-events: none; opacity: 0; transition: opacity 0.5s ease; }
   #landscape-hint.show { display: flex; opacity: 1; }
-  #landscape-hint svg { width: 18px; height: 18px; animation: rotate 2s infinite ease-in-out; }
-  @keyframes rotate { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
+  #landscape-hint svg { width: 18px; height: 18px; animation: rotate-phone 2s infinite ease-in-out; }
 
-  #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 56px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; }
+  #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 40px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; }
   #result-layer::-webkit-scrollbar { width: 6px; }
   #result-layer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
   #result-layer.show { opacity: 1; pointer-events: auto; }
@@ -106,17 +121,8 @@
   .restart-btn { margin-top: 36px; padding: 13px 36px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #e9e9ee; font-size: 13px; letter-spacing: 0.22em; cursor: pointer; transition: all 0.3s ease; }
   .restart-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); }
 
-  @media (orientation: landscape) and (max-height: 500px) {
-    #card { padding: 20px 30px; max-height: 95vh; overflow-y: auto; width: 90%; }
-    .character-box { height: 80px; margin-bottom: 4px; }
-    #question-text { font-size: 16px; min-height: auto; margin-bottom: 12px; }
-    .option { padding: 8px 14px; margin-top: 6px; font-size: 13px; }
-    .info-grid { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .sin-panel { grid-column: span 3; padding: 16px; }
-    .sin-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
-  }
   @media (max-width: 640px) {
-    #result-layer { padding: 44px 18px; }
+    #result-layer { padding: 32px 18px; }
     .info-grid { grid-template-columns: 1fr; gap: 14px; }
     .sin-panel { grid-column: span 1; }
     .sin-grid { grid-template-columns: 1fr; gap: 14px; }
@@ -133,9 +139,16 @@
 
   <canvas id="bg-canvas"></canvas>
 
+  <!-- 横屏引导遮罩 -->
+  <div id="rotate-overlay">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+    <h2>请横置手机</h2>
+    <p>横屏答题可带来更沉浸的体验，并完美衔接后续视频</p>
+  </div>
+
   <section id="start-layer">
     <h1 class="start-title">MBTI 人格测试</h1>
-    <p class="start-desc">28 道情境题，测量你的核心四维偏好与「坚定/动荡」身份倾向。请凭第一反应作答，这里没有标准答案，只有真实的你。</p>
+    <p class="start-desc">28 道情境题，测量你的核心四维偏好与「坚定/动荡」身份倾向。为了更好的沉浸体验，建议横屏作答。</p>
     <button class="start-btn" id="start-btn">开 始 测 试</button>
     <div id="resume-hint">检测到未完成的进度，点击继续</div>
   </section>
@@ -148,17 +161,22 @@
       </div>
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       
-      <!-- 动态图片插入点 -->
-      <div class="character-box" id="character-box"></div>
-
-      <h2 id="question-text">题目加载中…</h2>
-      <div class="options-wrap">
-        <button class="option" data-choice="A" type="button"><span class="tag">A</span><span class="option-text"></span></button>
-        <button class="option" data-choice="B" type="button"><span class="tag">B</span><span class="option-text"></span></button>
-        <button class="option" data-choice="C" type="button"><span class="tag">C</span><span class="option-text"></span></button>
-        <button class="option" data-choice="D" type="button"><span class="tag">D</span><span class="option-text"></span></button>
-        <button class="option" data-choice="E" type="button"><span class="tag">E</span><span class="option-text"></span></button>
+      <div class="card-content">
+        <!-- 图片区 -->
+        <div class="character-box" id="character-box"></div>
+        <!-- 题干与选项区 -->
+        <div class="right-panel">
+          <h2 id="question-text">题目加载中…</h2>
+          <div class="options-wrap">
+            <button class="option" data-choice="A" type="button"><span class="tag">A</span><span class="option-text"></span></button>
+            <button class="option" data-choice="B" type="button"><span class="tag">B</span><span class="option-text"></span></button>
+            <button class="option" data-choice="C" type="button"><span class="tag">C</span><span class="option-text"></span></button>
+            <button class="option" data-choice="D" type="button"><span class="tag">D</span><span class="option-text"></span></button>
+            <button class="option" data-choice="E" type="button"><span class="tag">E</span><span class="option-text"></span></button>
+          </div>
+        </div>
       </div>
+
       <div class="card-footer">
         <button id="prev-btn" class="footer-btn" type="button" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg> 上一题
@@ -203,7 +221,26 @@
 
 <script>
 /* ================================================================
-   一、四芒星背景
+   一、屏幕方向控制与提示
+   ================================================================ */
+const rotateOverlay = document.getElementById('rotate-overlay');
+let testStarted = false;
+
+function checkOrientation() {
+  // 如果测试已开始，且当前是竖屏（高度大于宽度），则显示遮罩
+  if (testStarted) {
+    if (window.innerHeight > window.innerWidth) {
+      rotateOverlay.classList.add('show');
+    } else {
+      rotateOverlay.classList.remove('show');
+    }
+  }
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
+
+/* ================================================================
+   二、四芒星背景
    ================================================================ */
 (function initParticles() {
   const canvas = document.getElementById('bg-canvas');
@@ -244,7 +281,7 @@
 })();
 
 /* ================================================================
-   二、16 人格数据
+   三、数据与题库（保持之前的配图）
    ================================================================ */
 const MBTI_TYPES = {
   INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', comm: '倾向于倾听和共情，表达含蓄，很少直接批评他人，喜欢用文字或艺术表达内心。', growth: '试着把想法落地为具体行动，接受世界的不完美，学会在必要时表达自己的愤怒和边界。', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
@@ -272,9 +309,6 @@ const SIN_META = [
   { key: 'lust', name: '色欲', en: 'Lust', color: '#f472b6' }
 ];
 
-/* ================================================================
-   三、28 道题库（已完成精准替换：题1图28，题3图17，题28图15）
-   ================================================================ */
 const QUESTIONS = [
   { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', scene: '人格测试题配图-28张_assets/1 (28).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
   { q: '比起和人聊天，我更享受一个人安静地做自己的事。', scene: '人格测试题配图-28张_assets/1 (11).png', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
@@ -366,6 +400,9 @@ musicToggle.addEventListener('click', () => {
 });
 
 startBtn.addEventListener('click', () => {
+  testStarted = true;
+  checkOrientation(); // 点击开始后立即检查一次方向
+  
   bgm.volume = 0.6;
   bgm.play().then(() => { musicPlaying = true; musicToggle.classList.remove('muted'); }).catch(() => {});
   startLayer.classList.add('hide'); quizLayer.classList.add('active'); renderQuestion();
@@ -377,7 +414,6 @@ function renderQuestion() {
   progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
   questionText.textContent = q.q;
   
-  // 使用 encodeURI 处理文件名中的空格、括号和中文，确保 100% 加载成功
   const encodedSrc = encodeURI(q.scene); 
   characterBox.innerHTML = `<img src="${encodedSrc}" class="character-img" alt="scene" onerror="this.style.display='none'">`;
 
@@ -481,16 +517,9 @@ function playTypeVideo(type) {
   video.classList.remove('show'); video.muted = true; video.setAttribute('muted', ''); video.src = src; video.load();
   video.addEventListener('playing', function onPlaying() { 
     videoStarted = true; 
+    // 在视频播放时，如果用户又转成了竖屏，依然尝试全屏。
     if (window.innerHeight > window.innerWidth) {
       landscapeHint.classList.add('show');
-      const videoEl = video;
-      if (videoEl.requestFullscreen) {
-        videoEl.requestFullscreen().then(() => {
-          if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('landscape').catch(e => console.log('Orientation lock not supported:', e));
-          }
-        }).catch(e => console.log('Fullscreen failed:', e));
-      }
       setTimeout(() => { landscapeHint.classList.remove('show'); }, 5000);
     }
   }, { once: true });
