@@ -32,13 +32,16 @@
   .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 16px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
 
-  /* 小人动画容器 */
-  .character-box { display: flex; justify-content: center; height: 100px; margin-bottom: 8px; }
-  .character-svg { width: 120px; height: 100px; color: #9fc0ff; filter: drop-shadow(0 0 12px rgba(159, 192, 255, 0.25)); }
-  
-  /* 小人基础样式 */
-  .line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-  .fill { fill: currentColor; }
+  /* 图片动画容器 */
+  .character-box { display: flex; justify-content: center; height: 140px; margin-bottom: 16px; }
+  /* 图片适配样式：等比缩放、发光阴影、轻微圆角 */
+  .character-img { 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
+    filter: drop-shadow(0 0 16px rgba(159, 192, 255, 0.3)); 
+    border-radius: 12px; 
+  }
 
   #question-text { font-size: 19px; line-height: 1.6; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 12px; min-height: 60px; flex-shrink: 0; text-align: center; }
   
@@ -103,24 +106,9 @@
   .restart-btn { margin-top: 36px; padding: 13px 36px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #e9e9ee; font-size: 13px; letter-spacing: 0.22em; cursor: pointer; transition: all 0.3s ease; }
   .restart-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); }
 
-  /* --- 小人动画 CSS --- */
-  .bubble { animation: floatBubble 2s infinite ease-in-out; }
-  @keyframes floatBubble { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-  .gear-spin { animation: spin 4s linear infinite; transform-origin: center; }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
-  .heart-beat { animation: beat 1s ease-in-out infinite; transform-origin: center; }
-  @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-  .check-pop { animation: pop 1.5s ease-in-out infinite; transform-origin: center; }
-  @keyframes pop { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 1; } }
-  .clock-tick { animation: tick 2s ease-in-out infinite; transform-origin: center; }
-  @keyframes tick { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
-  .star-twinkle { animation: twinkle 1.5s ease-in-out infinite alternate; transform-origin: center; }
-  @keyframes twinkle { 0% { opacity: 0.3; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.1); } }
-  
   @media (orientation: landscape) and (max-height: 500px) {
     #card { padding: 20px 30px; max-height: 95vh; overflow-y: auto; width: 90%; }
-    .character-box { height: 60px; margin-bottom: 4px; }
-    .character-svg { width: 80px; height: 60px; }
+    .character-box { height: 80px; margin-bottom: 4px; }
     #question-text { font-size: 16px; min-height: auto; margin-bottom: 12px; }
     .option { padding: 8px 14px; margin-top: 6px; font-size: 13px; }
     .info-grid { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
@@ -160,7 +148,7 @@
       </div>
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       
-      <!-- 动态小人插入点 -->
+      <!-- 动态图片插入点 -->
       <div class="character-box" id="character-box"></div>
 
       <h2 id="question-text">题目加载中…</h2>
@@ -285,252 +273,41 @@ const SIN_META = [
 ];
 
 /* ================================================================
-   三、28 道题库
+   三、28 道题库（已完美适配带空格和括号的文件名）
    ================================================================ */
 const QUESTIONS = [
-  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', scene: 'party', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', scene: 'solo', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', scene: 'talk', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', scene: 'crowd', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', scene: 'talk', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', scene: 'solo', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', scene: 'manual', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', scene: 'stars', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', scene: 'gear', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', scene: 'stars', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', scene: 'manual', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', scene: 'arrow', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', scene: 'gear', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', scene: 'comfort', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', scene: 'gear', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', scene: 'comfort', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', scene: 'gear', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', scene: 'comfort', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', scene: 'checklist', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', scene: 'plane', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', scene: 'clock', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', scene: 'plane', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', scene: 'checklist', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '我经常在最后期限的压迫下才进入最佳状态。', scene: 'clock', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', scene: 'sun', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', scene: 'sun', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', scene: 'sun', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', scene: 'cloud', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'A', score: 1 }, e: { text: '完全不符合', dim: 'A', score: 2 } }
+  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', scene: 'images/1 (1).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', scene: 'images/1 (2).png', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', scene: 'images/1 (3).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', scene: 'images/1 (4).png', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', scene: 'images/1 (5).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', scene: 'images/1 (6).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', scene: 'images/1 (7).png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', scene: 'images/1 (8).png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', scene: 'images/1 (9).png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', scene: 'images/1 (10).png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', scene: 'images/1 (11).png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', scene: 'images/1 (12).png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', scene: 'images/1 (13).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', scene: 'images/1 (14).png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', scene: 'images/1 (15).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', scene: 'images/1 (16).png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', scene: 'images/1 (17).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', scene: 'images/1 (18).png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', scene: 'images/1 (19).png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', scene: 'images/1 (20).png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', scene: 'images/1 (21).png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', scene: 'images/1 (22).png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', scene: 'images/1 (23).png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '我经常在最后期限的压迫下才进入最佳状态。', scene: 'images/1 (24).png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', scene: 'images/1 (25).png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', scene: 'images/1 (26).png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', scene: 'images/1 (27).png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', scene: 'images/1 (28).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'A', score: 1 }, e: { text: '完全不符合', dim: 'A', score: 2 } }
 ];
 
 /* ================================================================
-   四、重绘的 SVG 场景库（分区布局，朝向互动）
-   ================================================================ */
-const SCENES = {
-  party: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="50" cy="40" r="8" class="fill"/>
-    <path d="M 50 48 Q 45 65 50 85" class="line"/>
-    <path d="M 50 85 L 40 95 M 50 85 L 60 95" class="line"/>
-    <path d="M 48 58 L 30 45 M 48 58 L 70 45" class="line"/>
-    <path d="M 20 30 L 25 20 L 30 30" class="line" stroke-opacity="0.6"/>
-    <path d="M 75 30 L 80 20 L 85 30" class="line" stroke-opacity="0.6"/>
-    <circle cx="25" cy="70" r="2" class="fill" opacity="0.4"/>
-    <circle cx="80" cy="70" r="2" class="fill" opacity="0.4"/>
-  </svg>`,
-  
-  solo: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="35" cy="40" r="8" class="fill"/>
-    <path d="M 35 48 Q 30 65 35 85" class="line"/>
-    <path d="M 35 85 L 25 95 M 35 85 L 45 95" class="line"/>
-    <path d="M 33 58 L 20 65 M 33 58 L 50 65" class="line"/>
-    <!-- 右侧画个窗户/月亮，填补空白 -->
-    <path d="M 65 25 Q 80 25 80 40 Q 80 55 65 55 Z" class="line" stroke-opacity="0.3"/>
-    <path d="M 70 35 L 75 35 M 72.5 32.5 L 72.5 37.5" class="line" stroke-opacity="0.3"/>
-  </svg>`,
-  
-  talk: `<svg class="character-svg" viewBox="0 0 100 100">
-    <!-- 左边的人（倾听者，朝右） -->
-    <circle cx="25" cy="40" r="8" class="fill"/>
-    <path d="M 25 48 Q 30 65 25 85" class="line"/> <!-- 身体前倾 -->
-    <path d="M 25 85 L 18 95 M 25 85 L 32 95" class="line"/>
-    <path d="M 27 58 L 40 55" class="line"/> <!-- 手臂抬起 -->
-    <path d="M 27 58 L 20 70" class="line"/>
-    <path d="M 35 35 Q 38 40 35 45" class="line" stroke-opacity="0.6" stroke-width="2" />
-
-    <!-- 右边的人（倾诉者，朝左） -->
-    <circle cx="75" cy="40" r="8" class="fill"/>
-    <path d="M 75 48 Q 70 65 75 85" class="line"/>
-    <path d="M 75 85 L 68 95 M 75 85 L 82 95" class="line"/>
-    <path d="M 73 58 L 60 50" class="line"/>
-    <path d="M 73 58 L 65 70" class="line"/>
-    
-    <!-- 对话气泡（在右边人头顶，向左飘，不越界） -->
-    <g class="bubble" transform="translate(60, 15)">
-      <path d="M 10 0 Q 25 0 25 10 Q 25 18 10 18 L 5 22 L 8 18 Q 0 18 0 10 Q 0 0 10 0" class="line" stroke-width="2"/>
-      <circle cx="8" cy="9" r="1.5" class="fill"/>
-      <circle cx="13" cy="9" r="1.5" class="fill"/>
-      <circle cx="18" cy="9" r="1.5" class="fill"/>
-    </g>
-  </svg>`,
-  
-  crowd: `<svg class="character-svg" viewBox="0 0 100 100">
-    <!-- 模糊的人群背景 -->
-    <circle cx="20" cy="50" r="8" class="line" stroke-opacity="0.15"/>
-    <circle cx="80" cy="50" r="8" class="line" stroke-opacity="0.15"/>
-    <circle cx="30" cy="85" r="8" class="line" stroke-opacity="0.15"/>
-    <circle cx="70" cy="85" r="8" class="line" stroke-opacity="0.15"/>
-    
-    <!-- 主角 -->
-    <circle cx="50" cy="40" r="8" class="fill"/>
-    <path d="M 50 48 Q 45 65 50 85" class="line"/>
-    <path d="M 50 85 L 40 95 M 50 85 L 60 95" class="line"/>
-    <path d="M 48 58 L 35 65 M 48 58 L 65 65" class="line"/>
-    <!-- 汗滴 -->
-    <path d="M 60 30 Q 62 35 60 40" class="line" stroke-opacity="0.6" stroke-width="2"/>
-  </svg>`,
-  
-  manual: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="35" cy="40" r="8" class="fill"/>
-    <path d="M 35 48 Q 30 65 35 85" class="line"/>
-    <path d="M 35 85 L 25 95 M 35 85 L 45 95" class="line"/>
-    <path d="M 33 58 L 50 65" class="line"/>
-    <!-- 说明书 -->
-    <rect x="60" y="30" width="25" height="35" rx="2" class="line"/>
-    <line x1="65" y1="40" x2="80" y2="40" class="line" stroke-width="1.5"/>
-    <line x1="65" y1="50" x2="80" y2="50" class="line" stroke-width="1.5"/>
-    <line x1="65" y1="60" x2="80" y2="60" class="line" stroke-width="1.5"/>
-  </svg>`,
-  
-  stars: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="40" cy="45" r="8" class="fill"/>
-    <path d="M 40 53 Q 35 70 40 85" class="line"/>
-    <path d="M 40 85 L 30 95 M 40 85 L 50 95" class="line"/>
-    <path d="M 38 63 L 25 55 M 38 63 L 55 55" class="line"/>
-    <!-- 星星在右上角 -->
-    <g class="star-twinkle" transform="translate(75, 25)">
-      <path d="M 0 -8 L 2 -2 L 8 0 L 2 2 L 0 8 L -2 2 L -8 0 L -2 -2 Z" class="fill"/>
-    </g>
-    <g class="star-twinkle" style="animation-delay:0.5s" transform="translate(85, 45)">
-      <path d="M 0 -5 L 1 -1 L 5 0 L 1 1 L 0 5 L -1 1 L -5 0 L -1 -1 Z" class="fill"/>
-    </g>
-  </svg>`,
-  
-  gear: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="35" cy="40" r="8" class="fill"/>
-    <path d="M 35 48 Q 30 65 35 85" class="line"/>
-    <path d="M 35 85 L 25 95 M 35 85 L 45 95" class="line"/>
-    <path d="M 33 58 L 50 60" class="line"/>
-    <!-- 齿轮在右侧 -->
-    <g class="gear-spin" transform="translate(75, 50)">
-      <circle cx="0" cy="0" r="10" class="line"/>
-      <circle cx="0" cy="0" r="3" class="fill"/>
-      <line x1="0" y1="-13" x2="0" y2="-10" class="line"/>
-      <line x1="0" y1="13" x2="0" y2="10" class="line"/>
-      <line x1="-13" y1="0" x2="-10" y2="0" class="line"/>
-      <line x1="13" y1="0" x2="10" y2="0" class="line"/>
-      <line x1="-9" y1="-9" x2="-7" y2="-7" class="line"/>
-      <line x1="9" y1="9" x2="7" y2="7" class="line"/>
-      <line x1="-9" y1="9" x2="-7" y2="7" class="line"/>
-      <line x1="9" y1="-9" x2="7" y2="-7" class="line"/>
-    </g>
-  </svg>`,
-  
-  comfort: `<svg class="character-svg" viewBox="0 0 100 100">
-    <!-- 左边的人（安慰者，朝右） -->
-    <circle cx="25" cy="40" r="8" class="fill"/>
-    <path d="M 25 48 Q 30 65 25 85" class="line"/>
-    <path d="M 25 85 L 18 95 M 25 85 L 32 95" class="line"/>
-    <path d="M 27 58 L 50 58" class="line"/> <!-- 手伸过去 -->
-    
-    <!-- 右边的人（难过者，朝左，低头） -->
-    <circle cx="75" cy="45" r="8" class="fill"/> <!-- 头低 -->
-    <path d="M 75 53 Q 70 65 75 85" class="line"/>
-    <path d="M 75 85 L 68 95 M 75 85 L 82 95" class="line"/>
-    <path d="M 73 62 L 65 70" class="line"/>
-    
-    <!-- 爱心 -->
-    <g class="heart-beat" transform="translate(50, 45)">
-      <path d="M 0 -3 C 0 -3 -3 -8 -6 -5 C -9 -2 -6 2 0 6 C 6 2 9 -2 6 -5 C 3 -8 0 -3 0 -3 Z" class="fill"/>
-    </g>
-  </svg>`,
-  
-  checklist: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="35" cy="40" r="8" class="fill"/>
-    <path d="M 35 48 Q 30 65 35 85" class="line"/>
-    <path d="M 35 85 L 25 95 M 35 85 L 45 95" class="line"/>
-    <path d="M 33 58 L 50 65" class="line"/>
-    <!-- 悬浮的清单在右侧 -->
-    <rect x="60" y="30" width="25" height="35" rx="2" class="line"/>
-    <line x1="65" y1="40" x2="80" y2="40" class="line" stroke-width="1.5"/>
-    <line x1="65" y1="50" x2="80" y2="50" class="line" stroke-width="1.5"/>
-    <line x1="65" y1="60" x2="80" y2="60" class="line" stroke-width="1.5"/>
-    <g class="check-pop" transform="translate(72, 45)">
-      <path d="M -4 0 L -1 3 L 5 -3" class="line" stroke-width="2"/>
-    </g>
-  </svg>`,
-  
-  plane: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="40" cy="40" r="8" class="fill"/>
-    <path d="M 40 48 Q 35 65 40 85" class="line"/>
-    <path d="M 40 85 L 30 95 M 40 85 L 50 95" class="line"/>
-    <path d="M 38 58 L 25 65 M 38 58 L 55 65" class="line"/>
-    <!-- 纸飞机在右侧 -->
-    <g class="bubble" transform="translate(75, 30) rotate(15)">
-      <path d="M 0 0 L -15 -5 L -8 5 Z" class="fill"/>
-    </g>
-  </svg>`,
-  
-  clock: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="35" cy="40" r="8" class="fill"/>
-    <path d="M 35 48 Q 30 65 35 85" class="line"/>
-    <path d="M 35 85 L 25 95 M 35 85 L 45 95" class="line"/>
-    <path d="M 33 58 L 20 65 M 33 58 L 50 60" class="line"/>
-    <!-- 时钟在右侧 -->
-    <g class="clock-tick" transform="translate(75, 50)">
-      <circle cx="0" cy="0" r="10" class="line"/>
-      <line x1="0" y1="0" x2="0" y2="-6" class="line"/>
-      <line x1="0" y1="0" x2="5" y2="0" class="line"/>
-    </g>
-  </svg>`,
-  
-  arrow: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="40" cy="40" r="8" class="fill"/>
-    <path d="M 40 48 Q 35 65 40 85" class="line"/>
-    <path d="M 40 85 L 30 95 M 40 85 L 50 95" class="line"/>
-    <path d="M 38 58 L 25 60 M 38 58 L 55 65" class="line"/>
-    <!-- 箭头/星星向右上 -->
-    <g class="star-twinkle" transform="translate(75, 35)">
-      <path d="M 0 -8 L 2 -2 L 8 0 L 2 2 L 0 8 L -2 2 L -8 0 L -2 -2 Z" class="fill"/>
-    </g>
-    <path d="M 55 25 Q 65 20 70 30" class="line" stroke-opacity="0.4" stroke-dasharray="2 2"/>
-  </svg>`,
-  
-  sun: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="40" cy="40" r="8" class="fill"/>
-    <path d="M 40 48 Q 35 65 40 85" class="line"/>
-    <path d="M 40 85 L 30 95 M 40 85 L 50 95" class="line"/>
-    <path d="M 38 58 L 25 65 M 38 58 L 55 65" class="line"/>
-    <!-- 太阳在右上 -->
-    <g class="star-twinkle" transform="translate(75, 25)">
-      <circle cx="0" cy="0" r="6" class="fill"/>
-      <line x1="0" y1="-10" x2="0" y2="-8" class="line"/>
-      <line x1="0" y1="10" x2="0" y2="8" class="line"/>
-      <line x1="-10" y1="0" x2="-8" y2="0" class="line"/>
-      <line x1="10" y1="0" x2="8" y2="0" class="line"/>
-    </g>
-  </svg>`,
-  
-  cloud: `<svg class="character-svg" viewBox="0 0 100 100">
-    <circle cx="40" cy="40" r="8" class="fill"/>
-    <path d="M 40 48 Q 35 65 40 85" class="line"/>
-    <path d="M 40 85 L 30 95 M 40 85 L 50 95" class="line"/>
-    <path d="M 38 58 L 25 65 M 38 58 L 55 65" class="line"/>
-    <!-- 乌云/雨滴在右上 -->
-    <g class="bubble" transform="translate(70, 20)">
-      <path d="M -10 0 Q -10 -10 0 -10 Q 10 -10 10 0 Q 10 8 0 8 L -5 12 Z" class="fill"/>
-      <line x1="-2" y1="18" x2="2" y2="18" class="line" stroke-width="2"/>
-      <line x1="-4" y1="24" x2="0" y2="24" class="line" stroke-width="2"/>
-    </g>
-  </svg>`
-};
-
-/* ================================================================
-   五、DOM 与状态
+   四、DOM 与状态
    ================================================================ */
 const startLayer = document.getElementById('start-layer');
 const startBtn = document.getElementById('start-btn');
@@ -560,7 +337,7 @@ const restartBtn = document.getElementById('restart-btn');
 let currentIndex = 0, answerHistory = [], currentType = '', currentSubtype = '';
 let finished = false, videoStarted = false, videoFallbackTimer = null, musicPlaying = false;
 
-const STORAGE_KEY = 'mbti_test_progress_v5';
+const STORAGE_KEY = 'mbti_test_progress_v7';
 
 function saveProgress() {
   if (currentIndex < QUESTIONS.length) localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: currentIndex, answers: answerHistory }));
@@ -600,7 +377,9 @@ function renderQuestion() {
   progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
   questionText.textContent = q.q;
   
-  characterBox.innerHTML = SCENES[q.scene] || SCENES.solo;
+  // 使用 encodeURIComponent 处理文件名中的空格和括号，确保所有浏览器都能正确加载
+  const encodedSrc = encodeURI(q.scene); 
+  characterBox.innerHTML = `<img src="${encodedSrc}" class="character-img" alt="scene" onerror="this.style.display='none'">`;
 
   const keys = ['a', 'b', 'c', 'd', 'e'];
   optionBtns.forEach((btn, i) => {
@@ -657,7 +436,7 @@ function handleChoice(choiceKey) {
 optionBtns.forEach(btn => { btn.addEventListener('click', () => handleChoice(btn.dataset.choice)); });
 
 /* ================================================================
-   六、计算
+   五、计算
    ================================================================ */
 function calcResult() {
   const coreScore = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
@@ -681,7 +460,7 @@ function calcResult() {
 }
 
 /* ================================================================
-   七、流程与结果页
+   六、流程与结果页
    ================================================================ */
 function finishQuiz() {
   const r = calcResult(); currentType = r.type; currentSubtype = r.subtype;
