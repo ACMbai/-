@@ -24,28 +24,46 @@
   .start-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(110,150,255,0.2); }
   #resume-hint { display: none; margin-top: 16px; font-size: 12px; color: rgba(160, 190, 255, 0.8); letter-spacing: 0.05em; }
 
+  /* 答题区 */
   #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
   #quiz-layer.active { opacity: 1; pointer-events: auto; }
-  #card { width: min(800px, 100%); padding: 24px 30px; border-radius: 24px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
+  #card { width: min(800px, 100%); padding: 24px 30px; border-radius: 24px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; }
   
-  .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
-  .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 16px; overflow: hidden; }
+  .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; z-index: 2; }
+  .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 16px; overflow: hidden; z-index: 2; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
 
   /* 默认（竖屏）布局 */
-  .card-content { display: flex; flex-direction: column; }
-  .character-box { display: flex; justify-content: center; height: 140px; margin-bottom: 12px; }
-  .character-img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 0 16px rgba(159, 192, 255, 0.3)); border-radius: 12px; }
-  #question-text { font-size: 18px; line-height: 1.5; color: #f2f2f5; margin-bottom: 12px; text-align: center; }
-  .options-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .card-content { display: flex; flex-direction: column; z-index: 2; }
   
+  .character-box { 
+    display: flex; justify-content: center; align-items: center;
+    height: 180px; /* 放大图片 */
+    margin-top: -10px; 
+    margin-bottom: -10px; /* 让图片与文字更紧凑 */
+    position: relative;
+  }
+  
+  .character-img { 
+    max-width: 100%; max-height: 100%; object-fit: contain; 
+    /* 核心魔法：滤色模式去除黑底，让发光线条融入星空 */
+    mix-blend-mode: screen; 
+    /* 增加边缘羽化，让它和背景完美过渡，没有方形边界 */
+    -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+    mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+    transform: scale(1.1); /* 视觉上再放大一点 */
+  }
+
+  #question-text { font-size: 18px; line-height: 1.6; color: #f2f2f5; margin-bottom: 16px; text-align: center; font-weight: 500; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+  
+  .options-wrap { display: flex; flex-direction: column; gap: 8px; }
   .option { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 14px; cursor: pointer; transition: all 0.3s ease; outline: none; }
   .option:hover { background: rgba(255,255,255,0.1); border-color: rgba(160,190,255,0.5); transform: translateY(-2px); }
   .option:active { transform: translateY(0) scale(0.99); }
   .option:focus { outline: none; }
   .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(200,218,255,0.95); background: rgba(140,175,255,0.16); border: 1px solid rgba(160,190,255,0.3); }
 
-  .card-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .card-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
   .footer-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; font-family: inherit; outline: none; }
   #prev-btn { color: rgba(255,255,255,0.3); }
   #prev-btn:hover:not(:disabled) { color: rgba(255,255,255,0.8); }
@@ -53,15 +71,38 @@
   #reset-btn { color: rgba(248, 113, 113, 0.4); }
   #reset-btn:hover { color: rgba(248, 113, 113, 0.9); }
 
-  /* 横屏专用排版（左右分栏） */
+  /* 横屏专用排版（左右分栏，图片放大） */
   @media (orientation: landscape) and (max-height: 800px) {
     #card { padding: 16px 24px; width: 95%; max-width: 900px; }
-    .card-content { flex-direction: row; gap: 24px; align-items: center; }
-    .character-box { width: 35%; height: 160px; margin-bottom: 0; flex-shrink: 0; }
-    .right-panel { width: 65%; display: flex; flex-direction: column; justify-content: center; }
-    #question-text { text-align: left; font-size: 16px; min-height: auto; margin-bottom: 12px; }
-    .options-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } /* 选项变成两列，节省高度 */
-    .option { padding: 8px 12px; font-size: 13px; }
+    .card-content { flex-direction: row; gap: 10px; align-items: stretch; }
+    
+    .character-box { 
+      width: 45%; /* 占比更大 */
+      height: auto; 
+      min-height: 200px;
+      margin: 0; 
+      flex-shrink: 0; 
+    }
+    .character-img { 
+      transform: scale(1.3); /* 横屏时视觉放大 */
+    }
+    
+    .right-panel { 
+      width: 55%; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      padding-left: 10px;
+      position: relative;
+      z-index: 3;
+    }
+    #question-text { 
+      text-align: left; font-size: 16px; 
+      min-height: auto; margin-bottom: 16px; 
+      /* 文字靠右侧，避免被左侧巨大的光晕干扰 */
+    }
+    .options-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .option { padding: 10px 12px; font-size: 13px; }
     .card-footer { margin-top: 12px; }
   }
 
@@ -160,7 +201,7 @@
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       
       <div class="card-content">
-        <!-- 图片区 -->
+        <!-- 图片区：滤色模式使其融入背景 -->
         <div class="character-box" id="character-box"></div>
         <!-- 题干与选项区 -->
         <div class="right-panel">
@@ -219,34 +260,21 @@
 
 <script>
 /* ================================================================
-   一、屏幕方向控制与提示（升级版：绝对防卡死）
+   一、屏幕方向控制与提示
    ================================================================ */
 const rotateOverlay = document.getElementById('rotate-overlay');
 let testStarted = false;
 let orientationCheckInterval = null;
-
-// 使用 matchMedia 判断，这比比较 innerWidth 更准确，且与 CSS 的媒体查询一致
 const portraitQuery = window.matchMedia("(orientation: portrait)");
 
 function checkOrientation() {
-  if (!testStarted) {
-    rotateOverlay.classList.remove('show');
-    return;
-  }
-  
-  if (portraitQuery.matches) {
-    rotateOverlay.classList.add('show');
-  } else {
-    rotateOverlay.classList.remove('show');
-  }
+  if (!testStarted) { rotateOverlay.classList.remove('show'); return; }
+  if (portraitQuery.matches) rotateOverlay.classList.add('show');
+  else rotateOverlay.classList.remove('show');
 }
 
-// 监听事件
 window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', () => {
-  // 延迟 300ms 等待浏览器完成屏幕旋转和渲染更新
-  setTimeout(checkOrientation, 300);
-});
+window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 300));
 
 /* ================================================================
    二、四芒星背景
@@ -411,7 +439,7 @@ musicToggle.addEventListener('click', () => {
 startBtn.addEventListener('click', () => {
   testStarted = true;
   
-  // 尝试请求全屏，这样横屏显示会更彻底（隐藏浏览器地址栏）
+  // 尝试请求全屏
   const docEl = document.documentElement;
   if (docEl.requestFullscreen) {
     docEl.requestFullscreen().catch(e => console.log('Fullscreen request failed:', e));
@@ -419,9 +447,8 @@ startBtn.addEventListener('click', () => {
     docEl.webkitRequestFullscreen().catch(e => console.log('Fullscreen request failed:', e));
   }
   
-  checkOrientation(); // 立即检查一次
+  checkOrientation(); 
   
-  // 开启兜底轮询，每 500ms 检查一次，防止部分微信内置浏览器不触发 resize 事件
   if (orientationCheckInterval) clearInterval(orientationCheckInterval);
   orientationCheckInterval = setInterval(checkOrientation, 500);
 
@@ -522,7 +549,7 @@ function calcResult() {
    ================================================================ */
 function finishQuiz() {
   if (orientationCheckInterval) clearInterval(orientationCheckInterval);
-  rotateOverlay.classList.remove('show'); // 答题结束时清理遮罩
+  rotateOverlay.classList.remove('show');
 
   const r = calcResult(); currentType = r.type; currentSubtype = r.subtype;
   card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
