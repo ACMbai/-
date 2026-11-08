@@ -26,12 +26,18 @@
 
   #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
   #quiz-layer.active { opacity: 1; pointer-events: auto; }
-  #card { width: min(720px, 100%); padding: 40px 44px 30px; border-radius: 26px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
+  #card { width: min(720px, 100%); padding: 30px 44px 30px; border-radius: 26px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
   
-  .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
-  .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 24px; overflow: hidden; }
+  .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
+  .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 16px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
-  #question-text { font-size: 19px; line-height: 1.6; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 16px; min-height: 60px; flex-shrink: 0; }
+
+  /* 小人动画容器 */
+  .character-box { display: flex; justify-content: center; height: 90px; margin-bottom: 8px; }
+  .character-svg { width: 90px; height: 90px; color: #9fc0ff; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 12px rgba(159, 192, 255, 0.25)); }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+  #question-text { font-size: 19px; line-height: 1.6; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 12px; min-height: 60px; flex-shrink: 0; text-align: center; }
   
   .options-wrap { flex-grow: 1; }
   .option { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 12px 20px; margin-top: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 14.5px; line-height: 1.5; cursor: pointer; transition: all 0.3s ease; outline: none; }
@@ -48,6 +54,7 @@
   #reset-btn { color: rgba(248, 113, 113, 0.4); }
   #reset-btn:hover { color: rgba(248, 113, 113, 0.9); }
 
+  /* 隐藏其他层，保留原有逻辑 */
   #type-flash { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #type-flash.show { opacity: 1; }
   #type-flash-text { font-size: clamp(52px, 12vw, 116px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; padding-left: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(130,165,255,0.42)); transform: scale(0.94); transition: transform 0.9s ease; text-align: center; }
@@ -56,44 +63,33 @@
   #type-flash.show #type-flash-sub { opacity: 1; }
   #type-flash.dissolving { opacity: 0; transition: opacity 0.3s ease; }
   #type-flash.dissolving #type-flash-text { transform: scale(1.08); transition: transform 0.6s ease; }
-
   #dissolve-canvas { position: fixed; inset: 0; z-index: 6; width: 100%; height: 100%; pointer-events: none; display: block; }
   
   #intro-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4; background: #000; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; }
   #intro-video.show { opacity: 1; pointer-events: auto; }
-  
-  #landscape-hint {
-    position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%);
-    z-index: 5; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.9); font-size: 13px; letter-spacing: 0.1em;
-    display: none; align-items: center; gap: 8px; pointer-events: none;
-    opacity: 0; transition: opacity 0.5s ease;
-  }
+  #landscape-hint { position: fixed; bottom: 15%; left: 50%; transform: translateX(-50%); z-index: 5; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); font-size: 13px; display: none; align-items: center; gap: 8px; pointer-events: none; opacity: 0; transition: opacity 0.5s ease; }
   #landscape-hint.show { display: flex; opacity: 1; }
   #landscape-hint svg { width: 18px; height: 18px; animation: rotate 2s infinite ease-in-out; }
   @keyframes rotate { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
 
-  #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 56px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+  #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 56px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; }
   #result-layer::-webkit-scrollbar { width: 6px; }
   #result-layer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
   #result-layer.show { opacity: 1; pointer-events: auto; }
   .result-inner { margin: auto; width: 100%; max-width: 760px; text-align: center; transform: translateY(18px); transition: transform 1.5s ease; padding-bottom: 40px; }
   #result-layer.show .result-inner { transform: translateY(0); }
-  .result-label { font-size: 11px; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 18px; padding-left: 0.5em; }
-  .result-type { font-size: clamp(56px, 12vw, 120px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; padding-left: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px; filter: drop-shadow(0 0 34px rgba(130,165,255,0.28)); }
+  .result-label { font-size: 11px; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
+  .result-type { font-size: clamp(56px, 12vw, 120px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px; filter: drop-shadow(0 0 34px rgba(130,165,255,0.28)); }
   .result-subtype { font-size: 12px; letter-spacing: 0.16em; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
   .result-title { font-size: 21px; font-weight: 400; letter-spacing: 0.14em; color: rgba(255,255,255,0.9); margin-bottom: 22px; }
   .result-desc { font-size: 15.5px; line-height: 1.95; letter-spacing: 0.02em; color: rgba(255,255,255,0.6); text-align: justify; text-align-last: center; margin-bottom: 10px; }
-
   .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; text-align: left; }
-  .info-card { padding: 22px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); }
+  .info-card { padding: 22px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); }
   .info-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .info-title::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9fc0ff; }
   .info-text { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.75); }
-
-  .sin-panel { margin-top: 18px; padding: 24px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 18px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07); text-align: left; grid-column: span 2; }
-  .sin-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); text-align: center; margin-bottom: 22px; padding-left: 0.34em; }
+  .sin-panel { margin-top: 18px; padding: 24px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); text-align: left; grid-column: span 2; }
+  .sin-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); text-align: center; margin-bottom: 22px; }
   .sin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 30px; }
   .sin-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
   .sin-name { font-size: 13px; letter-spacing: 0.08em; color: rgba(255,255,255,0.78); }
@@ -101,24 +97,40 @@
   .sin-value { font-size: 13px; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; }
   .sin-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; }
   .sin-bar { height: 100%; width: 0%; border-radius: 4px; transition: width 1.1s cubic-bezier(0.22,0.61,0.36,1); }
+  .restart-btn { margin-top: 36px; padding: 13px 36px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #e9e9ee; font-size: 13px; letter-spacing: 0.22em; cursor: pointer; transition: all 0.3s ease; }
+  .restart-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); }
 
-  .restart-btn { margin-top: 36px; padding: 13px 36px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #e9e9ee; font-family: inherit; font-size: 13px; letter-spacing: 0.22em; padding-left: 40px; cursor: pointer; transition: all 0.3s ease; }
-  .restart-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); box-shadow: 0 10px 34px rgba(110,150,255,0.2); }
+  /* --- 小人动画相关 CSS --- */
+  .head { transform-origin: 50px 30px; animation: nod 4s ease-in-out infinite; }
+  @keyframes nod { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(4deg); } }
+  .question-mark, .star-twinkle, .gear-spin, .heart-beat, .check-pop, .clock-tick { transform-origin: center; }
+  .question-mark { animation: blink 2s ease-in-out infinite; }
+  @keyframes blink { 0%, 100% { opacity: 0.3; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+  .star-twinkle { animation: twinkle 1.5s ease-in-out infinite alternate; }
+  @keyframes twinkle { 0% { opacity: 0.4; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.1); } }
+  .gear-spin { animation: spin 4s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .heart-beat { animation: beat 1s ease-in-out infinite; }
+  @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+  .check-pop { animation: pop 1.5s ease-in-out infinite; }
+  @keyframes pop { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 1; } }
+  .clock-tick { animation: tick 2s ease-in-out infinite; }
+  @keyframes tick { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
+  .wave-hand { transform-origin: 30px 55px; animation: wave 1.5s ease-in-out infinite; }
+  @keyframes wave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-15deg); } }
+  .bubble-appear { animation: appear 2s ease-in-out infinite alternate; }
+  @keyframes appear { 0% { opacity: 0; transform: translateY(5px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
 
   @media (orientation: landscape) and (max-height: 500px) {
     #card { padding: 20px 30px; max-height: 95vh; overflow-y: auto; width: 90%; }
+    .character-box { height: 60px; margin-bottom: 4px; }
+    .character-svg { width: 60px; height: 60px; }
     #question-text { font-size: 16px; min-height: auto; margin-bottom: 12px; }
     .option { padding: 8px 14px; margin-top: 6px; font-size: 13px; }
-    .quiz-meta { margin-bottom: 6px; }
-    .progress-track { margin-bottom: 12px; }
-    .card-footer { margin-top: 12px; }
-    .start-title { font-size: 32px; margin-bottom: 10px; }
-    .start-desc { font-size: 13px; margin-bottom: 20px; }
     .info-grid { grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     .sin-panel { grid-column: span 3; padding: 16px; }
     .sin-grid { grid-template-columns: 1fr 1fr 1fr 1fr; }
   }
-
   @media (max-width: 640px) {
     #result-layer { padding: 44px 18px; }
     .info-grid { grid-template-columns: 1fr; gap: 14px; }
@@ -151,6 +163,10 @@
         <span id="question-index">01 / 28</span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      
+      <!-- 动态小人插入点 -->
+      <div class="character-box" id="character-box"></div>
+
       <h2 id="question-text">题目加载中…</h2>
       <div class="options-wrap">
         <button class="option" data-choice="A" type="button"><span class="tag">A</span><span class="option-text"></span></button>
@@ -188,38 +204,15 @@
       <div class="result-subtype" id="result-subtype"></div>
       <h1 class="result-title" id="result-title"></h1>
       <p class="result-desc" id="result-desc"></p>
-
       <div class="info-grid">
-        <div class="info-card">
-          <div class="info-title">Core Strengths · 核心优势</div>
-          <div class="info-text" id="text-strengths"></div>
-        </div>
-        <div class="info-card">
-          <div class="info-title">Blind Spots · 潜在盲点</div>
-          <div class="info-text" id="text-weaknesses"></div>
-        </div>
-        <div class="info-card">
-          <div class="info-title">Social & Love · 社交与恋爱</div>
-          <div class="info-text" id="text-love"></div>
-        </div>
-        <div class="info-card">
-          <div class="info-title">Ideal Careers · 推荐职业</div>
-          <div class="info-text" id="text-careers"></div>
-        </div>
-        <div class="info-card">
-          <div class="info-title">Communication · 沟通风格</div>
-          <div class="info-text" id="text-comm"></div>
-        </div>
-        <div class="info-card">
-          <div class="info-title">Growth Advice · 成长建议</div>
-          <div class="info-text" id="text-growth"></div>
-        </div>
-        <div class="sin-panel">
-          <div class="sin-title">Seven Deadly Sins · 七宗罪指数</div>
-          <div class="sin-grid" id="sin-grid"></div>
-        </div>
+        <div class="info-card"><div class="info-title">Core Strengths · 核心优势</div><div class="info-text" id="text-strengths"></div></div>
+        <div class="info-card"><div class="info-title">Blind Spots · 潜在盲点</div><div class="info-text" id="text-weaknesses"></div></div>
+        <div class="info-card"><div class="info-title">Social & Love · 社交与恋爱</div><div class="info-text" id="text-love"></div></div>
+        <div class="info-card"><div class="info-title">Ideal Careers · 推荐职业</div><div class="info-text" id="text-careers"></div></div>
+        <div class="info-card"><div class="info-title">Communication · 沟通风格</div><div class="info-text" id="text-comm"></div></div>
+        <div class="info-card"><div class="info-title">Growth Advice · 成长建议</div><div class="info-text" id="text-growth"></div></div>
+        <div class="sin-panel"><div class="sin-title">Seven Deadly Sins · 七宗罪指数</div><div class="sin-grid" id="sin-grid"></div></div>
       </div>
-
       <button class="restart-btn" id="restart-btn" type="button">再测一次</button>
     </div>
   </section>
@@ -296,50 +289,178 @@ const SIN_META = [
 ];
 
 /* ================================================================
-   三、28 道题库（全新5级量表：+2, +1, 0, -1, -2）
+   三、28 道题库（加入 SVG 场景映射）
    ================================================================ */
 const QUESTIONS = [
   /* ---------- E / I (6题) ---------- */
-  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', scene: 'party', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', scene: 'solo', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', scene: 'talk', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', scene: 'crowd', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', scene: 'talk', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', scene: 'solo', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
 
   /* ---------- S / N (6题) ---------- */
-  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', scene: 'manual', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', scene: 'stars', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', scene: 'gear', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', scene: 'stars', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', scene: 'manual', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', scene: 'arrow', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
 
   /* ---------- T / F (6题) ---------- */
-  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', scene: 'gear', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', scene: 'comfort', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', scene: 'gear', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', scene: 'comfort', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', scene: 'gear', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', scene: 'comfort', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
 
   /* ---------- J / P (6题) ---------- */
-  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '我经常在最后期限的压迫下才进入最佳状态。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', scene: 'checklist', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', scene: 'plane', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', scene: 'clock', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', scene: 'plane', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', scene: 'checklist', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '我经常在最后期限的压迫下才进入最佳状态。', scene: 'clock', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
 
   /* ---------- A / T 身份 (4题) ---------- */
-  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'A', score: 1 }, e: { text: '完全不符合', dim: 'A', score: 2 } }
+  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', scene: 'sun', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', scene: 'sun', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', scene: 'sun', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', scene: 'cloud', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'A', score: 1 }, e: { text: '完全不符合', dim: 'A', score: 2 } }
 ];
 
 /* ================================================================
-   四、DOM 与状态
+   四、SVG 场景库
+   ================================================================ */
+const SCENES = {
+  party: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="20" cy="40" r="8" stroke-opacity="0.4"/><circle cx="80" cy="40" r="8" stroke-opacity="0.4"/>
+    <circle cx="30" cy="80" r="8" stroke-opacity="0.4"/><circle cx="70" cy="80" r="8" stroke-opacity="0.4"/>
+    <g class="head"><circle cx="50" cy="45" r="14"/><line x1="45" y1="43" x2="47" y2="43"/><line x1="53" y1="43" x2="55" y2="43"/><path d="M 46 50 Q 50 54 54 50"/></g>
+    <line x1="50" y1="59" x2="50" y2="80"/><path d="M 50 80 L 40 95 M 50 80 L 60 95"/>
+    <path d="M 50 65 L 30 55 M 50 65 L 70 55"/>
+    <path d="M 42 35 L 45 28 L 48 35" stroke-opacity="0.6"/><path d="M 52 35 L 55 28 L 58 35" stroke-opacity="0.6"/>
+  </svg>`,
+  
+  solo: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 30 85 Q 50 70 70 85" stroke-opacity="0.4"/>
+    <line x1="30" y1="85" x2="70" y2="85" stroke-opacity="0.4"/>
+    <g class="head"><circle cx="50" cy="40" r="14"/><line x1="45" y1="38" x2="47" y2="38"/><line x1="53" y1="38" x2="55" y2="38"/><path d="M 48 44 Q 50 46 52 44"/></g>
+    <line x1="50" y1="54" x2="50" y2="75"/><path d="M 50 75 L 40 85 M 50 75 L 60 85"/>
+    <path d="M 50 60 L 35 70 M 50 60 L 65 70"/>
+    <path d="M 65 65 L 75 60 L 75 75 L 65 70 Z" stroke-opacity="0.6"/>
+  </svg>`,
+  
+  talk: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head" transform="translate(-15, 0)"><circle cx="50" cy="35" r="12"/><line x1="46" y1="33" x2="48" y2="33"/><line x1="52" y1="33" x2="54" y2="33"/><path d="M 48 39 Q 50 41 52 39"/></g>
+    <line x1="35" y1="47" x2="35" y2="70"/><path d="M 35 70 L 25 85 M 35 70 L 45 85"/><path d="M 35 55 L 20 65 M 35 55 L 50 65" stroke-opacity="0.5"/>
+    
+    <g class="head" transform="translate(15, 0)"><circle cx="50" cy="35" r="12"/><line x1="46" y1="33" x2="48" y2="33"/><line x1="52" y1="33" x2="54" y2="33"/><path d="M 48 39 Q 50 41 52 39"/></g>
+    <line x1="65" y1="47" x2="65" y2="70"/><path d="M 65 70 L 55 85 M 65 70 L 75 85"/><path d="M 65 55 L 50 65 M 65 55 L 80 65" stroke-opacity="0.5"/>
+    
+    <g class="bubble-appear"><path d="M 45 10 Q 45 5 50 5 Q 55 5 55 10 Q 55 15 50 15 L 50 18" stroke-width="1.5"/><circle cx="50" cy="22" r="1.5" fill="currentColor"/></g>
+  </svg>`,
+  
+  crowd: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="20" cy="50" r="6" stroke-opacity="0.3"/><circle cx="80" cy="50" r="6" stroke-opacity="0.3"/>
+    <circle cx="30" cy="80" r="6" stroke-opacity="0.3"/><circle cx="70" cy="80" r="6" stroke-opacity="0.3"/>
+    <circle cx="10" cy="70" r="6" stroke-opacity="0.3"/><circle cx="90" cy="70" r="6" stroke-opacity="0.3"/>
+    <g class="head"><circle cx="50" cy="40" r="14"/><line x1="45" y1="38" x2="47" y2="38"/><line x1="53" y1="38" x2="55" y2="38"/><path d="M 46 48 L 54 48" stroke-width="1.5"/></g>
+    <line x1="50" y1="54" x2="50" y2="75"/><path d="M 50 75 L 40 85 M 50 75 L 60 85"/><path d="M 50 60 L 40 70 M 50 60 L 60 70"/>
+    <path d="M 35 25 Q 40 20 45 25" stroke-width="1.5" stroke-opacity="0.6"/><path d="M 55 25 Q 60 20 65 25" stroke-width="1.5" stroke-opacity="0.6"/>
+  </svg>`,
+  
+  manual: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 48 34 L 52 34"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 L 35 75" class="wave-hand"/>
+    <path d="M 50 50 L 70 60 L 65 75" />
+    <rect x="28" y="75" width="10" height="15" rx="1" stroke-opacity="0.6"/>
+    <rect x="62" y="75" width="10" height="15" rx="1" stroke-opacity="0.6"/>
+    <line x1="30" y1="80" x2="36" y2="80" stroke-width="1"/><line x1="30" y1="85" x2="36" y2="85" stroke-width="1"/>
+    <line x1="64" y1="80" x2="70" y2="80" stroke-width="1"/><line x1="64" y1="85" x2="70" y2="85" stroke-width="1"/>
+  </svg>`,
+  
+  stars: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 50 55 L 70 30 L 75 35" stroke-opacity="0.4"/><circle cx="75" cy="35" r="3"/>
+    <g class="star-twinkle"><path d="M 80 15 L 82 20 L 87 22 L 82 24 L 80 29 L 78 24 L 73 22 L 78 20 Z" fill="currentColor"/></g>
+    <g class="star-twinkle" style="animation-delay:0.5s"><path d="M 65 10 L 66 13 L 69 14 L 66 15 L 65 18 L 64 15 L 61 14 L 64 13 Z" fill="currentColor"/></g>
+    <g class="head"><circle cx="50" cy="45" r="12"/><line x1="45" y1="43" x2="47" y2="43"/><line x1="53" y1="43" x2="55" y2="43"/><path d="M 48 49 L 52 49"/></g>
+    <line x1="50" y1="57" x2="50" y2="75"/><path d="M 50 75 L 40 90 M 50 75 L 60 90"/>
+    <path d="M 50 65 L 35 55 L 40 45" class="wave-hand"/>
+  </svg>`,
+  
+  gear: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 48 34 L 52 34"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 M 50 50 L 70 60"/>
+    <g class="gear-spin" transform="translate(70, 50)">
+      <circle cx="0" cy="0" r="8"/><circle cx="0" cy="0" r="3" fill="currentColor"/>
+      <line x1="0" y1="-10" x2="0" y2="-12"/><line x1="0" y1="10" x2="0" y2="12"/>
+      <line x1="-10" y1="0" x2="-12" y2="0"/><line x1="10" y1="0" x2="12" y2="0"/>
+    </g>
+  </svg>`,
+  
+  comfort: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head" transform="translate(-15, 0)"><circle cx="50" cy="35" r="12"/><line x1="46" y1="33" x2="48" y2="33"/><line x1="52" y1="33" x2="54" y2="33"/><path d="M 46 42 Q 50 38 54 42"/></g>
+    <line x1="35" y1="47" x2="35" y2="70"/><path d="M 35 70 L 25 85 M 35 70 L 45 85"/><path d="M 35 55 L 50 50"/>
+
+    <g class="head" transform="translate(15, 0)"><circle cx="50" cy="35" r="12"/><line x1="46" y1="33" x2="48" y2="33"/><line x1="52" y1="33" x2="54" y2="33"/><path d="M 48 39 L 52 39"/></g>
+    <line x1="65" y1="47" x2="65" y2="70"/><path d="M 65 70 L 55 85 M 65 70 L 75 85"/><path d="M 65 55 L 50 50"/>
+
+    <g class="heart-beat"><path d="M 50 25 C 50 25 45 18 40 22 C 35 26 40 32 50 38 C 60 32 65 26 60 22 C 55 18 50 25 50 25 Z" fill="currentColor" stroke="none"/></g>
+  </svg>`,
+  
+  checklist: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 46 34 Q 50 38 54 34"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 M 50 50 L 70 60"/>
+    <rect x="25" y="45" width="15" height="20" rx="2" stroke-opacity="0.6"/>
+    <line x1="28" y1="50" x2="37" y2="50" stroke-width="1"/><line x1="28" y1="55" x2="37" y2="55" stroke-width="1"/><line x1="28" y1="60" x2="37" y2="60" stroke-width="1"/>
+    <g class="check-pop"><path d="M 32 68 L 35 72 L 42 65" stroke-width="2.5"/></g>
+  </svg>`,
+  
+  plane: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 46 34 Q 50 38 54 34"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 M 50 50 L 70 60" class="wave-hand"/>
+    <g class="bubble-appear"><path d="M 70 30 L 85 25 L 80 35 Z" fill="currentColor"/></g>
+  </svg>`,
+  
+  clock: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 48 34 L 52 34"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 M 50 50 L 70 60"/>
+    <g class="clock-tick" transform="translate(75, 50)"><circle cx="0" cy="0" r="10"/><line x1="0" y1="0" x2="0" y2="-6"/><line x1="0" y1="0" x2="5" y2="0"/></g>
+  </svg>`,
+  
+  arrow: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 48 34 L 52 34"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 M 50 50 L 70 60"/>
+    <g class="star-twinkle" transform="translate(75, 30)"><path d="M 0 -10 L 3 -3 L 10 0 L 3 3 L 0 10 L -3 3 L -10 0 L -3 -3 Z" fill="currentColor" stroke="none"/></g>
+    <path d="M 60 20 Q 70 20 70 30" stroke-opacity="0.4" stroke-dasharray="2 2"/>
+  </svg>`,
+  
+  sun: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 46 34 Q 50 38 54 34"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 M 50 50 L 70 60"/>
+    <g class="star-twinkle" transform="translate(70, 20)"><circle cx="0" cy="0" r="6" fill="currentColor"/><line x1="0" y1="-10" x2="0" y2="-8"/><line x1="0" y1="10" x2="0" y2="8"/><line x1="-10" y1="0" x2="-8" y2="0"/><line x1="10" y1="0" x2="8" y2="0"/></g>
+  </svg>`,
+  
+  cloud: `<svg class="character-svg" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <g class="head"><circle cx="50" cy="30" r="12"/><line x1="45" y1="28" x2="47" y2="28"/><line x1="53" y1="28" x2="55" y2="28"/><path d="M 48 36 L 52 36"/></g>
+    <line x1="50" y1="42" x2="50" y2="70"/><path d="M 50 70 L 40 85 M 50 70 L 60 85"/>
+    <path d="M 50 50 L 30 60 M 50 50 L 70 60"/>
+    <g class="bubble-appear" transform="translate(65, 20)"><path d="M -5 5 Q -5 -5 5 -5 Q 15 -5 15 5 Q 15 10 10 10 L 5 10 Z" fill="currentColor" stroke="none"/><line x1="-2" y1="15" x2="2" y2="15" stroke-width="2"/><line x1="-4" y1="20" x2="0" y2="20" stroke-width="2"/></g>
+  </svg>`
+};
+
+/* ================================================================
+   五、DOM 与状态
    ================================================================ */
 const startLayer = document.getElementById('start-layer');
 const startBtn = document.getElementById('start-btn');
@@ -354,6 +475,8 @@ const progressFill = document.getElementById('progress-fill');
 const optionBtns = Array.from(document.querySelectorAll('.option'));
 const prevBtn = document.getElementById('prev-btn');
 const resetBtn = document.getElementById('reset-btn');
+const characterBox = document.getElementById('character-box');
+
 const typeFlash = document.getElementById('type-flash');
 const typeFlashText = document.getElementById('type-flash-text');
 const typeFlashSub = document.getElementById('type-flash-sub');
@@ -367,7 +490,7 @@ const restartBtn = document.getElementById('restart-btn');
 let currentIndex = 0, answerHistory = [], currentType = '', currentSubtype = '';
 let finished = false, videoStarted = false, videoFallbackTimer = null, musicPlaying = false;
 
-const STORAGE_KEY = 'mbti_test_progress_v4';
+const STORAGE_KEY = 'mbti_test_progress_v5';
 
 function saveProgress() {
   if (currentIndex < QUESTIONS.length) localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: currentIndex, answers: answerHistory }));
@@ -396,7 +519,7 @@ musicToggle.addEventListener('click', () => {
 });
 
 startBtn.addEventListener('click', () => {
-  bgm.volume = 0.6; // 音量调整至 60%
+  bgm.volume = 0.6;
   bgm.play().then(() => { musicPlaying = true; musicToggle.classList.remove('muted'); }).catch(() => {});
   startLayer.classList.add('hide'); quizLayer.classList.add('active'); renderQuestion();
 });
@@ -407,6 +530,9 @@ function renderQuestion() {
   progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
   questionText.textContent = q.q;
   
+  // 渲染对应的小人场景
+  characterBox.innerHTML = SCENES[q.scene] || SCENES.solo;
+
   const keys = ['a', 'b', 'c', 'd', 'e'];
   optionBtns.forEach((btn, i) => {
     const opt = q[keys[i]];
@@ -416,10 +542,7 @@ function renderQuestion() {
   
   prevBtn.disabled = (currentIndex === 0);
   
-  // 强制失焦，防止光标/选中状态遗留到下一题
-  if (document.activeElement) {
-    document.activeElement.blur();
-  }
+  if (document.activeElement) document.activeElement.blur();
 }
 
 prevBtn.addEventListener('click', () => {
@@ -445,10 +568,7 @@ function handleChoice(choiceKey) {
   const selected = q[choiceKey.toLowerCase()];
   if (!selected) return;
   
-  // 点击后立刻失焦，防止按钮残留选中效果
-  if (document.activeElement) {
-    document.activeElement.blur();
-  }
+  if (document.activeElement) document.activeElement.blur();
   
   answerHistory.push({ dim: selected.dim, score: selected.score });
   currentIndex++;
@@ -468,14 +588,13 @@ function handleChoice(choiceKey) {
 optionBtns.forEach(btn => { btn.addEventListener('click', () => handleChoice(btn.dataset.choice)); });
 
 /* ================================================================
-   五、计算
+   六、计算
    ================================================================ */
 function calcResult() {
   const coreScore = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
   const identityScore = { A:0, Tb:0 };
   
   answerHistory.forEach((ans, idx) => {
-    // 跳过中立选项（不计分）
     if (ans.dim === 'N') return; 
 
     if (idx < 24) {
@@ -493,7 +612,7 @@ function calcResult() {
 }
 
 /* ================================================================
-   六、流程
+   七、流程与结果页
    ================================================================ */
 function finishQuiz() {
   const r = calcResult(); currentType = r.type; currentSubtype = r.subtype;
@@ -618,9 +737,6 @@ function dissolveType(text, onComplete) {
   requestAnimationFrame(frame);
 }
 
-/* ================================================================
-   七、结果页
-   ================================================================ */
 function showResult() {
   const info = MBTI_TYPES[currentType] || {};
   const fullType = `${currentType}-${currentSubtype}`;
