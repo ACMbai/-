@@ -26,21 +26,22 @@
 
   #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
   #quiz-layer.active { opacity: 1; pointer-events: auto; }
-  #card { width: min(720px, 100%); padding: 44px 44px 30px; border-radius: 26px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
+  #card { width: min(720px, 100%); padding: 40px 44px 30px; border-radius: 26px; transition: opacity 0.38s ease, transform 0.38s cubic-bezier(0.22,0.61,0.36,1); transform: scale(1); opacity: 1; display: flex; flex-direction: column; }
   
   .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; }
-  .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 30px; overflow: hidden; }
+  .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 24px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
-  #question-text { font-size: 20px; line-height: 1.65; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 20px; min-height: 70px; flex-shrink: 0; }
+  #question-text { font-size: 19px; line-height: 1.6; font-weight: 400; letter-spacing: 0.01em; color: #f2f2f5; margin-bottom: 16px; min-height: 60px; flex-shrink: 0; }
   
   .options-wrap { flex-grow: 1; }
-  .option { display: flex; align-items: flex-start; gap: 14px; width: 100%; text-align: left; padding: 15px 20px; margin-top: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 15px; line-height: 1.6; cursor: pointer; transition: all 0.3s ease; }
+  .option { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 12px 20px; margin-top: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 14.5px; line-height: 1.5; cursor: pointer; transition: all 0.3s ease; outline: none; }
   .option:hover { background: rgba(255,255,255,0.1); border-color: rgba(160,190,255,0.5); transform: translateY(-2px); box-shadow: 0 10px 34px rgba(110,150,255,0.16); }
   .option:active { transform: translateY(0) scale(0.99); }
-  .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(200,218,255,0.95); background: rgba(140,175,255,0.16); border: 1px solid rgba(160,190,255,0.3); margin-top: 1px; }
+  .option:focus { outline: none; }
+  .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(200,218,255,0.95); background: rgba(140,175,255,0.16); border: 1px solid rgba(160,190,255,0.3); }
 
-  .card-footer { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; }
-  .footer-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; font-family: inherit; }
+  .card-footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; font-family: inherit; outline: none; }
   #prev-btn { color: rgba(255,255,255,0.3); }
   #prev-btn:hover:not(:disabled) { color: rgba(255,255,255,0.8); }
   #prev-btn:disabled { opacity: 0; pointer-events: none; }
@@ -107,7 +108,7 @@
   @media (orientation: landscape) and (max-height: 500px) {
     #card { padding: 20px 30px; max-height: 95vh; overflow-y: auto; width: 90%; }
     #question-text { font-size: 16px; min-height: auto; margin-bottom: 12px; }
-    .option { padding: 10px 14px; margin-top: 8px; font-size: 13.5px; }
+    .option { padding: 8px 14px; margin-top: 6px; font-size: 13px; }
     .quiz-meta { margin-bottom: 6px; }
     .progress-track { margin-bottom: 12px; }
     .card-footer { margin-top: 12px; }
@@ -138,7 +139,7 @@
 
   <section id="start-layer">
     <h1 class="start-title">MBTI 人格测试</h1>
-    <p class="start-desc">32 道情境题，测量你的核心四维偏好与「坚定/动荡」身份倾向。请凭第一反应作答，这里没有标准答案，只有真实的你。</p>
+    <p class="start-desc">28 道情境题，测量你的核心四维偏好与「坚定/动荡」身份倾向。请凭第一反应作答，这里没有标准答案，只有真实的你。</p>
     <button class="start-btn" id="start-btn">开 始 测 试</button>
     <div id="resume-hint">检测到未完成的进度，点击继续</div>
   </section>
@@ -156,6 +157,7 @@
         <button class="option" data-choice="B" type="button"><span class="tag">B</span><span class="option-text"></span></button>
         <button class="option" data-choice="C" type="button"><span class="tag">C</span><span class="option-text"></span></button>
         <button class="option" data-choice="D" type="button"><span class="tag">D</span><span class="option-text"></span></button>
+        <button class="option" data-choice="E" type="button"><span class="tag">E</span><span class="option-text"></span></button>
       </div>
       <div class="card-footer">
         <button id="prev-btn" class="footer-btn" type="button" disabled>
@@ -294,46 +296,46 @@ const SIN_META = [
 ];
 
 /* ================================================================
-   三、28 道全新题库 (采用16P的陈述句+程度选择，正反向交叉)
+   三、28 道题库（全新5级量表：+2, +1, 0, -1, -2）
    ================================================================ */
 const QUESTIONS = [
   /* ---------- E / I (6题) ---------- */
-  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '不太符合', dim: 'E', score: 1 }, d: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '不太符合', dim: 'E', score: 1 }, d: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '不太符合', dim: 'I', score: 1 }, d: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
 
   /* ---------- S / N (6题) ---------- */
-  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '不太符合', dim: 'N', score: 1 }, d: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '不太符合', dim: 'S', score: 1 }, d: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '不太符合', dim: 'N', score: 1 }, d: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '不太符合', dim: 'S', score: 1 }, d: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '不太符合', dim: 'N', score: 1 }, d: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '不太符合', dim: 'S', score: 1 }, d: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
 
   /* ---------- T / F (6题) ---------- */
-  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'F', score: 1 }, d: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'F', score: 1 }, d: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'F', score: 1 }, d: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
 
   /* ---------- J / P (6题) ---------- */
-  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '不太符合', dim: 'P', score: 1 }, d: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '不太符合', dim: 'J', score: 1 }, d: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '不太符合', dim: 'P', score: 1 }, d: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '不太符合', dim: 'J', score: 1 }, d: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '不太符合', dim: 'P', score: 1 }, d: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '我经常在最后期限的压迫下才进入最佳状态。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '不太符合', dim: 'J', score: 1 }, d: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '我经常在最后期限的压迫下才进入最佳状态。', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
 
   /* ---------- A / T 身份 (4题) ---------- */
-  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '不太符合', dim: 'T', score: 1 }, d: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '不太符合', dim: 'A', score: 1 }, d: { text: '完全不符合', dim: 'A', score: 2 } }
+  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'A', score: 1 }, e: { text: '完全不符合', dim: 'A', score: 2 } }
 ];
 
 /* ================================================================
@@ -365,7 +367,7 @@ const restartBtn = document.getElementById('restart-btn');
 let currentIndex = 0, answerHistory = [], currentType = '', currentSubtype = '';
 let finished = false, videoStarted = false, videoFallbackTimer = null, musicPlaying = false;
 
-const STORAGE_KEY = 'mbti_test_progress_v3';
+const STORAGE_KEY = 'mbti_test_progress_v4';
 
 function saveProgress() {
   if (currentIndex < QUESTIONS.length) localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: currentIndex, answers: answerHistory }));
@@ -394,7 +396,7 @@ musicToggle.addEventListener('click', () => {
 });
 
 startBtn.addEventListener('click', () => {
-  bgm.volume = 0.5;
+  bgm.volume = 0.6; // 音量调整至 60%
   bgm.play().then(() => { musicPlaying = true; musicToggle.classList.remove('muted'); }).catch(() => {});
   startLayer.classList.add('hide'); quizLayer.classList.add('active'); renderQuestion();
 });
@@ -404,13 +406,20 @@ function renderQuestion() {
   questionIdx.textContent = String(currentIndex + 1).padStart(2, '0') + ' / ' + String(QUESTIONS.length).padStart(2, '0');
   progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
   questionText.textContent = q.q;
-  const keys = ['a', 'b', 'c', 'd'];
+  
+  const keys = ['a', 'b', 'c', 'd', 'e'];
   optionBtns.forEach((btn, i) => {
     const opt = q[keys[i]];
     if (opt) { btn.style.display = 'flex'; btn.querySelector('.option-text').textContent = opt.text; }
     else { btn.style.display = 'none'; }
   });
+  
   prevBtn.disabled = (currentIndex === 0);
+  
+  // 强制失焦，防止光标/选中状态遗留到下一题
+  if (document.activeElement) {
+    document.activeElement.blur();
+  }
 }
 
 prevBtn.addEventListener('click', () => {
@@ -435,8 +444,15 @@ function handleChoice(choiceKey) {
   const q = QUESTIONS[currentIndex];
   const selected = q[choiceKey.toLowerCase()];
   if (!selected) return;
+  
+  // 点击后立刻失焦，防止按钮残留选中效果
+  if (document.activeElement) {
+    document.activeElement.blur();
+  }
+  
   answerHistory.push({ dim: selected.dim, score: selected.score });
   currentIndex++;
+  
   if (currentIndex < QUESTIONS.length) {
     saveProgress();
     card.style.opacity = '0'; card.style.transform = 'scale(0.9)';
@@ -452,26 +468,25 @@ function handleChoice(choiceKey) {
 optionBtns.forEach(btn => { btn.addEventListener('click', () => handleChoice(btn.dataset.choice)); });
 
 /* ================================================================
-   五、计算 (严格区分 24 题核心维度与 4 题身份维度)
+   五、计算
    ================================================================ */
 function calcResult() {
   const coreScore = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
   const identityScore = { A:0, Tb:0 };
   
   answerHistory.forEach((ans, idx) => {
-    // 前 24 题归为核心四维
+    // 跳过中立选项（不计分）
+    if (ans.dim === 'N') return; 
+
     if (idx < 24) {
       if (coreScore[ans.dim] !== undefined) coreScore[ans.dim] += ans.score;
-    } 
-    // 后 4 题归为身份维度（注意身份题的 T 用 Tb 接收，避免与 Thinking 混淆）
-    else {
+    } else {
       if (ans.dim === 'A') identityScore.A += ans.score;
       else if (ans.dim === 'T') identityScore.Tb += ans.score;
     }
   });
 
   const dims = [['E','I'],['S','N'],['T','F'],['J','P']];
-  // 平票时取偏左侧（如 E）
   const type = dims.map(([l,r]) => coreScore[l] >= coreScore[r] ? l : r).join('');
   const subtype = identityScore.A >= identityScore.Tb ? 'A' : 'T';
   return { type, subtype };
