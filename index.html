@@ -6,7 +6,6 @@
 <title>MBTI 人格测试 · 沉浸版</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  /* 将背景改为极深的幽蓝色，增加深海感 */
   html, body { height: 100%; overflow: hidden; background: radial-gradient(circle at center, #041222 0%, #000000 80%); color: #f5f5f7; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
   
   #bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
@@ -87,21 +86,13 @@
     .card-footer { margin-top: 12px; }
   }
 
-  /* 横屏提示遮罩 */
   #rotate-overlay { position: fixed; inset: 0; z-index: 999; background: #000; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-align: center; padding: 24px; }
   #rotate-overlay.show { display: flex; }
   #rotate-overlay svg { width: 64px; height: 64px; color: #4dc3ff; margin-bottom: 20px; animation: rotate-phone 2s infinite ease-in-out; }
   @keyframes rotate-phone { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
   #rotate-overlay h2 { font-size: 20px; font-weight: 400; letter-spacing: 0.1em; margin-bottom: 10px; }
   #rotate-overlay p { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 24px; }
-
-  /* 新增：应急跳过按钮 */
-  #skip-orientation-btn {
-    padding: 10px 24px; border-radius: 99px;
-    background: transparent; border: 1px solid rgba(255,255,255,0.3);
-    color: rgba(255,255,255,0.7); font-size: 13px; cursor: pointer;
-    transition: all 0.3s;
-  }
+  #skip-orientation-btn { padding: 10px 24px; border-radius: 99px; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); font-size: 13px; cursor: pointer; transition: all 0.3s; }
   #skip-orientation-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
   #type-flash { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
@@ -167,7 +158,6 @@
 
   <canvas id="bg-canvas"></canvas>
 
-  <!-- 横屏提示遮罩（带有跳过按钮） -->
   <div id="rotate-overlay">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
     <h2>请横置手机</h2>
@@ -250,7 +240,7 @@
 
 <script>
 /* ================================================================
-   一、屏幕方向控制与提示（强化版，兼容鸿蒙 ArkWeb）
+   一、屏幕方向控制与提示（强化版，兼容鸿蒙）
    ================================================================ */
 const rotateOverlay = document.getElementById('rotate-overlay');
 const skipOrientationBtn = document.getElementById('skip-orientation-btn');
@@ -269,7 +259,6 @@ function checkOrientation() {
 
   let isPortrait = portraitQuery.matches;
   
-  // 鸿蒙等部分系统兜底：如果 matchMedia 异常，使用视口宽高比
   if (!portraitQuery.matches && !landscapeQuery.matches) {
     const vv = window.visualViewport;
     const w = vv ? vv.width : window.innerWidth;
@@ -306,7 +295,6 @@ skipOrientationBtn.addEventListener('click', () => {
   function createSprite() {
     const size = 64; const off = document.createElement('canvas'); off.width = off.height = size;
     const g = off.getContext('2d'); const cx = size / 2, cy = size / 2;
-    // 绘制幽蓝色发光光斑
     const grad = g.createRadialGradient(cx, cy, 0, cx, cy, size / 2);
     grad.addColorStop(0, 'rgba(200, 240, 255, 1)');
     grad.addColorStop(0.2, 'rgba(77, 195, 255, 0.8)');
@@ -384,7 +372,7 @@ skipOrientationBtn.addEventListener('click', () => {
 })();
 
 /* ================================================================
-   三、数据与题库 (路径为 images/1.png 格式)
+   三、数据与题库 (路径已精准匹配你的带括号文件名)
    ================================================================ */
 const MBTI_TYPES = {
   INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', comm: '倾向于倾听和共情，表达含蓄，很少直接批评他人，喜欢用文字或艺术表达内心。', growth: '试着把想法落地为具体行动，接受世界的不完美，学会在必要时表达自己的愤怒和边界。', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
@@ -413,34 +401,34 @@ const SIN_META = [
 ];
 
 const QUESTIONS = [
-  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', scene: 'images/28.png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', scene: 'images/11.png', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', scene: 'images/17.png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', scene: 'images/2.png', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
-  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', scene: 'images/25.png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', scene: 'images/26.png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
-  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', scene: 'images/3.png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', scene: 'images/20.png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', scene: 'images/16.png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', scene: 'images/8.png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', scene: 'images/10.png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
-  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', scene: 'images/5.png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
-  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', scene: 'images/24.png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', scene: 'images/4.png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', scene: 'images/13.png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', scene: 'images/27.png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', scene: 'images/9.png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
-  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', scene: 'images/14.png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', scene: 'images/19.png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', scene: 'images/22.png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', scene: 'images/7.png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', scene: 'images/21.png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', scene: 'images/23.png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
-  { q: '我经常在最后期限的压迫下才进入最佳状态。', scene: 'images/6.png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
-  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', scene: 'images/18.png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', scene: 'images/12.png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', scene: 'images/1.png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
-  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', scene: 'images/15.png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'A', score: 1 }, e: { text: '完全不符合', dim: 'A', score: 2 } }
+  { q: '在一场热闹的聚会结束后，我通常感觉精力充沛，而不是需要独处来“回血”。', scene: 'images/1 (28).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '比起和人聊天，我更享受一个人安静地做自己的事。', scene: 'images/1 (11).png', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '遇到烦心事时，我的第一反应是找人说出来，而不是自己先消化。', scene: 'images/1 (17).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '在需要频繁和陌生人打交道的场合里，我很快就会感到疲惫。', scene: 'images/1 (2).png', a: { text: '非常符合', dim: 'I', score: 2 }, b: { text: '比较符合', dim: 'I', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'E', score: 1 }, e: { text: '完全不符合', dim: 'E', score: 2 } },
+  { q: '我经常在说话的过程中把想法理清楚，而不是必须先想好再说。', scene: 'images/1 (25).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '如果连续几天没有和人进行有实质内容的交流，我会觉得缺少了什么。', scene: 'images/1 (26).png', a: { text: '非常符合', dim: 'E', score: 2 }, b: { text: '比较符合', dim: 'E', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'I', score: 1 }, e: { text: '完全不符合', dim: 'I', score: 2 } },
+  { q: '比起抽象的理论和可能性，我更信任那些被实际验证过的方法和经验。', scene: 'images/1 (3).png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我经常在别人描述完一件事之后，还在想这件事背后更大的图景或含义。', scene: 'images/1 (20).png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '做一件事时，我更享受“把细节做对”的过程，而不是“想出全新的做法”。', scene: 'images/1 (16).png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '我常常被那些带有隐喻、多重解读空间的表达所吸引。', scene: 'images/1 (8).png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '学习新东西时，如果没有清晰的步骤和具体的例子，我会感到不安。', scene: 'images/1 (10).png', a: { text: '非常符合', dim: 'S', score: 2 }, b: { text: '比较符合', dim: 'S', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'N', score: 1 }, e: { text: '完全不符合', dim: 'N', score: 2 } },
+  { q: '比起“现在具体发生了什么”，我更关心“这件事未来可能走向哪里”。', scene: 'images/1 (5).png', a: { text: '非常符合', dim: 'N', score: 2 }, b: { text: '比较符合', dim: 'N', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'S', score: 1 }, e: { text: '完全不符合', dim: 'S', score: 2 } },
+  { q: '做决定时，我首先考虑的是“哪个方案在逻辑上最合理”，而不是“哪个方案让人最舒服”。', scene: 'images/1 (24).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '看到别人难过时，我很难保持客观冷静，情绪会先于分析出现。', scene: 'images/1 (4).png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '我更容易被“有道理”说服，而不是被“有感染力”打动。', scene: 'images/1 (13).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '在争论中，我更在意对方有没有感到被尊重，而不是谁的道理更站得住脚。', scene: 'images/1 (27).png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '当规则和人情发生冲突时，我倾向于维护规则，哪怕会让具体的人不舒服。', scene: 'images/1 (9).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'F', score: 1 }, e: { text: '完全不符合', dim: 'F', score: 2 } },
+  { q: '别人向我倾诉时，我更自然的反应是陪着感受，而不是帮忙找解决办法。', scene: 'images/1 (14).png', a: { text: '非常符合', dim: 'F', score: 2 }, b: { text: '比较符合', dim: 'F', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '我喜欢事情提前定好，不确定感会让我不舒服。', scene: 'images/1 (19).png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '比起按部就班，我更喜欢保留选择的余地，到时候再看。', scene: 'images/1 (22).png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '如果一项任务没有明确的截止日期，我很难真正开始推进它。', scene: 'images/1 (7).png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '计划被打乱时，我更多感到的是“松了口气”，而不是“烦躁”。', scene: 'images/1 (21).png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '我习惯把东西分类放好，哪怕别人觉得没必要。', scene: 'images/1 (23).png', a: { text: '非常符合', dim: 'J', score: 2 }, b: { text: '比较符合', dim: 'J', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'P', score: 1 }, e: { text: '完全不符合', dim: 'P', score: 2 } },
+  { q: '我经常在最后期限的压迫下才进入最佳状态。', scene: 'images/1 (6).png', a: { text: '非常符合', dim: 'P', score: 2 }, b: { text: '比较符合', dim: 'P', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'J', score: 1 }, e: { text: '完全不符合', dim: 'J', score: 2 } },
+  { q: '面对不确定的结果，我通常相信事情最终会朝好的方向发展，不太会提前陷入焦虑。', scene: 'images/1 (18).png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '过去做过的决定，我很少反复回想“如果当时选了另一条路会怎样”。', scene: 'images/1 (12).png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '别人指出我的错误时，我通常能就事论事，不会因此怀疑自己的能力。', scene: 'images/1 (1).png', a: { text: '非常符合', dim: 'A', score: 2 }, b: { text: '比较符合', dim: 'A', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'T', score: 1 }, e: { text: '完全不符合', dim: 'T', score: 2 } },
+  { q: '即使别人觉得我做得不错，我仍然经常觉得自己可以更好。', scene: 'images/1 (15).png', a: { text: '非常符合', dim: 'T', score: 2 }, b: { text: '比较符合', dim: 'T', score: 1 }, c: { text: '中立 / 不确定', dim: 'N', score: 0 }, d: { text: '不太符合', dim: 'A', score: 1 }, e: { text: '完全不符合', dim: 'A', score: 2 } }
 ];
 
 /* ================================================================
@@ -526,12 +514,15 @@ function renderQuestion() {
   progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
   questionText.textContent = q.q;
   
+  // 关键点：使用 encodeURI 编码带有空格和括号的文件名，确保成功加载
+  const encodedSrc = encodeURI(q.scene);
+
   characterBox.innerHTML = `<span class="img-loading">图片加载中...</span>`;
   const loadingText = characterBox.querySelector('.img-loading');
   const timeoutId = setTimeout(() => { if(loadingText) loadingText.style.opacity = '0'; }, 3000);
 
   const img = new Image();
-  img.src = q.scene;
+  img.src = encodedSrc;
   img.className = 'character-img';
   img.onload = () => {
     clearTimeout(timeoutId);
