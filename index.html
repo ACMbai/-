@@ -6,7 +6,8 @@
 <title>MBTI 人格测试 · 沉浸版</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; overflow: hidden; background: #000; color: #f5f5f7; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
+  /* 将背景改为极深的幽蓝色，增加深海感 */
+  html, body { height: 100%; overflow: hidden; background: radial-gradient(circle at center, #041222 0%, #000000 80%); color: #f5f5f7; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; }
   
   #bg-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   .glass-panel { background: rgba(255,255,255,0.055); backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 30px 90px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.12); }
@@ -16,13 +17,13 @@
   #music-toggle svg { width: 18px; height: 18px; fill: currentColor; }
   #music-toggle.muted::after { content: ''; position: absolute; width: 20px; height: 2px; background: #f87171; transform: rotate(45deg); }
 
-  #start-layer { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; transition: opacity 1s ease; padding: 24px; text-align: center; }
+  #start-layer { position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); transition: opacity 1s ease; padding: 24px; text-align: center; backdrop-filter: blur(5px); }
   #start-layer.hide { opacity: 0; pointer-events: none; }
-  .start-title { font-size: clamp(32px, 6vw, 56px); font-weight: 200; letter-spacing: 0.2em; margin-bottom: 20px; padding-left: 0.2em; background: linear-gradient(120deg, #fff, #9fc0ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .start-title { font-size: clamp(32px, 6vw, 56px); font-weight: 200; letter-spacing: 0.2em; margin-bottom: 20px; padding-left: 0.2em; background: linear-gradient(120deg, #fff, #4dc3ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .start-desc { font-size: 14.5px; color: rgba(255,255,255,0.5); max-width: 440px; line-height: 1.8; margin-bottom: 30px; letter-spacing: 0.05em; }
-  .start-btn { padding: 16px 48px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 15px; letter-spacing: 0.2em; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); }
-  .start-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(110,150,255,0.2); }
-  #resume-hint { display: none; margin-top: 16px; font-size: 12px; color: rgba(160, 190, 255, 0.8); letter-spacing: 0.05em; }
+  .start-btn { padding: 16px 48px; border-radius: 999px; background: rgba(0, 150, 255, 0.1); border: 1px solid rgba(77, 195, 255, 0.4); color: #fff; font-size: 15px; letter-spacing: 0.2em; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+  .start-btn:hover { background: rgba(0, 150, 255, 0.25); border-color: rgba(77, 195, 255, 0.8); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 150, 255, 0.3); }
+  #resume-hint { display: none; margin-top: 16px; font-size: 12px; color: rgba(77, 195, 255, 0.8); letter-spacing: 0.05em; }
 
   #quiz-layer { position: fixed; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 16px; opacity: 0; pointer-events: none; transition: opacity 1s ease; }
   #quiz-layer.active { opacity: 1; pointer-events: auto; }
@@ -30,7 +31,7 @@
   
   .quiz-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.18em; color: rgba(255,255,255,0.4); text-transform: uppercase; z-index: 2; }
   .progress-track { height: 2px; width: 100%; border-radius: 2px; background: rgba(255,255,255,0.12); margin-bottom: 16px; overflow: hidden; z-index: 2; }
-  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #6f9dff, #c9a7ff); box-shadow: 0 0 12px rgba(120,160,255,0.7); transition: width 0.55s ease; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #0088ff, #4dc3ff); box-shadow: 0 0 12px rgba(77,195,255,0.7); transition: width 0.55s ease; }
 
   .card-content { display: flex; flex-direction: column; z-index: 2; }
   
@@ -42,9 +43,9 @@
     position: relative;
   }
   
-  /* 加载占位提示 */
   .img-loading {
     position: absolute; color: rgba(255,255,255,0.3); font-size: 13px; letter-spacing: 0.1em;
+    transition: opacity 0.3s;
   }
   
   .character-img { 
@@ -53,7 +54,7 @@
     -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
     mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
     transform: scale(1.1); 
-    opacity: 0; transition: opacity 0.5s ease; /* 初始透明，加载完淡入 */
+    opacity: 0; transition: opacity 0.5s ease;
   }
   .character-img.loaded { opacity: 1; }
 
@@ -61,10 +62,10 @@
   
   .options-wrap { display: flex; flex-direction: column; gap: 8px; }
   .option { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e9e9ee; font-family: inherit; font-size: 14px; cursor: pointer; transition: all 0.3s ease; outline: none; }
-  .option:hover { background: rgba(255,255,255,0.1); border-color: rgba(160,190,255,0.5); transform: translateY(-2px); }
+  .option:hover { background: rgba(77, 195, 255, 0.1); border-color: rgba(77, 195, 255, 0.5); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 150, 255, 0.2); }
   .option:active { transform: translateY(0) scale(0.99); }
   .option:focus { outline: none; }
-  .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(200,218,255,0.95); background: rgba(140,175,255,0.16); border: 1px solid rgba(160,190,255,0.3); }
+  .option .tag { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: rgba(77, 195, 255, 0.95); background: rgba(0, 150, 255, 0.15); border: 1px solid rgba(77, 195, 255, 0.3); }
 
   .card-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
   .footer-btn { background: transparent; border: none; font-size: 13px; cursor: pointer; transition: color 0.2s; display: flex; align-items: center; gap: 6px; font-family: inherit; outline: none; }
@@ -86,16 +87,26 @@
     .card-footer { margin-top: 12px; }
   }
 
+  /* 横屏提示遮罩 */
   #rotate-overlay { position: fixed; inset: 0; z-index: 999; background: #000; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-align: center; padding: 24px; }
   #rotate-overlay.show { display: flex; }
-  #rotate-overlay svg { width: 64px; height: 64px; color: #9fc0ff; margin-bottom: 20px; animation: rotate-phone 2s infinite ease-in-out; }
+  #rotate-overlay svg { width: 64px; height: 64px; color: #4dc3ff; margin-bottom: 20px; animation: rotate-phone 2s infinite ease-in-out; }
   @keyframes rotate-phone { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
   #rotate-overlay h2 { font-size: 20px; font-weight: 400; letter-spacing: 0.1em; margin-bottom: 10px; }
-  #rotate-overlay p { font-size: 14px; color: rgba(255,255,255,0.5); }
+  #rotate-overlay p { font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 24px; }
+
+  /* 新增：应急跳过按钮 */
+  #skip-orientation-btn {
+    padding: 10px 24px; border-radius: 99px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.7); font-size: 13px; cursor: pointer;
+    transition: all 0.3s;
+  }
+  #skip-orientation-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
   #type-flash { position: fixed; inset: 0; z-index: 6; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.6s ease; }
   #type-flash.show { opacity: 1; }
-  #type-flash-text { font-size: clamp(52px, 12vw, 116px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; padding-left: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(130,165,255,0.42)); transform: scale(0.94); transition: transform 0.9s ease; text-align: center; }
+  #type-flash-text { font-size: clamp(52px, 12vw, 116px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; padding-left: 0.1em; background: linear-gradient(120deg, #fff 10%, #4dc3ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 40px rgba(77,195,255,0.42)); transform: scale(0.94); transition: transform 0.9s ease; text-align: center; }
   #type-flash.show #type-flash-text { transform: scale(1); }
   #type-flash-sub { margin-top: 16px; font-size: 13px; letter-spacing: 0.16em; color: rgba(255,255,255,0.4); opacity: 0; transition: opacity 0.8s ease 0.4s; }
   #type-flash.show #type-flash-sub { opacity: 1; }
@@ -110,21 +121,21 @@
   #landscape-hint.show { display: flex; opacity: 1; }
   #landscape-hint svg { width: 18px; height: 18px; animation: rotate-phone 2s infinite ease-in-out; }
 
-  #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 40px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(90,125,255,0.1), transparent 62%), #000; scrollbar-width: thin; }
+  #result-layer { position: fixed; inset: 0; z-index: 7; display: flex; flex-direction: column; padding: 40px 24px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; background: radial-gradient(circle at 50% 32%, rgba(0, 150, 255, 0.15), transparent 62%), rgba(0,0,0,0.8); scrollbar-width: thin; }
   #result-layer::-webkit-scrollbar { width: 6px; }
   #result-layer::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
   #result-layer.show { opacity: 1; pointer-events: auto; }
   .result-inner { margin: auto; width: 100%; max-width: 760px; text-align: center; transform: translateY(18px); transition: transform 1.5s ease; padding-bottom: 40px; }
   #result-layer.show .result-inner { transform: translateY(0); }
   .result-label { font-size: 11px; letter-spacing: 0.5em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
-  .result-type { font-size: clamp(56px, 12vw, 120px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; background: linear-gradient(120deg, #fff 10%, #9fc0ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px; filter: drop-shadow(0 0 34px rgba(130,165,255,0.28)); }
+  .result-type { font-size: clamp(56px, 12vw, 120px); font-weight: 200; line-height: 1; letter-spacing: 0.1em; background: linear-gradient(120deg, #fff 10%, #4dc3ff 58%, #c9a7ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 8px; filter: drop-shadow(0 0 34px rgba(77,195,255,0.28)); }
   .result-subtype { font-size: 12px; letter-spacing: 0.16em; color: rgba(255,255,255,0.35); margin-bottom: 18px; }
   .result-title { font-size: 21px; font-weight: 400; letter-spacing: 0.14em; color: rgba(255,255,255,0.9); margin-bottom: 22px; }
   .result-desc { font-size: 15.5px; line-height: 1.95; letter-spacing: 0.02em; color: rgba(255,255,255,0.6); text-align: justify; text-align-last: center; margin-bottom: 10px; }
   .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; text-align: left; }
   .info-card { padding: 22px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); }
   .info-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .info-title::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9fc0ff; }
+  .info-title::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4dc3ff; }
   .info-text { font-size: 14px; line-height: 1.75; color: rgba(255,255,255,0.75); }
   .sin-panel { margin-top: 18px; padding: 24px 24px; border-radius: 20px; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.09); backdrop-filter: blur(18px); text-align: left; grid-column: span 2; }
   .sin-title { font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase; color: rgba(255,255,255,0.4); text-align: center; margin-bottom: 22px; }
@@ -135,8 +146,8 @@
   .sin-value { font-size: 13px; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; }
   .sin-track { height: 4px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow: hidden; }
   .sin-bar { height: 100%; width: 0%; border-radius: 4px; transition: width 1.1s cubic-bezier(0.22,0.61,0.36,1); }
-  .restart-btn { margin-top: 36px; padding: 13px 36px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); color: #e9e9ee; font-size: 13px; letter-spacing: 0.22em; cursor: pointer; transition: all 0.3s ease; }
-  .restart-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(160,190,255,0.6); transform: translateY(-2px); }
+  .restart-btn { margin-top: 36px; padding: 13px 36px; border-radius: 999px; background: rgba(0, 150, 255, 0.1); border: 1px solid rgba(77, 195, 255, 0.4); color: #e9e9ee; font-size: 13px; letter-spacing: 0.22em; cursor: pointer; transition: all 0.3s ease; }
+  .restart-btn:hover { background: rgba(0, 150, 255, 0.25); border-color: rgba(77, 195, 255, 0.8); transform: translateY(-2px); }
 
   @media (max-width: 640px) {
     #result-layer { padding: 32px 18px; }
@@ -156,11 +167,12 @@
 
   <canvas id="bg-canvas"></canvas>
 
-  <!-- 横屏引导遮罩 -->
+  <!-- 横屏提示遮罩（带有跳过按钮） -->
   <div id="rotate-overlay">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
     <h2>请横置手机</h2>
     <p>横屏答题可带来更沉浸的体验，并完美衔接后续视频</p>
+    <button id="skip-orientation-btn" type="button">跳过提示，直接开始</button>
   </div>
 
   <section id="start-layer">
@@ -179,11 +191,9 @@
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       
       <div class="card-content">
-        <!-- 图片区：自带加载提示 -->
         <div class="character-box" id="character-box">
           <span class="img-loading">图片加载中...</span>
         </div>
-        <!-- 题干与选项区 -->
         <div class="right-panel">
           <h2 id="question-text">题目加载中…</h2>
           <div class="options-wrap">
@@ -240,65 +250,141 @@
 
 <script>
 /* ================================================================
-   一、屏幕方向控制与提示
+   一、屏幕方向控制与提示（强化版，兼容鸿蒙 ArkWeb）
    ================================================================ */
 const rotateOverlay = document.getElementById('rotate-overlay');
+const skipOrientationBtn = document.getElementById('skip-orientation-btn');
 let testStarted = false;
 let orientationCheckInterval = null;
+let isManualSkip = false;
+
 const portraitQuery = window.matchMedia("(orientation: portrait)");
+const landscapeQuery = window.matchMedia("(orientation: landscape)");
 
 function checkOrientation() {
-  if (!testStarted) { rotateOverlay.classList.remove('show'); return; }
-  if (portraitQuery.matches) rotateOverlay.classList.add('show');
-  else rotateOverlay.classList.remove('show');
+  if (!testStarted || isManualSkip) { 
+    rotateOverlay.classList.remove('show'); 
+    return; 
+  }
+
+  let isPortrait = portraitQuery.matches;
+  
+  // 鸿蒙等部分系统兜底：如果 matchMedia 异常，使用视口宽高比
+  if (!portraitQuery.matches && !landscapeQuery.matches) {
+    const vv = window.visualViewport;
+    const w = vv ? vv.width : window.innerWidth;
+    const h = vv ? vv.height : window.innerHeight;
+    isPortrait = h > w;
+  }
+
+  if (isPortrait) {
+    rotateOverlay.classList.add('show');
+  } else {
+    rotateOverlay.classList.remove('show');
+  }
 }
 
+portraitQuery.addEventListener('change', checkOrientation);
+landscapeQuery.addEventListener('change', checkOrientation);
 window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 300));
+window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 400));
+
+skipOrientationBtn.addEventListener('click', () => {
+  isManualSkip = true;
+  checkOrientation();
+});
 
 /* ================================================================
-   二、四芒星背景
+   二、全新“深海荧光”动态粒子背景
    ================================================================ */
 (function initParticles() {
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let W = 0, H = 0, particles = [], sprite = null;
+  
   function createSprite() {
     const size = 64; const off = document.createElement('canvas'); off.width = off.height = size;
     const g = off.getContext('2d'); const cx = size / 2, cy = size / 2;
+    // 绘制幽蓝色发光光斑
     const grad = g.createRadialGradient(cx, cy, 0, cx, cy, size / 2);
-    grad.addColorStop(0, 'rgba(255,255,255,0.9)'); grad.addColorStop(0.2, 'rgba(200,220,255,0.4)'); grad.addColorStop(1, 'rgba(200,220,255,0)');
-    g.fillStyle = grad; g.fillRect(0, 0, size, size);
-    g.beginPath(); const long = size * 0.45, short = size * 0.08;
-    g.moveTo(cx, cy - long); g.quadraticCurveTo(cx + short, cy - short, cx + long, cy);
-    g.quadraticCurveTo(cx + short, cy + short, cx, cy + long); g.quadraticCurveTo(cx - short, cy + short, cx - long, cy);
-    g.quadraticCurveTo(cx - short, cy - short, cx, cy - long); g.fillStyle = 'rgba(255,255,255,0.95)'; g.fill();
+    grad.addColorStop(0, 'rgba(200, 240, 255, 1)');
+    grad.addColorStop(0.2, 'rgba(77, 195, 255, 0.8)');
+    grad.addColorStop(0.6, 'rgba(0, 100, 255, 0.2)');
+    grad.addColorStop(1, 'rgba(0, 50, 150, 0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, size, size);
     return off;
   }
+
   function buildParticles() {
-    const count = Math.min(350, Math.round((W * H) / 8000)); particles = [];
-    for (let i = 0; i < count; i++) particles.push({ x: Math.random()*W, y: Math.random()*H, size: 1.2+Math.random()*2.8, vx: (Math.random()-0.5)*0.12, vy: -0.05-Math.random()*0.15, alpha: 0.15+Math.random()*0.6, phase: Math.random()*Math.PI*2, speed: 0.0004+Math.random()*0.0012 });
+    const count = Math.min(400, Math.round((W * H) / 4000)); 
+    particles = [];
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: 0.5 + Math.random() * 2.5,
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2 - 0.1,
+        alpha: 0.2 + Math.random() * 0.6,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.0005 + Math.random() * 0.001,
+        offset: Math.random() * Math.PI * 2
+      });
+    }
   }
-  function resize() { W = window.innerWidth; H = window.innerHeight; canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr); canvas.style.width = W+'px'; canvas.style.height = H+'px'; ctx.setTransform(dpr,0,0,dpr,0,0); buildParticles(); }
+
+  function resize() { 
+    W = window.innerWidth; H = window.innerHeight; 
+    canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr); 
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px'; 
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); 
+    buildParticles(); 
+  }
+
   let lastTime = performance.now();
   function loop(now) {
-    const dt = Math.min(now-lastTime, 50); lastTime = now;
-    ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation = 'lighter';
+    const dt = Math.min(now - lastTime, 50); lastTime = now;
+    ctx.clearRect(0, 0, W, H); 
+    ctx.globalCompositeOperation = 'lighter';
+
     for (let i = 0; i < particles.length; i++) {
-      const p = particles[i]; p.x += p.vx*dt*0.06; p.y += p.vy*dt*0.06; p.phase += p.speed*dt;
-      if (p.y < -40) { p.y = H+40; p.x = Math.random()*W; } if (p.x < -40) p.x = W+40; if (p.x > W+40) p.x = -40;
-      const twinkle = 0.6 + 0.4*Math.sin(p.phase); const drawSize = p.size*9;
-      ctx.globalAlpha = p.alpha*twinkle; ctx.drawImage(sprite, p.x-drawSize/2, p.y-drawSize/2, drawSize, drawSize);
+      const p = particles[i]; 
+      
+      p.phase += p.speed * dt;
+      let waveX = Math.sin(p.phase + p.offset) * 0.5;
+      let waveY = Math.cos(p.phase + p.offset) * 0.3;
+
+      p.x += (p.vx + waveX) * dt * 0.06; 
+      p.y += (p.vy + waveY) * dt * 0.06; 
+      
+      if (p.y < -40) { p.y = H + 40; p.x = Math.random() * W; } 
+      if (p.x < -40) p.x = W + 40; 
+      if (p.x > W + 40) p.x = -40;
+      
+      const twinkle = 0.5 + 0.5 * Math.sin(p.phase * 2);
+      const drawSize = p.size * 8;
+      
+      ctx.globalAlpha = p.alpha * twinkle; 
+      ctx.drawImage(sprite, p.x - drawSize / 2, p.y - drawSize / 2, drawSize, drawSize);
     }
-    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; requestAnimationFrame(loop);
+    
+    ctx.globalAlpha = 1; 
+    ctx.globalCompositeOperation = 'source-over'; 
+    requestAnimationFrame(loop);
   }
-  sprite = createSprite(); resize(); requestAnimationFrame(loop);
-  let resizeTimer = null; window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 180); });
+  
+  sprite = createSprite(); 
+  resize(); 
+  requestAnimationFrame(loop);
+  
+  let resizeTimer = null; 
+  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(resize, 180); });
 })();
 
 /* ================================================================
-   三、数据与题库 (路径已改为纯英文 images/1.png 格式)
+   三、数据与题库 (路径为 images/1.png 格式)
    ================================================================ */
 const MBTI_TYPES = {
   INFP: { title: '调停者 · 温柔的理想主义者', desc: '你像一颗安静的星，心里装着浩瀚宇宙。敏感、真诚、忠于内心的价值观。你用温柔对抗世界的坚硬，在理想与现实之间，始终寻找那个让自己安心的答案。', strengths: '共情力极强、富有创造力、忠于自我、包容度高', weaknesses: '容易过度内耗、过于理想化、行动力有时不足', love: '渴望灵魂契合的深度连接，慢热但极其忠诚，需要独处空间来恢复能量。', careers: '作家、心理咨询师、插画师、独立音乐人', comm: '倾向于倾听和共情，表达含蓄，很少直接批评他人，喜欢用文字或艺术表达内心。', growth: '试着把想法落地为具体行动，接受世界的不完美，学会在必要时表达自己的愤怒和边界。', video: 'videos/INFP.mp4', sins: { pride: 30, envy: 45, wrath: 35, sloth: 60, greed: 20, gluttony: 40, lust: 55 } },
@@ -418,7 +504,8 @@ musicToggle.addEventListener('click', () => {
 
 startBtn.addEventListener('click', () => {
   testStarted = true;
-  
+  isManualSkip = false;
+
   const docEl = document.documentElement;
   if (docEl.requestFullscreen) docEl.requestFullscreen().catch(e => {});
   else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen().catch(e => {});
@@ -426,7 +513,7 @@ startBtn.addEventListener('click', () => {
   checkOrientation(); 
   
   if (orientationCheckInterval) clearInterval(orientationCheckInterval);
-  orientationCheckInterval = setInterval(checkOrientation, 500);
+  orientationCheckInterval = setInterval(checkOrientation, 800);
 
   bgm.volume = 0.6;
   bgm.play().then(() => { musicPlaying = true; musicToggle.classList.remove('muted'); }).catch(() => {});
@@ -439,19 +526,22 @@ function renderQuestion() {
   progressFill.style.width = ((currentIndex + 1) / QUESTIONS.length) * 100 + '%';
   questionText.textContent = q.q;
   
-  // 动态创建图片，带加载提示
   characterBox.innerHTML = `<span class="img-loading">图片加载中...</span>`;
+  const loadingText = characterBox.querySelector('.img-loading');
+  const timeoutId = setTimeout(() => { if(loadingText) loadingText.style.opacity = '0'; }, 3000);
+
   const img = new Image();
   img.src = q.scene;
   img.className = 'character-img';
   img.onload = () => {
+    clearTimeout(timeoutId);
     characterBox.innerHTML = '';
     characterBox.appendChild(img);
-    // 强制重绘后加上 loaded 类触发淡入动画
     setTimeout(() => img.classList.add('loaded'), 10);
   };
   img.onerror = () => {
-    characterBox.innerHTML = `<span class="img-loading" style="color:#f87171">配图加载失败，请检查网络</span>`;
+    clearTimeout(timeoutId);
+    characterBox.innerHTML = ''; 
   };
 
   const keys = ['a', 'b', 'c', 'd', 'e'];
@@ -604,7 +694,7 @@ function dissolveType(text, onComplete) {
   const chars = Array.from(text), widths = chars.map(ch => octx.measureText(ch).width);
   let totalWidth = 0; chars.forEach((ch, i) => { totalWidth += widths[i]; if (i < chars.length - 1) totalWidth += spacing; });
   const grad = octx.createLinearGradient(cx - totalWidth/2, cy, cx + totalWidth/2, cy);
-  grad.addColorStop(0, '#fff'); grad.addColorStop(0.58, '#9fc0ff'); grad.addColorStop(1, '#c9a7ff'); octx.fillStyle = grad;
+  grad.addColorStop(0, '#fff'); grad.addColorStop(0.58, '#4dc3ff'); grad.addColorStop(1, '#c9a7ff'); octx.fillStyle = grad;
   let penX = cx - totalWidth / 2;
   chars.forEach((ch, i) => { octx.fillText(ch, penX, cy); penX += widths[i] + spacing; });
 
